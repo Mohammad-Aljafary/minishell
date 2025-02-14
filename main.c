@@ -6,7 +6,14 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 11:09:05 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/02/14 11:09:06 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/02/14 11:24:13 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
+
+int main ()
+{
+    printf("Hello World\n");
+    return (0);
+}
