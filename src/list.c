@@ -3,26 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   list.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 12:39:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/02/18 17:28:04 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/02/19 10:36:54 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
-void    create(char *str)
+t_token   *create(char *str)
 {
     t_token *node;
     
     node = malloc(sizeof(t_token));
     if(!node)
-        return ;
+        return (NULL);
     node->word = str;
     node->prev = NULL;
     node->next = NULL;
     node->type = 0;
+    return (node);
 }
 
 void    add_back(t_token **list, t_token *new_node)
@@ -51,16 +52,22 @@ void    clear_list(t_token **list)
 {
     t_token *temp;
     
-    while (list)
+    while (*list)
     {
         temp = (*list);
         *list = (*list)->next;
         temp->next = NULL;
         temp->prev = NULL;
         free (temp);
-    }    
+    }
 }
-int main(void)
+
+
+void    print_list(t_token *list)
 {
-printf("HIIIII");
+    while (list)
+    {
+        printf ("%s\n", list->word);
+        list = list->next;
+    }
 }

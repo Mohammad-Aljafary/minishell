@@ -69,7 +69,6 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Usage: %s <delimiter> <command>\n", argv[0]);
         return EXIT_FAILURE;
     }
-
     heredoc_to_command(argv[1], argv[2]);
     return EXIT_SUCCESS;
 }
