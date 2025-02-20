@@ -3,25 +3,111 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 09:46:18 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/02/19 10:30:58 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/02/20 18:01:17 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
+
+int	is_whitespace(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n');
+}
+
+int	is_operator(char c)
+{
+	return (c == '>' || c == '<' || c == '|' || c == ';');
+}
+
+int	get_op_len(char *str)
+{
+	if ((*str == '>' && *(str + 1) == '>'))
+		return (2);
+	else if ((*str == '<' && *(str + 1) == '<'))
+		return (2);
+	else if (is_operator(*str))
+	{
+        if (is_operator(*(str + 1)))
+            return (2);
+        return (1);
+    }
+	return (0);
+}
+
 void tokenize(char *line, t_token **list)
 {
-    char    *token;
-    t_token *temp;
+    int i;
+    int j;
+    int len;
+    t_token *node;
 
-    token = ft_strtok(line, " \n<>;|"); 
-    while (token) 
+    i = 0;
+    len = 0;
+    while(line[i])
     {
-        temp = create(token);
-        add_back(list, temp);
-        token = ft_strtok(NULL, " \n<>;|");
+        while(is_whitespace(line[i]))
+            i++;
+        if (!line[i])
+            break;
+        if (is_operator(line[i]))
+        {
+            len = get_op_len(&line[i]);
+            node = create(ft_substr(line, i, len));
+            add_back(list, node);
+            i += len;
+        }
+        else
+        {
+            j = i;
+            while (line[j] && !is_whitespace(line[j]) && !is_operator(line[j]))
+                j++;
+            node = create(ft_substr(line, i, j - i));
+            add_back(list, node);
+            i = j;
+        }
+        
     }
+
 }
+
+/*void handle_operator(char *line, int *i, t_token **list)
+{
+    int len;
+    t_token *node;
+
+    len = get_op_len(&line[*i]);
+     node = create(ft_substr(line, *i, len));
+    add_back(list, node);
+    *i += len;
+}
+
+void tokenize(char *line, t_token **list)
+{
+    int i;
+    int j;
+    t_token *node;
+
+    i = 0;
+    while(line[i])
+    {
+        while(is_whitespace(line[i]))
+            i++;
+        if (!line[i])
+            break;
+        if (is_operator(line[i]))
+            handle_operator(line, &i, list);
+        else
+        {
+            j = i;
+            while (line[j] && !is_whitespace(line[j]) && !is_operator(line[j]))
+                j++;
+            node = create(ft_substr(line, i, j - i));
+            add_back(list, node);
+            i = j;
+        }
+    }
+}*/

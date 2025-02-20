@@ -77,5 +77,5 @@ int					ft_lstsize(t_list *lst);
 char				*ft_strtok(char *str, const char *delimiters);
 int					ft_atoi_base(const char *str, int base);
 void				*ft_realloc(void *ptr, size_t new_size);
-int	is_delim(char c, const char *delimiters);
+int					is_delim(char c, const char *delimiters);
 #endif

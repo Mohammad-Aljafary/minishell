@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../includes/libft.h"
 #include <stdio.h>
 #include <string.h>
-#include "../includes/libft.h"
 
 int	is_delim(char c, const char *delimiters)
 {
