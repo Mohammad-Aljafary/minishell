@@ -6,12 +6,11 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 09:46:18 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/02/20 18:01:17 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/02/21 14:22:58 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
-
 
 int	is_whitespace(char c)
 {
@@ -29,85 +28,105 @@ int	get_op_len(char *str)
 		return (2);
 	else if ((*str == '<' && *(str + 1) == '<'))
 		return (2);
-	else if (is_operator(*str))
+	else
 	{
-        if (is_operator(*(str + 1)))
-            return (2);
-        return (1);
-    }
+		if (is_operator(*(str + 1)))
+		{
+			perror("syntax error");
+			return (-1);
+		}
+		return (1);
+	}
 	return (0);
 }
 
-void tokenize(char *line, t_token **list)
+void	tokenize(char *line, t_token **list)
 {
-    int i;
-    int j;
-    int len;
-    t_token *node;
+	int		i;
+	int		j;
+	int		len;
+	t_token	*node;
+	char	q;
 
-    i = 0;
-    len = 0;
-    while(line[i])
-    {
-        while(is_whitespace(line[i]))
-            i++;
-        if (!line[i])
-            break;
-        if (is_operator(line[i]))
-        {
-            len = get_op_len(&line[i]);
-            node = create(ft_substr(line, i, len));
-            add_back(list, node);
-            i += len;
-        }
-        else
-        {
-            j = i;
-            while (line[j] && !is_whitespace(line[j]) && !is_operator(line[j]))
-                j++;
-            node = create(ft_substr(line, i, j - i));
-            add_back(list, node);
-            i = j;
-        }
-        
-    }
-
+	i = 0;
+	len = 0;
+	while (line[i])
+	{
+		while (is_whitespace(line[i]))
+			i++;
+		if (!line[i])
+			break ;
+		if (line[i] == '\"' || line[i] == '\'')
+		{
+			q = line[i++];
+			j = i;
+			while (line[j] && line[j] != q)
+				j++;
+			if (!line[j])
+			{
+				perror("syntax error");
+                break ;
+			}
+			node = create(ft_substr(line, i, j - i));
+			add_back(list, node);
+			i = j + 1;
+		}
+		else if (is_operator(line[i]))
+		{
+			len = get_op_len(&line[i]);
+            if(len == -1)
+                return( clear_list(list));
+			node = create(ft_substr(line, i, len));
+			add_back(list, node);
+			i += len;
+		}
+		else
+		{
+			j = i;
+			while (line[j] && !is_whitespace(line[j]) && !is_operator(line[j])
+				&& line[j] != '"' && line[j] != '\'')
+				j++;
+			node = create(ft_substr(line, i, j - i));
+			add_back(list, node);
+			i = j;
+		}
+	}
 }
 
 /*void handle_operator(char *line, int *i, t_token **list)
 {
-    int len;
-    t_token *node;
+	int		len;
+	t_token	*node;
 
-    len = get_op_len(&line[*i]);
-     node = create(ft_substr(line, *i, len));
-    add_back(list, node);
-    *i += len;
+	len = get_op_len(&line[*i]);
+		node = create(ft_substr(line, *i, len));
+	add_back(list, node);
+	*i += len;
 }
 
-void tokenize(char *line, t_token **list)
+void	tokenize(char *line, t_token **list)
 {
-    int i;
-    int j;
-    t_token *node;
+	int		i;
+	int		j;
+	t_token	*node;
 
-    i = 0;
-    while(line[i])
-    {
-        while(is_whitespace(line[i]))
-            i++;
-        if (!line[i])
-            break;
-        if (is_operator(line[i]))
-            handle_operator(line, &i, list);
-        else
-        {
-            j = i;
-            while (line[j] && !is_whitespace(line[j]) && !is_operator(line[j]))
-                j++;
-            node = create(ft_substr(line, i, j - i));
-            add_back(list, node);
-            i = j;
-        }
+	i = 0;
+	while(line[i])
+	{
+		while(is_whitespace(line[i]))
+			i++;
+		if (!line[i])
+			break ;
+		if (is_operator(line[i]))
+			handle_operator(line, &i, list);
+		else
+		{
+			j = i;
+			while (line[j] && !is_whitespace(line[j]) && !is_operator(line[j]))
+				j++;
+			node = create(ft_substr(line, i, j - i));
+			add_back(list, node);
+			i = j;
+		}
     }
 }*/
