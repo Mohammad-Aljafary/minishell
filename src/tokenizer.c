@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 09:46:18 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/02/21 14:22:58 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/02/24 22:15:02 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	get_op_len(char *str)
 	}
 	return (0);
 }
-
+ 
 void	tokenize(char *line, t_token **list)
 {
 	int		i;
@@ -67,9 +67,7 @@ void	tokenize(char *line, t_token **list)
 				perror("syntax error");
                 break ;
 			}
-			node = create(ft_substr(line, i, j - i));
-			add_back(list, node);
-			i = j + 1;
+	
 		}
 		else if (is_operator(line[i]))
 		{
@@ -91,7 +89,58 @@ void	tokenize(char *line, t_token **list)
 			i = j;
 		}
 	}
-}
+} 
+
+/*void	tokenize(char *line, t_token **list)
+{
+	int		i;
+	int		j;
+	t_token	*node;
+	char 	q;
+
+	i = 0;
+	while (line[i])
+	{
+		while (is_whitespace(line[i]))
+			i++;
+		if (!line[i])
+			break ;
+		if (!is_whitespace(line[i]) && !is_operator(line[i]))
+		{
+			j = i;
+			while (line[j] && !is_whitespace(line[j]) && !is_operator(line[j]))
+			{
+				if (line[j] == '"' || line[j] == '\'')
+				{
+					q = line[j++];
+					while (line[j] && line[j] != q)
+						j++;
+					if (!line[j])
+					{
+						perror("syntax error");
+						break ;
+					}
+					if (line[j] == q)
+						j++;
+				}
+				else
+					j++;
+			}
+			node = create(ft_substr(line, i, j - i));
+			add_back(list, node);
+			i = j;
+		}
+		else if (is_operator(line[i]))
+		{
+			int len = get_op_len(&line[i]);
+			if (len == -1)
+				return (clear_list(list));
+			node = create(ft_substr(line, i, len));
+			add_back(list, node);
+			i += len;
+		}
+	}
+} */
 
 /*void handle_operator(char *line, int *i, t_token **list)
 {
