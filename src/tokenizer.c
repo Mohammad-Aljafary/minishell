@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 09:46:18 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/02/24 22:15:02 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/03 00:01:24 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	is_whitespace(char c)
 
 int	is_operator(char c)
 {
-	return (c == '>' || c == '<' || c == '|' || c == ';');
+	return (c == '>' || c == '<' || c == '|' || c == '&');
 }
 
 int	get_op_len(char *str)
@@ -30,68 +30,21 @@ int	get_op_len(char *str)
 		return (2);
 	else
 	{
-		if (is_operator(*(str + 1)))
+		while (is_whitespace(*(++str)))
+			;
+		if (is_operator(*str))
 		{
-			perror("syntax error");
+			ft_putstr_fd("syntax error: near unexpected token `", 2);
+			ft_putchar_fd(*(str), 2);
+			ft_putstr_fd("\'\n", 2);
 			return (-1);
 		}
 		return (1);
 	}
 	return (0);
 }
- 
+
 void	tokenize(char *line, t_token **list)
-{
-	int		i;
-	int		j;
-	int		len;
-	t_token	*node;
-	char	q;
-
-	i = 0;
-	len = 0;
-	while (line[i])
-	{
-		while (is_whitespace(line[i]))
-			i++;
-		if (!line[i])
-			break ;
-		if (line[i] == '\"' || line[i] == '\'')
-		{
-			q = line[i++];
-			j = i;
-			while (line[j] && line[j] != q)
-				j++;
-			if (!line[j])
-			{
-				perror("syntax error");
-                break ;
-			}
-	
-		}
-		else if (is_operator(line[i]))
-		{
-			len = get_op_len(&line[i]);
-            if(len == -1)
-                return( clear_list(list));
-			node = create(ft_substr(line, i, len));
-			add_back(list, node);
-			i += len;
-		}
-		else
-		{
-			j = i;
-			while (line[j] && !is_whitespace(line[j]) && !is_operator(line[j])
-				&& line[j] != '"' && line[j] != '\'')
-				j++;
-			node = create(ft_substr(line, i, j - i));
-			add_back(list, node);
-			i = j;
-		}
-	}
-} 
-
-/*void	tokenize(char *line, t_token **list)
 {
 	int		i;
 	int		j;
@@ -117,7 +70,7 @@ void	tokenize(char *line, t_token **list)
 						j++;
 					if (!line[j])
 					{
-						perror("syntax error");
+						ft_putstr_fd("syntax error\n", 2);
 						break ;
 					}
 					if (line[j] == q)
@@ -140,7 +93,7 @@ void	tokenize(char *line, t_token **list)
 			i += len;
 		}
 	}
-} */
+}
 
 /*void handle_operator(char *line, int *i, t_token **list)
 {

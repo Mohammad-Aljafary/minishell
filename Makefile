@@ -12,7 +12,7 @@ all: libft $(NAME)
 
 
 $(NAME): $(OBJECTS) $(LIBFT)/libft.a 
-	$(CC) $(CFLAGS) $(OBJECTS) -L $(LIBFT) -lft -lreadline -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJECTS) -L $(LIBFT) -lft -lreadline -lncurses -o $(NAME)
 
 libft:
 	@make -C $(LIBFT)

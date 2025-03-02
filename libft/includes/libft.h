@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 12:10:21 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/01/12 14:54:01 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/03 01:09:27 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,4 +78,5 @@ char				*ft_strtok(char *str, const char *delimiters);
 int					ft_atoi_base(const char *str, int base);
 void				*ft_realloc(void *ptr, size_t new_size);
 int					is_delim(char c, const char *delimiters);
+int					ft_putchar(int c);
 #endif

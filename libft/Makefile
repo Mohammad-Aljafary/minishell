@@ -6,7 +6,7 @@
 #    By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/26 08:29:35 by malja-fa          #+#    #+#              #
-#    Updated: 2025/01/12 14:56:07 by malja-fa         ###   ########.fr        #
+#    Updated: 2025/03/03 01:10:37 by malja-fa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ SRCS = ft_isascii.c ft_isprint.c ft_isalpha.c ft_isdigit.c ft_isalnum.c \
        ft_strjoin.c ft_strtrim.c ft_split.c ft_strmapi.c ft_striteri.c \
        ft_lstadd_back_bonus.c ft_lstadd_front_bonus.c ft_lstclear_bonus.c ft_lstdelone_bonus.c \
        ft_lstiter_bonus.c ft_lstlast_bonus.c ft_lstmap_bonus.c ft_lstnew_bonus.c ft_lstsize_bonus.c\
-       ft_strtok.c ft_atoi_base.c ft_realloc.c ft_free_split.c
+       ft_strtok.c ft_atoi_base.c ft_realloc.c ft_free_split.c ft_putchar.c\
+       get_next_line.c get_next_line_utils.c
 
 OBJECTS = $(SRCS:%.c=$(OBJDIR)/%.o)
 NAME = libft.a
