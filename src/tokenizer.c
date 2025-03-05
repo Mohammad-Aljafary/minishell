@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 09:46:18 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/03 00:01:24 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/05 11:50:21 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	get_op_len(char *str)
 	return (0);
 }
 
-void	tokenize(char *line, t_token **list)
+int	tokenize(char *line, t_token **list)
 {
 	int		i;
 	int		j;
@@ -71,7 +71,7 @@ void	tokenize(char *line, t_token **list)
 					if (!line[j])
 					{
 						ft_putstr_fd("syntax error\n", 2);
-						break ;
+						return (0);
 					}
 					if (line[j] == q)
 						j++;
@@ -87,12 +87,13 @@ void	tokenize(char *line, t_token **list)
 		{
 			int len = get_op_len(&line[i]);
 			if (len == -1)
-				return (clear_list(list));
+				return (0);
 			node = create(ft_substr(line, i, len));
 			add_back(list, node);
 			i += len;
 		}
 	}
+	return (1);
 }
 
 /*void handle_operator(char *line, int *i, t_token **list)

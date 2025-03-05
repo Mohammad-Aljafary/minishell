@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:06:31 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/03 00:53:01 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/05 11:51:19 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,12 @@ int	main(int argc, char **argv, char **envp)
 	{
 		line = readline("minishell> ");
 		add_history(line);
-		tokenize(line, &list);
+		if (!tokenize(line, &list))
+		{
+			clear_list(&list);
+			free(line);
+			continue;
+		}
 		print_list(list);
 		clear_list(&list);
 		free(line);

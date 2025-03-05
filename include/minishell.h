@@ -6,13 +6,14 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/03 01:10:53 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/05 11:50:53 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 # include "../libft/includes/libft.h"
+# include "../libft/includes/get_next_line.h"
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdio.h>
@@ -40,7 +41,7 @@ void				print_list(t_token *list);
 /************************************************************\
 \******************** TOKENIZATION ***************************\
 \*************************************************************/
-void				tokenize(char *line, t_token **list);
+int				tokenize(char *line, t_token **list);
 
 
 /************************************************************\
