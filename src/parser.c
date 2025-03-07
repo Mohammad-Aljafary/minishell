@@ -1,5 +1,5 @@
 
-#include<minishell.h>
+#include <minishell.h>
 
 int    check_type(t_token **list)
 {
@@ -7,30 +7,29 @@ int    check_type(t_token **list)
 
     lst = *list;
     if (ft_strcmp(lst->word , ">") == 0)
-        return(in_re);
+        return (out_re);
     else if(ft_strcmp(lst->word ,"<") == 0)
-        return(out_re);
+        return (in_re);
     else if(ft_strcmp(lst->word ,"|") == 0)
-        return(pipes);
+        return (pipes);
     else if(ft_strcmp(lst->word ,">>") == 0)
-        return(here_doc);
+        return (appends);
     else if(ft_strcmp(lst->word ,"<<") == 0)
-        return(appends);
+        return (here_doc);
     else
-    return(not_defined);
+        return (not_defined);
 }
-void parser(t_token **list)
+
+void    parser(t_token **list)
 {
     t_token *lst;
-    // Guard against null list
+
     if (!list || !*list)
         return;
     lst = *list;
     while (lst)
     {
-        // Set initial type
         lst->type = check_type(lst);
-        // Handle undefined tokens
         if (lst->type == not_defined)
         {
             if (lst->prev == NULL)
@@ -47,3 +46,4 @@ void parser(t_token **list)
         lst = lst->next;
     }
 }
+

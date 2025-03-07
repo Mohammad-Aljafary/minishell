@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:06:31 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/07 11:45:25 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/07 14:02:24 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,18 @@ void	clear_screenn()
 		tputs(clear, 1, ft_putchar); 
 }
 
+void	print_env(char **env)
+{
+	int	i;
+	
+	i = 0;
+	while (env[i])
+	{
+		printf("%s\n", env[i]);
+		i++;
+	}
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -75,11 +87,12 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	(void)envp;
+	//(void)envp;
 	list = NULL;
 	if (!setup_terminal())
 		clear_screenn();
 	print_screenn();
+	print_env(envp);
 	while (1)
 	{
 		line = readline("minishell> ");
