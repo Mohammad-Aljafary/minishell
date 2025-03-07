@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:06:31 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/03 00:53:01 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/03 22:34:33 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <minishell.h>
 
 int setup_terminal(void)
 {

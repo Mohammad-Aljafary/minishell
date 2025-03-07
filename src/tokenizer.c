@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 09:46:18 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/03 01:28:19 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/03 23:32:38 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,26 +22,16 @@ int	is_operator(char c)
 	return (c == '>' || c == '<' || c == '|' || c == '&');
 }
 
-int	get_op_len(char *str)
+int get_op_len(char *str)
 {
-	if ((*str == '>' && *(str + 1) == '>'))
-		return (2);
-	else if ((*str == '<' && *(str + 1) == '<'))
-		return (2);
-	else
-	{
-		while (is_whitespace(*(++str)))
-			;
-		if (is_operator(*str))
-		{
-			ft_putstr_fd("syntax error: near unexpected token `", 2);
-			ft_putchar_fd(*(str), 2);
-			ft_putstr_fd("\'\n", 2);
-			return (-1);
-		}
-		return (1);
-	}
-	return (0);
+    if (!str || !*str)
+        return (0);
+    if ((*str == '>' && *(str + 1) == '>')
+        || (*str == '<' && *(str + 1) == '<'))
+        return (2);
+    if (*str && is_operator(*str))
+        return (1);
+    return (0);
 }
 
 void	tokenize(char *line, t_token **list)
