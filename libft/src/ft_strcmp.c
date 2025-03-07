@@ -6,11 +6,11 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 15:57:21 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/02/11 11:24:37 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/07 13:36:46 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../includes/libft.h"
 
 int	ft_strcmp(const char *s1, const char *s2)
 {

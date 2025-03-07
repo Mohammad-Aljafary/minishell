@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 12:39:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/02/20 17:43:56 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/07 13:48:37 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ t_token	*create(char *str)
 	node->word = str;
 	node->prev = NULL;
 	node->next = NULL;
-	node->type = 0;
+	node->type = not_defined;
 	return (node);
 }
 
@@ -66,7 +66,7 @@ void	print_list(t_token *list)
 {
 	while (list)
 	{
-		printf("%s\n", list->word);
+		printf("%s %d\n", list->word, list->type);
 		list = list->next;
 	}
 }

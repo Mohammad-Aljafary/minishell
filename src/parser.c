@@ -1,26 +1,42 @@
 
 #include <minishell.h>
 
-int    check_type(t_token **list)
+int check_type(t_token *list)
 {
-    t_token *lst;
-
-    lst = *list;
-    if (ft_strcmp(lst->word , ">") == 0)
+    if (ft_strcmp(list->word, ">") == 0)
         return (out_re);
-    else if(ft_strcmp(lst->word ,"<") == 0)
+    else if (ft_strcmp(list->word, "<") == 0)
         return (in_re);
-    else if(ft_strcmp(lst->word ,"|") == 0)
+    else if (ft_strcmp(list->word, "|") == 0)
         return (pipes);
-    else if(ft_strcmp(lst->word ,">>") == 0)
+    else if (ft_strcmp(list->word, ">>") == 0)
         return (appends);
-    else if(ft_strcmp(lst->word ,"<<") == 0)
+    else if (ft_strcmp(list->word, "<<") == 0)
         return (here_doc);
     else
         return (not_defined);
 }
 
-void    parser(t_token **list)
+int check_redirection(t_token *list)
+{
+    t_token *lst;
+
+    lst = *list;
+    if (ft_strcmp(lst->word , ">") == 0)
+        return(in_re);
+    else if(ft_strcmp(lst->word ,"<") == 0)
+        return(out_re);
+    else if(ft_strcmp(lst->word ,"|") == 0)
+        return(pipes);
+    else if(ft_strcmp(lst->word ,">>") == 0)
+        return(here_doc);
+    else if(ft_strcmp(lst->word ,"<<") == 0)
+        return(appends);
+    else
+    return(not_defined);
+}
+
+void parser(t_token **list)
 {
     t_token *lst;
 
@@ -46,4 +62,3 @@ void    parser(t_token **list)
         lst = lst->next;
     }
 }
-
