@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/03/05 11:50:53 by malja-fa         ###   ########.fr       */
+=======
+/*   Updated: 2025/03/06 13:36:50 by taabu-fe         ###   ########.fr       */
+>>>>>>> origin/tamara
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +26,20 @@
 # include <term.h>
 # include <curses.h>
 
+typedef enum	e_type
+{
+	not_defined,
+	pipes,
+	out_re,
+	in_re,
+	here_doc,
+	command,
+	option,
+	appends,
+	delimiter,
+	args,
+	file	
+}				t_type;
 typedef struct s_token
 {
 	char			*word;
