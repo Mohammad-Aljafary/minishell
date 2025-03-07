@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:06:31 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/07 11:45:25 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/07 16:07:04 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,13 @@ int	main(int argc, char **argv, char **envp)
 			exit(0);
 		add_history(line);
 		if (!tokenize(line, &list))
+		{
+			clear_list(&list);
+			free(line);
+			continue;
+		}
+		parser(&list);
+		if(syntax_error(list))
 		{
 			clear_list(&list);
 			free(line);
