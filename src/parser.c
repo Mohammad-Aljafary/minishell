@@ -45,7 +45,7 @@ void parser(t_token **list)
                 lst->type = command;
             else if (lst->prev->type == pipes)
                 lst->type = command;
-            else if (lst->prev->type == command || lst->prev->type == file)
+            else if (lst->prev->type == command || lst->prev->type == file || lst->prev->type == args)
                 lst->type = args;
             else if (check_redirection(lst->prev))
                 lst->type = file;
@@ -55,6 +55,7 @@ void parser(t_token **list)
         lst = lst->next;
     }
 }
+
 int syntax_error(t_token *list)
 {
     t_token *lst;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:06:31 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/07 16:07:04 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/08 15:59:14 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,21 @@ void	clear_screenn()
 		tputs(clear, 1, ft_putchar); 
 }
 
+void	print_env(char **env)
+{
+	int i = 0;
+	while (env[i])
+	{
+		printf ("%s\n", env[i]);
+		i++;
+	}
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	t_token	*list;
+	t_env	*env;
 
 	(void)argc;
 	(void)argv;
@@ -80,11 +91,17 @@ int	main(int argc, char **argv, char **envp)
 	if (!setup_terminal())
 		clear_screenn();
 	print_screenn();
+	env = NULL;
+	create_list_env(&env, envp);
+	print_env_list(env);
 	while (1)
 	{
 		line = readline("minishell> ");
 		if (!line)
+		{
+			clear_list_env(&env);
 			exit(0);
+		}
 		add_history(line);
 		if (!tokenize(line, &list))
 		{
