@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:06:31 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/08 15:59:14 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/09 13:22:20 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,10 +88,10 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)envp;
 	list = NULL;
+	env = NULL;
 	if (!setup_terminal())
 		clear_screenn();
 	print_screenn();
-	env = NULL;
 	create_list_env(&env, envp);
 	print_env_list(env);
 	while (1)

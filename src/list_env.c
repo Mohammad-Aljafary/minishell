@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 11:02:52 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/08 15:57:11 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/09 13:19:59 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,30 +19,34 @@ t_env *create_node_env(char *key, char *value)
     node = malloc(sizeof(t_env));
     if (!node)
         return (NULL);
-    node->key = key ? ft_strdup(key) : ft_strdup("");     // Handle NULL keys
-    node->value = value ? ft_strdup(value) : ft_strdup(""); // Handle NULL values
+    if (key)
+        node->key = ft_strdup(key);
+    else
+        node->key = ft_strdup("");
+    if (value)
+        node->value = ft_strdup(value);
+    else
+        node->value = ft_strdup("");
     node->next = NULL;
     return (node);
 }
-
 
 void add_back_env(t_env **list, t_env *node)
 {
     t_env *lst;
 
-    if (!node)                     // Protect against null node
+    if (!node)
         return;
-    if (!*list)                    // Handle empty list case
+    if (!*list)                 
     {
         *list = node;
         return;
     }
     lst = *list;
-    while (lst->next)              // Traverse to last node
+    while (lst->next)             
         lst = lst->next;
-    lst->next = node;              // Link the new node
+    lst->next = node;             
 }
-
 
 void    clear_list_env(t_env **list)
 {
@@ -51,12 +55,11 @@ void    clear_list_env(t_env **list)
     {
         temp = *list;
         *list = (*list)->next;
-        free(temp->key);      // Free the key string
-        free(temp->value);    // Free the value string
-        free(temp);           // Free the node itself
+        free(temp->key);      
+        free(temp->value);  
+        free(temp);
     }
 }
-
 
 void    add_node_env(t_env **list, t_env *node, char *key)
 {
@@ -67,16 +70,16 @@ void    add_node_env(t_env **list, t_env *node, char *key)
     {
         if (ft_strcmp(lst->key, key) == 0)
         {
-            free(lst->value);                 // Free the old value
-            lst->value = ft_strdup(node->value); // Update with the new value
-            free(node->key);                 // Free unused key in new node
-            free(node->value);               // Free unused value in new node
-            free(node);                      // Free the temporary node
+            free(lst->value);                 
+            lst->value = ft_strdup(node->value); 
+            free(node->key);                
+            free(node->value);              
+            free(node);                     
             return;
         }
         lst = lst->next;
     }
-    add_back_env(list, node);                // Add new node if key not found
+    add_back_env(list, node);                
 }
 
 void    delete_node_env(t_env **list, char *key)
@@ -119,13 +122,19 @@ void create_list_env(t_env **list, char **envp)
     while (envp[i])
     {
         str = ft_split(envp[i], '=');
-        if (str && str[0])                                 // Check split success
+        if (str && str[0])                                
         {
             node = create_node_env(str[0], str[1] ? str[1] : "");
             if (node)
                 add_back_env(list, node);
+            else
+            {
+                clear_list_env(list);
+                ft_free_split(str);
+                return ;
+            }
         }
-        ft_free(str);                                      // Free split array
+        ft_free_split(str);
         i++;
     }
 }
@@ -137,7 +146,7 @@ void print_env_list(t_env *list)
         if (list->value)
             printf("%s=%s\n", list->key, list->value);
         else
-            printf("%s=\n", list->key);           // Print empty value case
+            printf("%s=\n", list->key);
         list = list->next;
     }
 }

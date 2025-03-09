@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 12:10:21 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/06 22:48:30 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/09 13:10:42 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,4 +81,5 @@ int					is_delim(char c, const char *delimiters);
 int					ft_putchar(int c);
 int					ft_fprintf(int fd, const char *format, ...);
 int					ft_strcmp(const char *s1, const char *s2);
+void				ft_free_split(char **str);
 #endif
