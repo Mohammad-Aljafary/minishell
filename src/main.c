@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/18 10:06:31 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/09 18:16:38 by malja-fa         ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/03/09 18:19:45 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include <minishell.h>
 
@@ -78,10 +79,21 @@ void	print_env(char **env)
 	}
 }
 
+void	print_env(char **env)
+{
+	int i = 0;
+	while (env[i])
+	{
+		printf ("%s\n", env[i]);
+		i++;
+	}
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	t_token	*list;
+	t_env	*env;
 	t_env	*env;
 
 	(void)argc;
@@ -89,9 +101,12 @@ int	main(int argc, char **argv, char **envp)
 	(void)envp;
 	list = NULL;
 	env = NULL;
+	env = NULL;
 	if (!setup_terminal())
 		clear_screenn();
 	print_screenn();
+	create_list_env(&env, envp);
+	print_env_list(env);
 	create_list_env(&env, envp);
 	print_env_list(env);
 	while (1)
@@ -100,7 +115,10 @@ int	main(int argc, char **argv, char **envp)
 		if (!line)
 		{
 			clear_list_env(&env);
+		{
+			clear_list_env(&env);
 			exit(0);
+		}
 		}
 		add_history(line);
 		if (!tokenize(line, &list))

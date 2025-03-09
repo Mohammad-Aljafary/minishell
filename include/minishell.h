@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/07 14:58:17 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/08 22:54:34 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,13 @@ typedef struct s_token
 	struct s_token	*next;
 }					t_token;
 
+typedef	struct s_env
+{
+	char	*key;
+	char	*value;
+	struct s_env	*next;
+}					t_env;
+
 /***********************************************************\
 \***************** LIST OPERATIONS **************************\
 \************************************************************/
@@ -51,7 +58,9 @@ t_token				*create(char *str);
 void				add_back(t_token **list, t_token *new_node);
 void				clear_list(t_token **list);
 void				print_list(t_token *list);
-
+void    			create_list_env(t_env **list, char **envp);
+void				print_env_list(t_env *list);
+void    			clear_list_env(t_env **list);
 /************************************************************\
 \******************** TOKENIZATION ***************************\
 \*************************************************************/
