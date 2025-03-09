@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:06:31 by malja-fa          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/03/07 14:02:24 by malja-fa         ###   ########.fr       */
-=======
-/*   Updated: 2025/03/07 16:07:04 by taabu-fe         ###   ########.fr       */
->>>>>>> tamara
+/*   Updated: 2025/03/09 18:16:38 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +70,10 @@ void	clear_screenn()
 
 void	print_env(char **env)
 {
-	int	i;
-	
-	i = 0;
+	int i = 0;
 	while (env[i])
 	{
-		printf("%s\n", env[i]);
+		printf ("%s\n", env[i]);
 		i++;
 	}
 }
@@ -88,20 +82,26 @@ int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	t_token	*list;
+	t_env	*env;
 
 	(void)argc;
 	(void)argv;
-	//(void)envp;
+	(void)envp;
 	list = NULL;
+	env = NULL;
 	if (!setup_terminal())
 		clear_screenn();
 	print_screenn();
-	print_env(envp);
+	create_list_env(&env, envp);
+	print_env_list(env);
 	while (1)
 	{
 		line = readline("minishell> ");
 		if (!line)
+		{
+			clear_list_env(&env);
 			exit(0);
+		}
 		add_history(line);
 		if (!tokenize(line, &list))
 		{
