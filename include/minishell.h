@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/08 22:54:34 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/10 16:23:01 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef enum	e_type
 typedef struct s_token
 {
 	char			*word;
-	int				type;
+	t_type			type;
 	struct s_token	*prev;
 	struct s_token	*next;
 }					t_token;
@@ -51,6 +51,14 @@ typedef	struct s_env
 	struct s_env	*next;
 }					t_env;
 
+typedef struct s_tree
+{
+	char	**arg;
+	t_type	type;
+	struct s_tree	*left;
+	struct s_tree	*right;
+}				t_tree;
+
 /***********************************************************\
 \***************** LIST OPERATIONS **************************\
 \************************************************************/
@@ -59,6 +67,7 @@ void				add_back(t_token **list, t_token *new_node);
 void				clear_list(t_token **list);
 void				print_list(t_token *list);
 void    			create_list_env(t_env **list, char **envp);
+void				add_back_env(t_env **list, t_env *node);
 void				print_env_list(t_env *list);
 void    			clear_list_env(t_env **list);
 /************************************************************\
@@ -73,7 +82,14 @@ int    			syntax_error(t_token *list);
 /************************************************************\
 \***************** BUILT INS COMMANDS ************************\
 \*************************************************************/
-int					pwd();
-int					cd(char *path);
-void				exits(int n);
+int				pwd();
+int				cd(char *path);
+void			exits(int n);
+
+/************************************************************\
+\********************** Expander *****************************\
+\*************************************************************/
+
+int				expand_tilde(t_token **token, t_env *env);
+char    		*search_env(t_env *env, char *key);
 #endif
