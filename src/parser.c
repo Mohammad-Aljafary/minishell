@@ -24,7 +24,8 @@ int check_redirection(t_token *list)
     lst = list;
     if (!list)
         return (-1);
-    if (lst->type == here_doc || lst->type == appends || lst->type == in_re || lst->type == out_re)
+    if (lst->type == here_doc || lst->type == appends 
+        || lst->type == in_re || lst->type == out_re)
         return (1);
     return (0);
 }
@@ -45,7 +46,8 @@ void parser(t_token **list)
                 lst->type = command;
             else if (lst->prev->type == pipes)
                 lst->type = command;
-            else if (lst->prev->type == command || lst->prev->type == file)
+            else if (lst->prev->type == command || lst->prev->type == file 
+                    || lst->prev->type == args)
                 lst->type = args;
             else if (check_redirection(lst->prev))
                 lst->type = file;
@@ -55,6 +57,7 @@ void parser(t_token **list)
         lst = lst->next;
     }
 }
+
 int syntax_error(t_token *list)
 {
     t_token *lst;
@@ -76,7 +79,7 @@ int syntax_error(t_token *list)
         }
         lst = lst->next;
     }
-    if (check_type(lst) != not_defined)
+    if (check_type(lst) != not_defined && check_type(lst) != pipes)
     {
         ft_fprintf(2, "syntax error near unexpected token `newline'\n");
         return (1);
