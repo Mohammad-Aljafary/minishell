@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/07 14:58:17 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/15 11:26:52 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,5 @@ int    			syntax_error(t_token *list);
 \*************************************************************/
 int					pwd();
 int					cd(char *path);
-void				exits(int n);
+void				exits(char *str);
 #endif
