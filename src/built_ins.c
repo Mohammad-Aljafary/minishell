@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 10:57:55 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/15 11:42:31 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/15 17:07:35 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,25 +27,62 @@ int pwd()
     return (0);
 }
 
-int cd(char *path)
+int cd(char *path, t_env **env)
 {
-    int valid_dir;
-
-    valid_dir = chdir(path);
-    if (valid_dir == -1)
+    char    *current;
+    t_env   *node;
+    
+    node = *env;
+    if (path == NULL)
+        path = search_env(node, "HOME");    
+    current = getcwd(NULL, 0);
+    if (!current)
     {
-        perror(path);
+        perror(NULL);
         return (1);
     }
-    return (0);
+    if (chdir(path) == -1)
+    {
+        perror (path);
+        return 1;
+    }
+    while (node)
+    {
+        if (ft_strcmp(node->key, "OLDPWD") == 0)
+            break;
+        node = node->next;
+    }
+    if (node)
+    {
+        free(node->value);
+        node->value = ft_strdup(current);
+        free(current);
+    }
+    node = *env;
+    while (node)
+    {
+        if (ft_strcmp(node->key, "PWD") == 0)
+            break;
+        node = node->next;
+    }
+    if (node)
+    {
+        free(node->value);
+        node->value = ft_strdup(path);
+    }
+    return 0;
 }
+
 
 void    exits(char *str)
 {
-    char n; 
+    int n; 
     int i;
 
     i = 0;
+    n = ft_atoi(str);
+    if (n < 0)
+        i = 1;
     printf("exit\n");
     while(str[i])
     {
@@ -56,16 +93,23 @@ void    exits(char *str)
         }
         i++;
     }
-    
+    while (n >= 256)
+        n -= 256;
+    while (n < 0)
+        n += 256;
     exit(n);
 }
 
-int main()
+int main(int argc, char **argv, char **envp)
 {
     int pwdd;
+    t_env *env;
+
+    env = NULL;
+    create_list_env(&env, envp);
 
     pwdd = pwd();
-    cd("../");
+    cd("../", env);
     pwd();
     exits("2aa");
     if (pwdd)
