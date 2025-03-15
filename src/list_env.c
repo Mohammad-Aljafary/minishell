@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 11:02:52 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/09 13:19:59 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/12 14:29:16 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void    delete_node_env(t_env **list, char *key)
             lst->next = temp->next;
             free(temp->key);
             free(temp->value);
-            free(temp);
+            free(temp); 
             return;
         }
         lst = lst->next;

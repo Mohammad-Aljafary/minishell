@@ -1,112 +1,62 @@
 
-#include "../include/minishell.h"
+#include <minishell.h>
 
 char    *search_env(t_env *env, char *key)
 {
     while (env)
     {
         if (ft_strcmp(env->key, key) == 0)
+        {
             return (env->value);
+        }
         env = env->next;
     }
     return (NULL);
 }
-
-char *expand_tilde_both(char *word, t_env *env, char c)
+void    expander(t_token *tok_lst, t_env *env_lst)
 {
-    char    *value;
-    char    *expanded;
-    
-    expanded = NULL;
-    if(c == '-')
-        value = search_env(env, "OLDPWD");
-    else if (c == '+')
-        value = search_env(env, "PWD");
-    if (!value)
-        return (NULL);
-    if (word[2] == '/')
-    {
-        expanded = malloc(strlen(value) + strlen(&word[2]) + 1);
-        if (expanded)
-        {
-            ft_strlcpy(expanded, value, ft_strlen(value));
-            ft_strlcat(expanded, &word[2], ft_strlen(expanded) + ft_strlen(&word[2]));
-            free(value);
-            return (expanded);
-        }
-    }
-    else if (word[2] == '\0')
-        if (value)
-            return (strdup(value));
-    return (NULL);
-}
+    char    *sub;
+    char    *temp;
+    char    *new_word;
+    int     i, j;
 
-char *expand_home(char *word, t_env *env)
-{
-    char *value;
-    char *expanded;
-    int counter;
-    char *sub;
-
-    value = search_env(env, "HOME");
-    if (!value)
-        return (NULL);
-    expanded = NULL;
-    counter = 1;
-    sub = NULL;
-    if (word[1] && word[1] != '/')
+    while (tok_lst)  // Correctly iterate over tokens
     {
-        while (word[counter] && word[counter] != '/')
-            counter++;
-        sub = ft_substr(word, 1, counter - 1);
-        if (!sub)
-            return (NULL);
-        if (ft_strcmp(search_env(env, "USER"), sub) == 0)
+        i = 0;
+        while (tok_lst->word[i])
         {
-            free(sub);
-            expanded = malloc(strlen(value) + strlen(&word[counter]) + 1);
-            if (expanded)
+            if (!ft_strchr(tok_lst->word, '"') && !ft_strchr(tok_lst->word, '\''))
             {
-                ft_strlcpy(expanded, value, strlen(value) + 1);
-                ft_strlcat(expanded, &word[counter], strlen(expanded) + strlen(&word[counter]) + 1);
-                return (expanded);
+                while (tok_lst->word[i] && tok_lst->word[i] != '$')
+                    i++;
+                if (!tok_lst->word[i] || tok_lst->word[i] != '$')
+                    break;
+                j = ++i;
+                while (tok_lst->word[j] && tok_lst->word[j] != ' ' && tok_lst->word[j] != '\t' && tok_lst->word[j] != '\0')
+                    j++;
+
+                sub = ft_substr(tok_lst->word, i, j - i);
+                temp = search_env(env_lst, sub);
+                free(sub);
+
+                if (temp)
+                {
+                    new_word = ft_strjoin(ft_substr(tok_lst->word, 0, i - 1), temp);
+                    new_word = ft_strjoin(new_word, ft_substr(tok_lst->word, j, ft_strlen(tok_lst->word) - j));
+                    free(tok_lst->word);
+                    tok_lst->word = new_word;
+                }
+                else
+                {
+                    new_word = ft_substr(tok_lst->word, 0, i - 1);
+                    free(tok_lst->word);
+                    tok_lst->word = new_word;
+                    i++;
+                }
             }
+            i++;
         }
-        free(sub);
+        tok_lst = tok_lst->next;  // Correctly move to the next token
     }
-    else
-    {
-        expanded = malloc(strlen(value) + strlen(&word[1]) + 1);
-        if (expanded)
-        {
-            ft_strlcpy(expanded, value, strlen(value) + 1);
-            ft_strlcat(expanded, &word[1], strlen(expanded) + strlen(&word[1]) + 1);
-            return (expanded);
-        }
-    }
-    return (NULL);
 }
 
-int   expand_tilde(t_token **token, t_env *env)
-{
-    char    *new_value;
-    char    *tmp;
-
-    new_value = NULL;
-    tmp = NULL;
-    if (ft_strchr((*token)->word, '\"') || ft_strchr((*token)->word, '\''))
-        return (0);
-    if (ft_strncmp((*token)->word, "~+", 2) == 0)
-        new_value = expand_tilde_both((*token)->word, env, '+');
-    else if (ft_strncmp((*token)->word, "~-", 2) == 0)
-        new_value = expand_tilde_both((*token)->word, env, '-');
-    else if (ft_strncmp((*token)->word, "~", 1) == 0)
-        new_value = expand_home((*token)->word, env);
-    if (new_value)
-    {
-        free((*token)->word);
-        (*token)->word = new_value;
-        return (1);
-    }
-    return (0);
-}

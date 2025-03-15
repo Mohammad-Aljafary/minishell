@@ -79,7 +79,7 @@ int syntax_error(t_token *list)
         }
         lst = lst->next;
     }
-    if (check_type(lst) != not_defined)
+    if (check_type(lst) != not_defined && check_type(lst) != pipes)
     {
         ft_fprintf(2, "syntax error near unexpected token `newline'\n");
         return (1);
