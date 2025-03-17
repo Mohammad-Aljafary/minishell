@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 10:57:55 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/15 17:07:35 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/17 12:55:04 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,29 @@ int cd(char *path, t_env **env)
     }
     return 0;
 }
+int ft_echo(char **str)
+{
+    int i;
 
+    i = 1;
+    if (str && str[i] && ft_strcmp(str[i], "-n") == 0)
+    {
+        i++;
+        while (str[i])
+        {
+            write(1, str[i], strlen(str[i]));
+        }
+    }
+    else
+    {
+        while (str[i])
+        {
+             write(1, str[i], strlen(str[i]));
+            i++;
+        }
+    }
+    return 0;
+}
 
 void    exits(char *str)
 {
@@ -94,13 +116,13 @@ void    exits(char *str)
         i++;
     }
     while (n >= 256)
-        n -= 256;
+        n = n - 256;
     while (n < 0)
-        n += 256;
+        n = n + 256;
     exit(n);
 }
 
-int main(int argc, char **argv, char **envp)
+/* int main(int argc, char **argv, char **envp)
 {
     int pwdd;
     t_env *env;
@@ -109,10 +131,14 @@ int main(int argc, char **argv, char **envp)
     create_list_env(&env, envp);
 
     pwdd = pwd();
-    cd("../", env);
+    cd(NULL, &env);
     pwd();
+   if (ft_strcmp(argv[1], "echo") == 0)
+    {
+        ft_echo(argv + 1);
+    }
     exits("2aa");
     if (pwdd)
         return (1);
     return (0);
-} 
+}  */

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 18:21:35 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/15 14:44:10 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/17 12:39:19 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ int	main(int argc, char **argv, char **envp)
 		clear_screenn();
 	print_screenn();
 	create_list_env(&all.env_lst, envp);
-	print_env_list(all.env_lst);
+	env(all.env_lst);
 
 	while (1)
 	{
@@ -122,6 +122,7 @@ int	main(int argc, char **argv, char **envp)
 		}
 
 		expander(all.tok_lst, all.env_lst);
+		execute (all.tok_lst, all.env_lst);
 		print_list(all.tok_lst);
 
 		clear_list(&all.tok_lst);

@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/15 16:52:58 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/17 11:58:52 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void				clear_list(t_token **list);
 void				print_list(t_token *list);
 void    			create_list_env(t_env **list, char **envp);
 void				add_back_env(t_env **list, t_env *node);
-void				print_env_list(t_env *list);
+void				env(t_env *list);
 void    			clear_list_env(t_env **list);
 void    			clear_all(t_all *all);
 /************************************************************\
@@ -95,10 +95,12 @@ int    			syntax_error(t_token *list);
 int				pwd();
 int 			cd(char *path, t_env **env);
 void			exits(char *str);
+int 			ft_echo(char **str);
 
 /************************************************************\
 \********************** Expander *****************************\
 \*************************************************************/
 char    		*search_env(t_env *env, char *key);
 void    		expander(t_token *tok_lst, t_env *env_lst);
+void    		execute(t_token *node, t_env *env);
 #endif
