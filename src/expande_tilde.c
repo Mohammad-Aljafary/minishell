@@ -13,6 +13,7 @@ char    *search_env(t_env *env, char *key)
     }
     return (NULL);
 }
+
 void    expander(t_token *tok_lst, t_env *env_lst)
 {
     char    *sub;
@@ -20,7 +21,7 @@ void    expander(t_token *tok_lst, t_env *env_lst)
     char    *new_word;
     int     i, j;
 
-    while (tok_lst)  // Correctly iterate over tokens
+    while (tok_lst)
     {
         i = 0;
         while (tok_lst->word[i])

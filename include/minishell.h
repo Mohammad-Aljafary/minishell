@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/17 11:58:52 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/19 14:19:40 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,9 @@ void				add_back_env(t_env **list, t_env *node);
 void				env(t_env *list);
 void    			clear_list_env(t_env **list);
 void    			clear_all(t_all *all);
+void				delete_node_env(t_env **list, char *key);
+t_env 				*create_node_env(char *key, char *value);
+void    			add_node_env(t_env **list, t_env *node, char *key);
 /************************************************************\
 \******************** TOKENIZATION ***************************\
 \*************************************************************/
@@ -95,7 +98,9 @@ int    			syntax_error(t_token *list);
 int				pwd();
 int 			cd(char *path, t_env **env);
 void			exits(char *str);
-int 			ft_echo(char **str);
+void     		unset(char *str, t_env **env);
+int				export(char *str, t_env **env);
+
 
 /************************************************************\
 \********************** Expander *****************************\

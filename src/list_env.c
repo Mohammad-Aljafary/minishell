@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 11:02:52 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/17 11:58:28 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/19 13:59:44 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ void    delete_node_env(t_env **list, char *key)
         lst = lst->next;
     }
 }
-
 
 void create_list_env(t_env **list, char **envp)
 {
