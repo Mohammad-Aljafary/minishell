@@ -24,8 +24,8 @@ int check_redirection(t_token *list)
     lst = list;
     if (!list)
         return (-1);
-    if (lst->type == here_doc || lst->type == appends 
-        || lst->type == in_re || lst->type == out_re)
+    if (lst->type == appends || lst->type == in_re
+         || lst->type == out_re)
         return (1);
     return (0);
 }
@@ -44,10 +44,14 @@ void parser(t_token **list)
         {
             if (lst->prev == NULL)
                 lst->type = command;
-            else if (lst->prev->type == pipes)
+            else if (lst->prev->type == pipes || (lst->prev->type == delimiter && !lst->prev->prev->prev))
                 lst->type = command;
-            else if (lst->prev->type == command || lst->prev->type == file 
+            else if ((lst->prev->type == file && !lst->prev->prev->prev))
+                lst->type = command;
+            else if (lst->prev->type == command || (lst->prev->type == file && lst->prev->prev->prev->type == command) 
                     || lst->prev->type == args)
+                lst->type = args;
+            else if ((lst->prev->type == delimiter && lst->prev->prev->prev->type == command))
                 lst->type = args;
             else if (check_redirection(lst->prev))
                 lst->type = file;

@@ -1,0 +1,19 @@
+haahaha.c
+include
+libft
+Makefile
+minishell
+obj
+out
+src
+src.mk
+total 44
+-rw-r--r-- 1 malja-fa 2024_42campus  1622 Mar  7 16:30 haahaha.c
+drwxr-xr-x 2 malja-fa 2024_42campus    25 Mar 12 12:56 include
+drwxr-xr-x 5 malja-fa 2024_42campus    75 Mar 19 11:20 libft
+-rw-r--r-- 1 malja-fa 2024_42campus   557 Mar  7 16:30 Makefile
+-rwxr-xr-x 1 malja-fa 2024_42campus 27640 Mar 20 08:46 minishell
+drwxr-xr-x 2 malja-fa 2024_42campus   137 Mar 20 08:46 obj
+-rw-r--r-- 1 malja-fa 2024_42campus    62 Mar 20 08:51 out
+drwxr-xr-x 2 malja-fa 2024_42campus   188 Mar 20 08:32 src
+-rw-r--r-- 1 malja-fa 2024_42campus   120 Mar 15 13:57 src.mk

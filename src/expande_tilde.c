@@ -13,14 +13,15 @@ char    *search_env(t_env *env, char *key)
     }
     return (NULL);
 }
-void    expander(t_token *tok_lst, t_env *env_lst)
+
+/* void    expander(t_token *tok_lst, t_env *env_lst)
 {
     char    *sub;
     char    *temp;
     char    *new_word;
     int     i, j;
 
-    while (tok_lst)  // Correctly iterate over tokens
+    while (tok_lst)  
     {
         i = 0;
         while (tok_lst->word[i])
@@ -32,9 +33,8 @@ void    expander(t_token *tok_lst, t_env *env_lst)
                 if (!tok_lst->word[i] || tok_lst->word[i] != '$')
                     break;
                 j = ++i;
-                while (tok_lst->word[j] && tok_lst->word[j] != ' ' && tok_lst->word[j] != '\t' && tok_lst->word[j] != '\0')
+                while (tok_lst->word[j] && tok_lst->word[j] != ' ' && tok_lst->word[j] != '\t' && tok_lst->word[j] != '\0' && tok_lst->word[j] != '$')
                     j++;
-
                 sub = ft_substr(tok_lst->word, i, j - i);
                 temp = search_env(env_lst, sub);
                 free(sub);
@@ -56,7 +56,7 @@ void    expander(t_token *tok_lst, t_env *env_lst)
             }
             i++;
         }
-        tok_lst = tok_lst->next;  // Correctly move to the next token
+        tok_lst = tok_lst->next;
     }
-}
+} */ 
 
