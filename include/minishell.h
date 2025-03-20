@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/19 14:19:40 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/20 15:44:00 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ int				pwd();
 int 			cd(char *path, t_env **env);
 void			exits(char *str);
 void     		unset(char *str, t_env **env);
-int				export(char *str, t_env **env);
+int				export(t_token *str, t_env **env);
 
 
 /************************************************************\

@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 10:57:55 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/19 14:18:55 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/20 16:32:27 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,19 +103,52 @@ void	unset(char *str, t_env **env)
 {
 	delete_node_env(env, str);
 }
-int	export(char *str, t_env **env)
+int	export(t_token *str, t_env **env)
 {
+ 	char	*equal;
 	char	**temp;
 	t_env	*node;
-
-	temp = ft_split(str, '=');
+	
+  	equal = ft_strchr(str->word, '=');
+	if(!equal)
+		return (0);
+	temp = ft_split(str->word, '=');
 	if (!temp)
 		return (0);
+		
+	if (!temp[1])
+		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->next->word);
 	node = create_node_env(temp[0], temp[1]);
 	add_node_env(env, node, temp[0]);
     ft_free_split(temp);
     return (1);
 }
+/* int	export(t_token *str, t_env **env)
+{
+	char	*equal;
+	char	*key;
+	char	*value;
+	t_env	*node;
+
+	equal = ft_strchr(str->word, '=');
+
+	// If '=' is missing, print an error
+	if (!equal)
+	{
+		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->word);
+		return (0);
+	}
+
+
+	key = ft_substr(str->word, 0, equal - str->word);
+	value = ft_strdup(equal + 1);
+	node = create_node_env(key, value);
+	add_node_env(env, node, key);
+	free(key);
+	free(value);
+	return (1);
+} */
+
 /* int main(int argc, char **argv, char **envp)
 {
 	int		pwdd;

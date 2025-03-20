@@ -26,8 +26,8 @@ void execute(t_token *node, t_env *envp)
                 else if (ft_strcmp(node->word, "unset") == 0)
                     unset(node->next->word, &envp);
                 else if (ft_strcmp(node->word, "export") == 0)
-                    if(!export(node->next->word, &envp))
-                        ft_fprintf(2,"syntax error");
+                    if(!export(node->next, &envp))
+                        return ;
         }
         node = node->next;
     }
