@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 18:21:35 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/15 14:44:10 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/21 15:30:51 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ int	main(int argc, char **argv, char **envp)
 		}
 
 		expander(all.tok_lst, all.env_lst);
-		print_list(all.tok_lst);
+		//print_list(all.tok_lst);
 
 		clear_list(&all.tok_lst);
 		free(line);
