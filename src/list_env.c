@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 11:02:52 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/12 14:29:16 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/22 13:17:52 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,14 @@ t_env *create_node_env(char *key, char *value)
         node->key = ft_strdup(key);
     else
         node->key = ft_strdup("");
+    if (!node->key)
+        return (NULL);
     if (value)
         node->value = ft_strdup(value);
     else
         node->value = ft_strdup("");
+    if (!node->value)
+        return (NULL);
     node->next = NULL;
     return (node);
 }
@@ -111,7 +115,6 @@ void    delete_node_env(t_env **list, char *key)
     }
 }
 
-
 void create_list_env(t_env **list, char **envp)
 {
     int     i;
@@ -124,15 +127,17 @@ void create_list_env(t_env **list, char **envp)
         str = ft_split(envp[i], '=');
         if (str && str[0])                                
         {
-            node = create_node_env(str[0], str[1] ? str[1] : "");
-            if (node)
-                add_back_env(list, node);
+            if (str[1])
+                node = create_node_env(str[0], str[1]);
             else
+                node = create_node_env(str[0], "");
+            if (!node)
             {
                 clear_list_env(list);
                 ft_free_split(str);
                 return ;
             }
+            add_back_env(list, node);
         }
         ft_free_split(str);
         i++;

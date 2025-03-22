@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 09:46:18 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/09 13:20:25 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/22 13:10:59 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ int	tokenize(char *line, t_token **list)
 	t_token	*node;
 	char 	q;
 	int	len;
+	char	*temp;
 
 	i = 0;
 	len = 0;
@@ -71,14 +72,30 @@ int	tokenize(char *line, t_token **list)
 				else
 					j++;
 			}
-			node = create(ft_substr(line, i, j - i));
+			temp = ft_substr(line, i, j - i);
+			if (!temp)
+				return (0);
+			node = create(temp);
+			if (!node)
+			{
+				free (temp);
+				return (0);
+			}
 			add_back(list, node);
 			i = j;
 		}
 		else if (is_operator(line[i]))
 		{
 			len = get_op_len(&line[i]);
-			node = create(ft_substr(line, i, len));
+			temp = ft_substr(line, i, len);
+			if (!temp)
+				return (0);
+			node = create(temp);
+			if (!node)
+			{
+				free (temp);
+				return (0);
+			}
 			add_back(list, node);
 			i += len;
 		}

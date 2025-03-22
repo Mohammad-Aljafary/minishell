@@ -6,11 +6,9 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 18:21:35 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/21 22:39:34 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/22 13:12:32 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include <minishell.h>
 
@@ -79,7 +77,8 @@ void	print_env(char **env)
 		i++;
 	}
 }
-int	main(int argc, char **argv, char **envp)
+
+int	main (int argc, char **argv, char **envp)
 {
 	char	*line;
 	t_all	all;
@@ -87,13 +86,10 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	all.tok_lst = NULL;
 	all.env_lst = NULL;
-
 	if (!setup_terminal())
 		clear_screenn();
 	print_screenn();
 	create_list_env(&all.env_lst, envp);
-	print_env_list(all.env_lst);
-
 	while (1)
 	{
 		line = readline("minishell> ");
@@ -104,29 +100,28 @@ int	main(int argc, char **argv, char **envp)
 			break;
 		}
 		add_history(line);
-
 		if (!tokenize(line, &all.tok_lst))
 		{
 			clear_list(&all.tok_lst);
 			free(line);
 			continue;
 		}
-
 		parser(&all.tok_lst);
-
 		if (syntax_error(all.tok_lst))
 		{
 			clear_list(&all.tok_lst);
 			free(line);
 			continue;
 		}
-
-		expander(all.tok_lst, all.env_lst, argv[0]);
-		//print_list(all.tok_lst);
-
+		if (!expander(all.tok_lst, all.env_lst, argv[0]))
+		{
+			clear_list(&all.tok_lst);
+			free (line);
+			continue;
+		}
+		print_list(all.tok_lst);
 		clear_list(&all.tok_lst);
 		free(line);
 	}
-
 	return (0);
 }

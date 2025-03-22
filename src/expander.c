@@ -60,7 +60,7 @@ char    *search_env(t_env *env, char *key)
     }
 } */ 
 
-void    replace_num(char **token, char *argv)
+int    replace_num(char **token, char *argv)
 {
     char    *temp;
     char    *joined;
@@ -70,17 +70,46 @@ void    replace_num(char **token, char *argv)
     else
         temp = ft_strdup("");
     if(!temp)
-        return ;
+        return (0);
     joined = ft_strjoin(temp, *token + 2);
     free(temp);
+    if (!joined)
+        return (0);
     free(*token);
     *token = joined;
+    return (1);
 }
 
-void replace(t_token *p, t_env *envp, char *argv)
+int replace_env (t_token *p, t_env *envp, int *i, int *j)
 {
-    int i, j;
-    char *temp, *env, *new_word;
+    char    *temp;
+    char    *new_word;
+    char    *env;
+
+    temp = ft_substr(p->word, *i + 1, *j - (*i + 1));
+    if (!temp)
+        return (0); 
+    env = search_env(envp, temp);  
+    free(temp);
+    if(!env)
+        new_word = ft_strdup("");
+    else
+        new_word = ft_strdup(env);
+    if (!new_word)
+    {
+        free(temp);
+        return (0);
+    }
+    free(p->word);
+    p->word = new_word;
+    *i += ft_strlen(env);
+    return (1);
+}
+
+int replace(t_token *p, t_env *envp, char *argv)
+{
+    int i;
+    int j;
 
     while (p)
     {
@@ -97,7 +126,8 @@ void replace(t_token *p, t_env *envp, char *argv)
                 j = i + 1;
                 if (ft_isdigit(p->word[j]))
                 {
-                    replace_num(&p->word, argv);
+                    if (!replace_num(&p->word, argv))
+                        return (0);
                     break;
                 }
                 while (p->word[j] || p->word[j] == '_')
@@ -107,25 +137,53 @@ void replace(t_token *p, t_env *envp, char *argv)
                     i++;
                     continue;
                 }
-                temp = ft_substr(p->word, i + 1, j - (i + 1)); 
-                env = search_env(envp, temp);  
-                free(temp);
-                if(!env)
-                    new_word = ft_strdup("");
-                else
-                    new_word = ft_strdup(env);
-                free(p->word);
-                p->word = new_word;
-                i += ft_strlen(env ? env : "");
+                if (!replace_env(p, envp, &i, &j))
+                    return (0);
             }
             else
                 i++;
         }
         p = p->next;
     }
+    return (1);
 } 
 
-void    expander(t_token *tok_lst, t_env *env_lst, char *argv)
+int    join_strings(t_token *p, char   **token)
+{
+    size_t  length;
+    t_token *ptr;
+    char    *str;
+
+    length = 0;
+    ptr = p;
+    str = NULL;
+    while (ptr)
+    {
+        if (ptr->word)
+            length += ft_strlen(ptr->word);
+        ptr = ptr->next;
+    }
+    str = malloc((length + 1) * sizeof(char));
+    if (!str)
+        return (0);
+    str[0] = '\0';
+    while (p)
+    {
+        ft_strlcat(str, p->word, length + 1);
+        p = p->next;
+    }
+    free(*token);
+    *token = str;
+    return (1);
+}
+
+int free_return (t_token **p)
+{
+    clear_list(p);
+    return (0);
+}
+
+int    expander(t_token *tok_lst, t_env *env_lst, char *argv)
 {
     t_token *p;
 
@@ -137,10 +195,14 @@ void    expander(t_token *tok_lst, t_env *env_lst, char *argv)
             tok_lst = tok_lst->next;
             continue;
         }
-        break_string(&p, tok_lst->word);
-        replace(p, env_lst, argv);
-        print_list(p);
+        if (!break_string(&p, tok_lst->word))
+            return (0);
+        if (!replace(p, env_lst, argv))
+            return (free_return(&p));
+        if (!join_strings(p, &tok_lst->word))
+            return (free_return(&p));
         clear_list(&p);
         tok_lst = tok_lst->next;
     }
+    return (1);
 }

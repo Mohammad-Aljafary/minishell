@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/21 21:47:47 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/22 09:06:42 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,6 @@ void			exits(int n);
 \********************** Expander *****************************\
 \*************************************************************/
 char    		*search_env(t_env *env, char *key);
-void    		expander(t_token *tok_lst, t_env *env_lst, char *argv);
-void 			break_string(t_token **list, char *token);
+int    		expander(t_token *tok_lst, t_env *env_lst, char *argv);
+int 			break_string(t_token **list, char *token);
 #endif
