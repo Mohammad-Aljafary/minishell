@@ -92,7 +92,8 @@ void	unset(char *str, t_env **env)
 {
 	delete_node_env(env, str);
 }
-int	export(t_token *str, t_env **env)
+
+/* int	export(t_token *str, t_env **env)
 {
  	char	*equal;
 	char	**temp;
@@ -107,7 +108,7 @@ int	export(t_token *str, t_env **env)
 	if(!equal)
 	{
 		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->next->word);
-		return (0);
+		return (2);
 	}
   	if(str->word[0] == '=')
 	{
@@ -115,18 +116,85 @@ int	export(t_token *str, t_env **env)
 		return(0);
 	}
 	temp = ft_split(str->word, '=');
-	if (!temp)
-	return (0);
+	if (!temp || !temp[0])
+	{
+		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->next->word);
+		return (2);
+	}
 	 if (!temp[1])
+	 	//temp[1] = ft_strdup("");
 	{
 		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->next->word);
 			return(0);
-	}
+	} 
 	node = create_node_env(temp[0], temp[1]);
 	add_node_env(env, node, temp[0]);
     ft_free_split(temp);
     return (1);
-}
+} */
+ int	export(t_token *str, t_env **env)
+{
+ 	char	*equal;
+	char	**temp;
+	t_env	*node;
+	int		i;
+
+	i = 0;
+	if(!str)
+	{
+		print_env_export(*env);
+		return(2);
+	}
+	if(ft_isdigit(str->word[0]))
+	{
+		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->word);
+			return (2);
+	}
+	equal = ft_strchr(str->word, '=');
+	if (!equal)
+	{
+		if (str->word[0])
+		{
+			while(ft_isalnum(str->word[i]))
+				i++;
+		}
+		if(!(str->next))
+		{
+			if(str->word[i] == '\0')
+			{
+				//hereeee
+				return (0);
+			}
+		}
+		else if ((str->next->word[0] == '=') && !str->word[i])
+		{
+			ft_fprintf(2, "export: `%s': not a valid identifier\n", str->next->word);
+			return (2);
+		}
+		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->word);
+		return (2);
+	}
+	while(ft_isalnum(str->word[i]) && str->word[i] != '=')
+			i++;
+	if(str->word[i] != '\0' && str->word[i] != '=')
+	{
+		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->word);
+		return (2);
+	}
+	temp = ft_split(str->word, '=');
+	if (!temp || !temp[0])
+		return (1);
+	if (!temp[1])
+		temp[1] = ft_strdup("");
+	if(!temp[1])
+		return (2);
+	node = create_node_env(temp[0], temp[1]);
+	add_node_env(env, node, temp[0]);
+
+	ft_free_split(temp);
+	return (1);
+} 
+
 /* int	export(t_token *str, t_env **env)
 {
 	char	*equal;
