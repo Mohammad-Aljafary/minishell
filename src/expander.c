@@ -60,27 +60,87 @@ char    *search_env(t_env *env, char *key)
     }
 } */ 
 
-void    replace(t_token *p, t_env *envp)
+void    replace_num(char **token, char *argv)
 {
-    int i;
-    int j;
     char    *temp;
-    char    *env;
+    char    *joined;
 
-    i = 0;
-    j = 0;
-    while (p)
-    {
-    }
+    if ((*token)[1] == '0')
+        temp = ft_strdup(argv);
+    else
+        temp = ft_strdup("");
+    if(!temp)
+        return ;
+    joined = ft_strjoin(temp, *token + 2);
+    free(temp);
+    free(*token);
+    *token = joined;
 }
 
-void    expander(t_token *tok_lst, t_env *env_lst)
+void replace(t_token *p, t_env *envp, char *argv)
+{
+    int i, j;
+    char *temp, *env, *new_word;
+
+    while (p)
+    {
+        if (p->type == s_quote)
+        {
+            p = p->next;
+            continue;
+        }
+        i = 0;
+        while (p->word[i])
+        {
+            if (p->word[i] == '$')
+            {
+                j = i + 1;
+                if (ft_isdigit(p->word[j]))
+                {
+                    replace_num(&p->word, argv);
+                    break;
+                }
+                while (p->word[j] || p->word[j] == '_')
+                    j++;
+                if (j == i + 1)
+                {
+                    i++;
+                    continue;
+                }
+                temp = ft_substr(p->word, i + 1, j - (i + 1)); 
+                env = search_env(envp, temp);  
+                free(temp);
+                if(!env)
+                    new_word = ft_strdup("");
+                else
+                    new_word = ft_strdup(env);
+                free(p->word);
+                p->word = new_word;
+                i += ft_strlen(env ? env : "");
+            }
+            else
+                i++;
+        }
+        p = p->next;
+    }
+} 
+
+void    expander(t_token *tok_lst, t_env *env_lst, char *argv)
 {
     t_token *p;
 
-    (void)env_lst;
     p = NULL;
-    break_string(&p, tok_lst->word);
-    replace(p, env_lst);
-    print_list(p);
+    while (tok_lst)
+    {
+        if (tok_lst->type == delimiter)
+        {
+            tok_lst = tok_lst->next;
+            continue;
+        }
+        break_string(&p, tok_lst->word);
+        replace(p, env_lst, argv);
+        print_list(p);
+        clear_list(&p);
+        tok_lst = tok_lst->next;
+    }
 }

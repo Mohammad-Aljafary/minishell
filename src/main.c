@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 18:21:35 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/21 15:30:51 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/21 22:39:34 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,6 @@ int	main(int argc, char **argv, char **envp)
 	t_all	all;
 
 	(void)argc;
-	(void)argv;
 	all.tok_lst = NULL;
 	all.env_lst = NULL;
 
@@ -101,6 +100,7 @@ int	main(int argc, char **argv, char **envp)
 		if (!line)
 		{
 			clear_all(&all);
+			clear_history();
 			break;
 		}
 		add_history(line);
@@ -121,7 +121,7 @@ int	main(int argc, char **argv, char **envp)
 			continue;
 		}
 
-		expander(all.tok_lst, all.env_lst);
+		expander(all.tok_lst, all.env_lst, argv[0]);
 		//print_list(all.tok_lst);
 
 		clear_list(&all.tok_lst);

@@ -57,6 +57,7 @@ void handle_single_quotes(t_token **list, char *token, int *i)
         if (!temp)
             return;
         node = create(temp);
+        node->type = s_quote;
         add_back(list, node);
         *i = j + 1;
     }
@@ -73,7 +74,7 @@ void handle_double_quotes(t_token **list, char *token, int *i)
     {
         if (token[j] == '$')
         {
-            if (j > *i + 1)
+            if (j >= *i + 1)
             {
                 temp = ft_substr(token, *i, j - *i);
                 if (!temp)
