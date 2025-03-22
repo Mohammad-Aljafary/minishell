@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/20 15:44:00 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/21 15:30:24 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void				print_list(t_token *list);
 void    			create_list_env(t_env **list, char **envp);
 void				add_back_env(t_env **list, t_env *node);
 void				env(t_env *list);
+void 				print_env_export(t_env *list);
 void    			clear_list_env(t_env **list);
 void    			clear_all(t_all *all);
 void				delete_node_env(t_env **list, char *key);

@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   built_ins.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/15 10:57:55 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/20 16:32:27 by taabu-fe         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include <minishell.h>
 
@@ -108,16 +97,31 @@ int	export(t_token *str, t_env **env)
  	char	*equal;
 	char	**temp;
 	t_env	*node;
-	
-  	equal = ft_strchr(str->word, '=');
+
+	if(!str)
+	{
+		print_env_export(*env);
+		return(0);
+	}
+	equal = ft_strchr(str->word, '=');
 	if(!equal)
+	{
+		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->next->word);
 		return (0);
+	}
+  	if(str->word[0] == '=')
+	{
+		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->word);
+		return(0);
+	}
 	temp = ft_split(str->word, '=');
 	if (!temp)
-		return (0);
-		
-	if (!temp[1])
+	return (0);
+	 if (!temp[1])
+	{
 		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->next->word);
+			return(0);
+	}
 	node = create_node_env(temp[0], temp[1]);
 	add_node_env(env, node, temp[0]);
     ft_free_split(temp);

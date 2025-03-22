@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 11:02:52 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/19 13:59:44 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/21 16:46:48 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,18 @@ void env(t_env *list)
     {
         if (list->value)
             printf("%s=%s\n", list->key, list->value);
+        else
+            printf("%s=\n", list->key);
+        list = list->next;
+    }
+}
+
+void print_env_export(t_env *list)
+{
+    while (list)
+    {
+        if (list->value)
+            printf("declare -x %s=%s\n", list->key, list->value);
         else
             printf("%s=\n", list->key);
         list = list->next;
