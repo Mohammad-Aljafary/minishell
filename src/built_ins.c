@@ -93,49 +93,27 @@ void	unset(char *str, t_env **env)
 	delete_node_env(env, str);
 }
 
-/* int	export(t_token *str, t_env **env)
+void ft_echo(t_token *args)
 {
- 	char	*equal;
-	char	**temp;
-	t_env	*node;
+    int ne = 1;
+    if (args && ft_strcmp(args->word, "-n") == 0)
+    {
+        ne= 0;
+        args = args->next;
+    }
+    while (args)
+    {
+        printf("%s", args->word);
+        args = args->next;
+    }
+    if (ne == 1)
+        printf("\n");
+}
 
-	if(!str)
-	{
-		print_env_export(*env);
-		return(0);
-	}
-	equal = ft_strchr(str->word, '=');
-	if(!equal)
-	{
-		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->next->word);
-		return (2);
-	}
-  	if(str->word[0] == '=')
-	{
-		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->word);
-		return(0);
-	}
-	temp = ft_split(str->word, '=');
-	if (!temp || !temp[0])
-	{
-		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->next->word);
-		return (2);
-	}
-	 if (!temp[1])
-	 	//temp[1] = ft_strdup("");
-	{
-		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->next->word);
-			return(0);
-	} 
-	node = create_node_env(temp[0], temp[1]);
-	add_node_env(env, node, temp[0]);
-    ft_free_split(temp);
-    return (1);
-} */
  int	export(t_token *str, t_env **env)
 {
  	char	*equal;
-	char	**temp;
+	char	*temp;
 	t_env	*node;
 	int		i;
 
@@ -181,18 +159,27 @@ void	unset(char *str, t_env **env)
 		ft_fprintf(2, "export: `%s': not a valid identifier\n", str->word);
 		return (2);
 	}
-	temp = ft_split(str->word, '=');
+	temp = ft_substr(str->word, 0, equal - str->word);
 	if (!temp || !temp[0])
 		return (1);
-	if (!temp[1])
-		temp[1] = ft_strdup("");
-	if(!temp[1])
-		return (2);
-	node = create_node_env(temp[0], temp[1]);
-	add_node_env(env, node, temp[0]);
-
-	ft_free_split(temp);
+	char*	value = ft_strdup(equal + 1);
+	if (!value || !value[0])
 	return (1);
+		i = 0;
+		while (ft_isalnum(temp[i]) && temp[i] != '\0')
+			i++;
+		if (temp[i] != '\0')
+		{
+			ft_fprintf(2, "export: `%s': not a valid identifier\n", str->word);
+			free(temp);
+			free(value);
+			return (2);
+		}
+		node = create_node_env(temp, value);
+		add_node_env(env, node, temp);
+		free(temp);
+		free(value);
+		return (1);
 } 
 
 /* int	export(t_token *str, t_env **env)

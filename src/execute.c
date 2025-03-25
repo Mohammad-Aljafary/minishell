@@ -25,6 +25,8 @@ void execute(t_token *node, t_env *envp)
                     env(envp);
                 else if (ft_strcmp(node->word, "unset") == 0)
                     unset(node->next->word, &envp);
+                else if (ft_strcmp(node->word, "echo") == 0)
+                    ft_echo(node->next); // Pass the arguments to ft_echo
                 else if (ft_strcmp(node->word, "export") == 0)
                     if(!export(node->next, &envp))
                         return ;

@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/21 15:30:24 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/03/26 00:04:40 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int 			cd(char *path, t_env **env);
 void			exits(char *str);
 void     		unset(char *str, t_env **env);
 int				export(t_token *str, t_env **env);
-
+void ft_echo(t_token *args);
 
 /************************************************************\
 \********************** Expander *****************************\
