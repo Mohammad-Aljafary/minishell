@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/22 09:06:42 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/26 08:54:32 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 # include <curses.h>
 # include <sys/types.h>
 # include <sys/stat.h>
-
 
 typedef enum	e_type
 {
@@ -79,9 +78,13 @@ void				clear_list(t_token **list);
 void				print_list(t_token *list);
 void    			create_list_env(t_env **list, char **envp);
 void				add_back_env(t_env **list, t_env *node);
-void				print_env_list(t_env *list);
+void				env(t_env *list);
+void 				print_env_export(t_env *list);
 void    			clear_list_env(t_env **list);
 void    			clear_all(t_all *all);
+void				delete_node_env(t_env **list, char *key);
+t_env 				*create_node_env(char *key, char *value);
+void    			add_node_env(t_env **list, t_env *node, char *key);
 /************************************************************\
 \******************** TOKENIZATION ***************************\
 \*************************************************************/
@@ -96,13 +99,16 @@ int				is_whitespace(char c);
 \***************** BUILT INS COMMANDS ************************\
 \*************************************************************/
 int				pwd();
-int				cd(char *path);
-void			exits(int n);
+int 			cd(char *path, t_env **env);
+void			exits(char *str);
+void     		unset(char *str, t_env **env);
+int				export(t_token *str, t_env **env);
+void ft_echo(t_token *args);
 
 /************************************************************\
 \********************** Expander *****************************\
 \*************************************************************/
 char    		*search_env(t_env *env, char *key);
-int    		expander(t_token *tok_lst, t_env *env_lst, char *argv);
+int    			expander(t_token *tok_lst, t_env *env_lst, char *argv);
 int 			break_string(t_token **list, char *token);
 #endif

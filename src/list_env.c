@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   list_env.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/08 11:02:52 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/22 13:17:52 by malja-fa         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include <minishell.h>
 
@@ -144,12 +133,24 @@ void create_list_env(t_env **list, char **envp)
     }
 }
 
-void print_env_list(t_env *list)
+void env(t_env *list)
 {
     while (list)
     {
         if (list->value)
             printf("%s=%s\n", list->key, list->value);
+        else
+            printf("%s=\n", list->key);
+        list = list->next;
+    }
+}
+
+void print_env_export(t_env *list)
+{
+    while (list)
+    {
+        if (list->value)
+            printf("declare -x %s=%s\n", list->key, list->value);
         else
             printf("%s=\n", list->key);
         list = list->next;

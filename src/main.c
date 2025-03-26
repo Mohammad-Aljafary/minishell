@@ -1,14 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/09 18:21:35 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/03/22 13:12:32 by malja-fa         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
 
 #include <minishell.h>
 
@@ -90,6 +80,8 @@ int	main (int argc, char **argv, char **envp)
 		clear_screenn();
 	print_screenn();
 	create_list_env(&all.env_lst, envp);
+	env(all.env_lst);
+
 	while (1)
 	{
 		line = readline("minishell> ");
@@ -119,6 +111,7 @@ int	main (int argc, char **argv, char **envp)
 			free (line);
 			continue;
 		}
+		execute (all.tok_lst, all.env_lst);
 		print_list(all.tok_lst);
 		clear_list(&all.tok_lst);
 		free(line);
