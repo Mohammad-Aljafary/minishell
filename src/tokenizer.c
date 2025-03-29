@@ -31,11 +31,14 @@ int	tokenize(char *line, t_token **list)
 	char 	q;
 	int	len;
 	char	*temp;
+	int		flag;//here
 
 	i = 0;
 	len = 0;
+	flag = 0;
 	while (line[i])
 	{
+		flag = 0;
 		while (is_whitespace(line[i]))
 			i++;
 		if (!line[i])
@@ -57,6 +60,10 @@ int	tokenize(char *line, t_token **list)
 					}
 					if (line[j] == q)
 						j++;
+					if (q == '\'')  //here i put a flag that we found a quotes to put it in the token
+						flag = 1;   //cause we remove the quotes in the expander i needed to put it 
+					else if (q == '"') // due to some edge cases we gonna face in the execution
+						flag = 2; // i'll leave the norm for you i know that you can do it =)
 				}
 				else
 					j++;
@@ -70,6 +77,10 @@ int	tokenize(char *line, t_token **list)
 				free (temp);
 				return (0);
 			}
+			if (flag == 1)
+				node->quotes = single_quote;
+			else if (flag == 2)
+				node->quotes = double_quote; //here is the changes 
 			add_back(list, node);
 			i = j;
 		}

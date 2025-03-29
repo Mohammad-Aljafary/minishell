@@ -1,62 +1,4 @@
-
-
 #include <minishell.h>
-
-int setup_terminal(void)
-{
-    char *term_type;
-	int success;
-	
-	term_type = getenv("TERM");
-    if (!term_type)
-    {
-        ft_putstr_fd("TERM environment variable not set.\n", 2);
-        return (-1);
-    }
-	success = tgetent(NULL, term_type);
-    if (success < 0)
-    {
-        ft_putstr_fd("Could not access the termcap database.\n", 2);
-        return (-1);
-    }
-    if (success == 0)
-    {
-        ft_putstr_fd("Terminal type is not defined in termcap.\n", 2);
-        return (-1);
-    }
-    return (0);
-}
-
-void	print_screenn()
-{
-	int	fd;
-	char	*line;
-
-	fd = open("./src/texture.txt", O_RDONLY);
-	if (fd < 0)
-    {
-        perror("Error opening texture.txt");
-        return;
-    }
-	line = get_next_line(fd);
-	while (line)
-	{
-		printf("\033[1;35m %s", line);
-		free (line);
-		line = get_next_line(fd);
-	}
-	printf("\033[1;37m");
-	close (fd);
-}
-
-void	clear_screenn()
-{
-	char	*clear;
-	
-	clear = tgetstr("cl", NULL);
-	if (clear)
-		tputs(clear, 1, ft_putchar); 
-}
 
 void	print_env(char **env)
 {
@@ -76,12 +18,8 @@ int	main (int argc, char **argv, char **envp)
 	(void)argc;
 	all.tok_lst = NULL;
 	all.env_lst = NULL;
-	if (!setup_terminal())
-		clear_screenn();
-	print_screenn();
 	create_list_env(&all.env_lst, envp);
 	env(all.env_lst);
-
 	while (1)
 	{
 		line = readline("minishell> ");

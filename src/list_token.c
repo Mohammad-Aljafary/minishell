@@ -13,6 +13,7 @@ t_token	*create(char *str)
 	node->next = NULL;
 	node->type = not_defined;
 	node->args = NULL;
+	node->quotes = not_quoted;
 	return (node);
 }
 
@@ -48,7 +49,7 @@ void	clear_list(t_token **list)
 		free(temp->word);
 		temp->next = NULL;
 		temp->prev = NULL;
-		if(temp->type == command)
+		if(temp->type == command && temp->args)
 			ft_free_split(temp->args);
 		free(temp);
 	}

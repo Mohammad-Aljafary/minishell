@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/29 11:35:20 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/29 13:00:29 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,19 @@ typedef enum	e_type
 	s_quote	
 }				t_type;
 
+typedef enum	e_quote
+{
+	single_quote,
+	double_quote,
+	not_quoted
+}				t_quote;
+
 typedef struct s_token
 {
 	char			*word;
 	t_type			type;
 	char			**args;
+	t_quote			quotes;
 	struct s_token	*prev;
 	struct s_token	*next;
 }					t_token;
@@ -59,6 +67,7 @@ typedef struct s_tree
 {
 	char	**arg;
 	t_type	type;
+	int		exit_status;
 	struct s_tree	*left;
 	struct s_tree	*right;
 }				t_tree;

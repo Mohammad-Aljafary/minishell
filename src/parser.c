@@ -30,12 +30,38 @@ int check_redirection(t_token *list)
     return (0);
 }
 
+void set_command_or_args(t_token *lst)
+{
+    t_token *p;
+
+    if (!lst->prev || lst->prev->type == pipes)
+        lst->type = command;
+    else if (lst->prev->type == command || lst->prev->type == args)
+        lst->type = args;
+    else if (check_redirection(lst->prev))
+        lst->type = file;
+    else if (lst->prev->type == here_doc)
+        lst->type = delimiter;
+    else if (lst->prev->type == file || lst->prev->type == delimiter)
+    {
+        p = lst;
+        while (p)
+        {
+            if (p->type == command)
+            {
+                lst->type = args;
+                return;
+            }
+            p = p->prev;
+        }
+        lst->type = command;
+    }
+}
+
 void parser(t_token **list)
 {
     t_token *lst;
-    t_token *p;
 
-    p = NULL;
     if (!list || !*list)
         return;
     lst = *list;
@@ -43,32 +69,7 @@ void parser(t_token **list)
     {
         lst->type = check_type(lst);
         if (lst->type == not_defined)
-        {
-            if (!lst->prev || lst->prev->type == pipes)
-                lst->type = command;
-            else if (lst->prev->type == command
-                    || lst->prev->type == args)
-                lst->type = args;
-            else if (check_redirection(lst->prev))
-                lst->type = file;
-            else if (lst->prev->type == here_doc)
-                lst->type = delimiter;
-            else if (lst->prev->type == file || lst->prev->type == delimiter)
-            {
-                p = lst;
-                while (p)
-                {
-                    if (p->type == command)
-                    {
-                        lst->type = args;
-                        break;
-                    }
-                    p = p->prev;
-                }
-                if (!p)
-                    lst->type = command;
-            }
-        }
+            set_command_or_args(lst);
         lst = lst->next;
     }
 }
@@ -94,7 +95,7 @@ int syntax_error(t_token *list)
         }
         lst = lst->next;
     }
-    if (check_type(lst) != not_defined && check_type(lst) != pipes)
+    if (check_type(lst) != not_defined)
     {
         ft_fprintf(2, "syntax error near unexpected token `newline'\n");
         return (1);

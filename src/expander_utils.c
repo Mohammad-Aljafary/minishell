@@ -1,6 +1,5 @@
 #include <minishell.h>
 
-
 int handle_variable(t_token **list, char *token, int *i)
 {
     int j; 
@@ -150,36 +149,39 @@ int qoutes (char *token, int *i, t_token **list)
     return (1);
 }
 
-int break_string(t_token **list, char *token)
+int	handle_quotes_and_var(t_token **list, char *token, int *i)
 {
-    int i = 0;
-
-    if (!token)
-        return (0);
-
-    while (token[i])
-    {
-        if (token[i] == '\'' || token[i] == '"')
-        {
-            if (!qoutes(token, &i, list))
-                return (0);
-        }
-        else if (token[i] == '$')
-        {
-            if (!handle_variable(list, token, &i))
-            {
-                clear_list(list);
-                return (0);
-            }
-        }
-        else
-        {
-            if (!add_normal_text(list, token, &i))
-            {
-                clear_list(list);
-                return (0);
-            }
-        }
-    }
-    return (1);
+	if (token[*i] == '\'' || token[*i] == '"')
+	{
+		if (!qoutes(token, i, list))
+			return (0);
+	}
+	else if (token[*i] == '$')
+	{
+		if (!handle_variable(list, token, i))
+		{
+			clear_list(list);
+			return (0);
+		}
+	}
+	return (1);
 }
+
+int	break_string(t_token **list, char *token)
+{
+	int	i;
+
+	i = 0;
+	while (token[i])
+	{
+		if (!handle_quotes_and_var(list, token, &i))
+			return (0);
+		else if (!add_normal_text(list, token, &i))
+		{
+			clear_list(list);
+			return (0);
+		}
+	}
+	return (1);
+}
+
