@@ -33,7 +33,9 @@ int check_redirection(t_token *list)
 void parser(t_token **list)
 {
     t_token *lst;
+    t_token *p;
 
+    p = NULL;
     if (!list || !*list)
         return;
     lst = *list;
@@ -42,17 +44,30 @@ void parser(t_token **list)
         lst->type = check_type(lst);
         if (lst->type == not_defined)
         {
-            if (lst->prev == NULL || lst->prev->type == pipes || (lst->prev->type == delimiter && !lst->prev->prev->prev) 
-                    || (lst->prev->type == file && !lst->prev->prev->prev))
+            if (!lst->prev || lst->prev->type == pipes)
                 lst->type = command;
-            else if (lst->prev->type == command || (lst->prev->type == file && lst->prev->prev->prev->type == command)
-                    || lst->prev->type == args 
-                    || (lst->prev->type == delimiter && lst->prev->prev->prev->type == command))
+            else if (lst->prev->type == command
+                    || lst->prev->type == args)
                 lst->type = args;
             else if (check_redirection(lst->prev))
                 lst->type = file;
             else if (lst->prev->type == here_doc)
                 lst->type = delimiter;
+            else if (lst->prev->type == file || lst->prev->type == delimiter)
+            {
+                p = lst;
+                while (p)
+                {
+                    if (p->type == command)
+                    {
+                        lst->type = args;
+                        break;
+                    }
+                    p = p->prev;
+                }
+                if (!p)
+                    lst->type = command;
+            }
         }
         lst = lst->next;
     }

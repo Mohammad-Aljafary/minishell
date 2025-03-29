@@ -177,7 +177,7 @@ int    join_strings(t_token *p, char   **token)
     return (1);
 }
 
-int free_return (t_token **p)
+int free_return(t_token **p)
 {
     clear_list(p);
     return (0);

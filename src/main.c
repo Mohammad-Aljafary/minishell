@@ -111,6 +111,11 @@ int	main (int argc, char **argv, char **envp)
 			free (line);
 			continue;
 		}
+		if (!join_args(all.tok_lst))
+		{
+			clear_list(&all.tok_lst);
+			continue;
+		}
 		execute (all.tok_lst, all.env_lst);
 		print_list(all.tok_lst);
 		clear_list(&all.tok_lst);

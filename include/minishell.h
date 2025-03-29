@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/26 08:54:32 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/03/29 11:35:20 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_token
 {
 	char			*word;
 	t_type			type;
+	char			**args;
 	struct s_token	*prev;
 	struct s_token	*next;
 }					t_token;
@@ -85,6 +86,7 @@ void    			clear_all(t_all *all);
 void				delete_node_env(t_env **list, char *key);
 t_env 				*create_node_env(char *key, char *value);
 void    			add_node_env(t_env **list, t_env *node, char *key);
+
 /************************************************************\
 \******************** TOKENIZATION ***************************\
 \*************************************************************/
@@ -103,7 +105,7 @@ int 			cd(char *path, t_env **env);
 void			exits(char *str);
 void     		unset(char *str, t_env **env);
 int				export(t_token *str, t_env **env);
-void ft_echo(t_token *args);
+void 			ft_echo(t_token *args);
 
 /************************************************************\
 \********************** Expander *****************************\
@@ -111,4 +113,10 @@ void ft_echo(t_token *args);
 char    		*search_env(t_env *env, char *key);
 int    			expander(t_token *tok_lst, t_env *env_lst, char *argv);
 int 			break_string(t_token **list, char *token);
+
+/**************************************************************\
+\*********************** Execution ****************************\
+\**************************************************************/
+void 			execute(t_token *node, t_env *envp);
+int 			join_args(t_token *node);
 #endif

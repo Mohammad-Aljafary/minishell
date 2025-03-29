@@ -1,5 +1,6 @@
 #include <minishell.h>
 
+
 int handle_variable(t_token **list, char *token, int *i)
 {
     int j; 
@@ -58,12 +59,12 @@ int handle_single_quotes(t_token **list, char *token, int *i)
     char *temp;
     t_token *node;
 
-    j = *i + 1;
+    j = ++*i;
     while (token[j] && token[j] != '\'')
         j++;
     if (token[j] == '\'')
     {
-        temp = ft_substr(token, *i, j - *i + 1);
+        temp = ft_substr(token, *i, j - *i);
         if (!temp)
             return (0);
         node = create(temp);
@@ -103,12 +104,12 @@ int handle_double_quotes(t_token **list, char *token, int *i)
 {
     int j;
 
-    j = *i + 1;
+    j = ++*i;
     while (token[j] && token[j] != '"')
     {
         if (token[j] == '$')
         {
-            if (j >= *i + 1)
+            if (j > *i)
             {
                 if (!handle_double_utile(list, token, j - *i, i))
                     return (0);
@@ -121,7 +122,7 @@ int handle_double_quotes(t_token **list, char *token, int *i)
     }
     if (token[j] == '"')
     {
-        if (!handle_double_utile(list, token, j - *i + 1, i))
+        if (!handle_double_utile(list, token, j - *i, i))
             return (0);
         *i = j + 1;
     }
@@ -153,25 +154,32 @@ int break_string(t_token **list, char *token)
 {
     int i = 0;
 
+    if (!token)
+        return (0);
+
     while (token[i])
     {
-        if (!add_normal_text(list, token, &i))
+        if (token[i] == '\'' || token[i] == '"')
         {
-            clear_list(list);
-            return (0);
+            if (!qoutes(token, &i, list))
+                return (0);
         }
-        else if (!qoutes(token, &i, list))
-            return (0);
         else if (token[i] == '$')
         {
             if (!handle_variable(list, token, &i))
             {
-                clear_list (list);
+                clear_list(list);
                 return (0);
             }
         }
         else
-            i++;
+        {
+            if (!add_normal_text(list, token, &i))
+            {
+                clear_list(list);
+                return (0);
+            }
+        }
     }
     return (1);
 }

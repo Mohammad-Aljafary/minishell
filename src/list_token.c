@@ -12,6 +12,7 @@ t_token	*create(char *str)
 	node->prev = NULL;
 	node->next = NULL;
 	node->type = not_defined;
+	node->args = NULL;
 	return (node);
 }
 
@@ -47,15 +48,30 @@ void	clear_list(t_token **list)
 		free(temp->word);
 		temp->next = NULL;
 		temp->prev = NULL;
+		if(temp->type == command)
+			ft_free_split(temp->args);
 		free(temp);
 	}
 }
 
 void	print_list(t_token *list)
 {
+	int	i;
+
 	while (list)
 	{
 		printf("%s %d\n", list->word, list->type);
+		if (list->type == command && list->args)
+		{
+			i = 0;
+			while (list->args[i])
+			{
+				printf("  arg[%d]: %s\n", i, list->args[i]);
+				i++;
+			}
+		}
+		printf("\n");
 		list = list->next;
 	}
 }
+
