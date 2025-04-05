@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/03/29 13:00:29 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/05 10:07:07 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <curses.h>
 # include <sys/types.h>
 # include <sys/stat.h>
+# include <errno.h>
 
 typedef enum	e_type
 {
@@ -51,6 +52,10 @@ typedef struct s_token
 	char			*word;
 	t_type			type;
 	char			**args;
+	int				out_fd;
+	int				in_fd;
+	int				origin_out;
+	int				origin_in;
 	t_quote			quotes;
 	struct s_token	*prev;
 	struct s_token	*next;
@@ -63,20 +68,11 @@ typedef	struct s_env
 	struct s_env	*next;
 }					t_env;
 
-typedef struct s_tree
-{
-	char	**arg;
-	t_type	type;
-	int		exit_status;
-	struct s_tree	*left;
-	struct s_tree	*right;
-}				t_tree;
-
 typedef struct s_all
 {
 	t_token	*tok_lst;
 	t_env	*env_lst;
-	t_tree	*syn_tree;
+	int		exit_status;
 }	t_all;
 
 /***********************************************************\
@@ -105,7 +101,6 @@ void			parser(t_token **list);
 int    			syntax_error(t_token *list);
 int				is_whitespace(char c);
 
-
 /************************************************************\
 \***************** BUILT INS COMMANDS ************************\
 \*************************************************************/
@@ -126,6 +121,7 @@ int 			break_string(t_token **list, char *token);
 /**************************************************************\
 \*********************** Execution ****************************\
 \**************************************************************/
-void 			execute(t_token *node, t_env *envp);
+void 			execute(t_all *lists);
 int 			join_args(t_token *node);
+void			delete_token(t_token **list, t_type type);
 #endif

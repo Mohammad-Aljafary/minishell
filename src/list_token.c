@@ -14,6 +14,10 @@ t_token	*create(char *str)
 	node->type = not_defined;
 	node->args = NULL;
 	node->quotes = not_quoted;
+	node->in_fd = 0;
+	node->out_fd = 1;
+	node->origin_in = STDIN_FILENO;
+	node->origin_out = STDOUT_FILENO;
 	return (node);
 }
 
@@ -54,6 +58,33 @@ void	clear_list(t_token **list)
 		free(temp);
 	}
 }
+void	delete_token(t_token **list, t_type type)
+{
+	t_token *lst;
+	t_token *next;
+
+	if (!list || !*list)
+		return ;
+	lst = *list;
+	while (lst)
+	{
+		next = lst->next;
+		if (lst->type == type)
+		{
+			if (lst->prev)
+				lst->prev->next = lst->next;
+			else
+				*list = lst->next;
+			if (lst->next)
+				lst->next->prev = lst->prev;
+			free(lst->word);
+			free(lst);
+		}
+		lst = next;
+	}
+}
+
+
 
 void	print_list(t_token *list)
 {

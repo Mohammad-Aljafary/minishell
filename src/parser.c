@@ -40,7 +40,7 @@ void set_command_or_args(t_token *lst)
         lst->type = args;
     else if (check_redirection(lst->prev))
         lst->type = file;
-    else if (lst->prev->type == here_doc)
+    else if ( lst->prev->type == here_doc)
         lst->type = delimiter;
     else if (lst->prev->type == file || lst->prev->type == delimiter)
     {

@@ -62,6 +62,7 @@ int join_args(t_token *node)
     t_token *cmd;
     int     count;
 
+    cmd = NULL;
     count = count_args(node, &cmd);
     if (!cmd || !allocate_args(cmd, count))
         return (0);

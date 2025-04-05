@@ -14,10 +14,11 @@ int	main (int argc, char **argv, char **envp)
 {
 	char	*line;
 	t_all	all;
-
+	
 	(void)argc;
 	all.tok_lst = NULL;
 	all.env_lst = NULL;
+	all.exit_status = 0;
 	create_list_env(&all.env_lst, envp);
 	env(all.env_lst);
 	while (1)
@@ -54,7 +55,8 @@ int	main (int argc, char **argv, char **envp)
 			clear_list(&all.tok_lst);
 			continue;
 		}
-		execute (all.tok_lst, all.env_lst);
+		delete_token(&all.tok_lst, args);
+		execute (&all);
 		print_list(all.tok_lst);
 		clear_list(&all.tok_lst);
 		free(line);

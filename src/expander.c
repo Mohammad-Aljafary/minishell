@@ -112,12 +112,12 @@ int replace(t_token *p, t_env *envp, char *argv)
     int j;
 
     while (p)
-    {
+    { 
         if (p->type == s_quote)
         {
             p = p->next;
             continue;
-        }
+        } 
         i = 0;
         while (p->word[i])
         {
