@@ -56,6 +56,7 @@ int	main (int argc, char **argv, char **envp)
 			continue;
 		}
 		delete_token(&all.tok_lst, args);
+		move_command_to_front(&all.tok_lst);
 		execute (&all);
 		print_list(all.tok_lst);
 		clear_list(&all.tok_lst);

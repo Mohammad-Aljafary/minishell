@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/05 10:07:07 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/05 14:59:22 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,8 @@ int    			check_type(t_token *list);
 void			parser(t_token **list);
 int    			syntax_error(t_token *list);
 int				is_whitespace(char c);
-
+int 			check_redirection(t_token *list);
+void 			move_command_to_front(t_token **head);
 /************************************************************\
 \***************** BUILT INS COMMANDS ************************\
 \*************************************************************/
@@ -124,4 +125,6 @@ int 			break_string(t_token **list, char *token);
 void 			execute(t_all *lists);
 int 			join_args(t_token *node);
 void			delete_token(t_token **list, t_type type);
+int 			apply_re_out(t_token **re_node, t_token *command);
+int 			redirect_out(int out_fd, int *origin_out);
 #endif

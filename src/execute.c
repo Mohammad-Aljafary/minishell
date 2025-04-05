@@ -1,47 +1,5 @@
 #include <minishell.h>
 
-int redirect_out(int out_fd, int *origin_out)
-{
-    *origin_out = dup(STDOUT_FILENO);
-    if (*origin_out == -1)
-    {
-        perror("dup_out fail");
-        return (1);
-    }
-    printf("Duplicated STDOUT_FILENO: %d\n", *origin_out);
-    printf("%d\n", out_fd);
-    if (dup2(out_fd, STDOUT_FILENO) == -1)
-    {
-        perror("dup2_out fail");
-        return (1);
-    }
-    printf("Redirection successful, out_fd: %d -> STDOUT_FILENO\n", out_fd);
-    return (0);
-}
-
-int open_file(char *file, int *out_fd)
-{
-    *out_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-    if (*out_fd == -1)
-    {
-        perror(file);
-        return (1);
-    }
-    return (0);
-}
-
-int apply_re_out(t_token **re_node, t_token *command)
-{
-    if (!(*re_node)->next)
-        return (1);
-    if (command->out_fd > 1)
-        close(command->out_fd);
-    if (open_file((*re_node)->next->word, &command->out_fd))
-        return (1);
-    *re_node = (*re_node)->next->next;
-    return (0);
-}
-
 int apply_redirection(t_token **next_node, t_token *node)
 {
     while (*next_node && (*next_node)->type != pipes)
@@ -53,7 +11,7 @@ int apply_redirection(t_token **next_node, t_token *node)
         }
         else
         {
-            *next_node = (*next_node)->next;
+            *next_node = (*next_node)->next->next;
         }
     }
      if (redirect_out(node->out_fd, &node->origin_out))
@@ -73,7 +31,6 @@ void retrieve(t_token *cmd)
         close(cmd->in_fd);
         close(cmd->origin_in);
     }
-
     if (cmd->out_fd > 1)
     {
         if (dup2(cmd->origin_out, STDOUT_FILENO) == -1)
@@ -89,13 +46,9 @@ void retrieve(t_token *cmd)
 
 void execute(t_all *lists)
 {
-    t_token *node;
-    t_env   *envp;
-    t_token *cmd;
+    t_token *node = lists->tok_lst;
+    t_token *cmd = NULL;
 
-    node = lists->tok_lst;
-    envp = lists->env_lst;
-    cmd = NULL;
     while (node)
     {
         if (node->type == command)
@@ -105,13 +58,13 @@ void execute(t_all *lists)
             lists->exit_status = apply_redirection(&node, cmd);
             if (lists->exit_status)
             {
-                while (node && node->type != command && node->type != pipes)
+                while (node && node->type != pipes)
                     node = node->next;
                 continue;
             }
-            // Execute the command here
-            // execute_command(cmd, envp);
-            retrieve(cmd);
+            // Execute the command (placeholder)
+            // execute_command(cmd, lists->env_lst);
+            retrieve(cmd); 
         }
         else
         {
@@ -119,3 +72,4 @@ void execute(t_all *lists)
         }
     }
 }
+
