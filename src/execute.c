@@ -9,6 +9,10 @@ int apply_redirection(t_token **next_node, t_token *node)
             if (apply_re_out(next_node, node))
                 return (1);
         }
+        else if ((*next_node)->type == in_re)
+        {
+            
+        }
         else
         {
             *next_node = (*next_node)->next->next;
@@ -42,7 +46,6 @@ void retrieve(t_token *cmd)
         close(cmd->origin_out);
     }
 }
-
 
 void execute(t_all *lists)
 {
