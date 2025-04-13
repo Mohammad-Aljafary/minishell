@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mohammad-boom <mohammad-boom@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/05 14:59:22 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/13 11:11:04 by mohammad-bo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,5 +126,7 @@ void 			execute(t_all *lists);
 int 			join_args(t_token *node);
 void			delete_token(t_token **list, t_type type);
 int 			apply_re_out(t_token **re_node, t_token *command);
+int 			apply_re_in(t_token **re_token, t_token *command);
 int 			redirect_out(int out_fd, int *origin_out);
+int 			redirect_in(int in_fd, int *origin_in);
 #endif

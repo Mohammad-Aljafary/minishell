@@ -11,41 +11,46 @@ int apply_redirection(t_token **next_node, t_token *node)
         }
         else if ((*next_node)->type == in_re)
         {
-            
+            if (apply_re_in(next_node, node))
+                return (1);
         }
         else
         {
             *next_node = (*next_node)->next->next;
         }
     }
-     if (redirect_out(node->out_fd, &node->origin_out))
-        return (1); 
+    if (redirect_out(node->out_fd, &node->origin_out))
+        return (1);
+    if (redirect_in(node->in_fd, &node->origin_in))
+        return (1);
     return (0);
 }    
-
 void retrieve(t_token *cmd)
 {
-    if (cmd->in_fd > 0)
+    if (cmd->origin_in != STDIN_FILENO)
     {
         if (dup2(cmd->origin_in, STDIN_FILENO) == -1)
         {
             perror("dup2_retrieve_input");
             return;
         }
-        close(cmd->in_fd);
+        if (cmd->in_fd != STDIN_FILENO)
+            close(cmd->in_fd);
         close(cmd->origin_in);
     }
-    if (cmd->out_fd > 1)
+    if (cmd->origin_out != STDOUT_FILENO)
     {
         if (dup2(cmd->origin_out, STDOUT_FILENO) == -1)
         {
             perror("dup2_retrieve_output");
             return;
         }
-        close(cmd->out_fd);
+        if (cmd->out_fd != STDOUT_FILENO)
+            close(cmd->out_fd);
         close(cmd->origin_out);
     }
 }
+
 
 void execute(t_all *lists)
 {

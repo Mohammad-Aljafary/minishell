@@ -96,10 +96,7 @@ int replace_env (t_token *p, t_env *envp, int *i, int *j)
     else
         new_word = ft_strdup(env);
     if (!new_word)
-    {
-        free(temp);
         return (0);
-    }
     free(p->word);
     p->word = new_word;
     *i += ft_strlen(env);
