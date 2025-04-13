@@ -29,7 +29,8 @@ int apply_redirection(t_token **next_node, t_token *node)
     if (redirect_in(node->in_fd, &node->origin_in))
         return (1);
     return (0);
-}    
+}
+
 void retrieve(t_token *cmd)
 {
     if (cmd->origin_in != STDIN_FILENO)
@@ -76,6 +77,7 @@ void execute(t_all *lists)
                 continue;
             }
             // Execute the command (placeholder)
+            //word splitting here =)
             // execute_command(cmd, lists->env_lst);
             retrieve(cmd); 
         }

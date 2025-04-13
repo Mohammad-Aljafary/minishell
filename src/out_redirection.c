@@ -1,5 +1,32 @@
 # include <minishell.h>
 
+int check_ambigious (t_token *node)
+{
+    int i;
+    int count;
+    int flag;
+
+    i = 0;
+    count = 0;
+    flag = 0;
+    if (node->quotes == double_quote)
+        return (1);
+    while (node->word[i])
+    {
+        if (is_whitespace(node->word[i]))
+            flag = 0;
+        if (!is_whitespace(node->word[i]) && flag == 0)
+        {
+            count++;
+            flag = 1;
+        }
+        i++;
+    }
+    if (count != 1)
+        return (0);
+    return (1);
+}
+
 int redirect_out(int out_fd, int *origin_out)
 {
     *origin_out = dup(STDOUT_FILENO);
@@ -34,6 +61,11 @@ int apply_re_out(t_token **re_node, t_token *command, int flag)
 {
     if (!(*re_node)->next)
         return (1);
+    if (!check_ambigious((*re_node)->next))
+    {
+        ft_fprintf(2, "%s: ambiguous redirect\n", (*re_node)->next->word);
+        return (1);
+    }
     if (command->out_fd > 1)
         close(command->out_fd);
     if (open_file((*re_node)->next->word, &command->out_fd, flag))
