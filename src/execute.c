@@ -6,12 +6,17 @@ int apply_redirection(t_token **next_node, t_token *node)
     {
         if ((*next_node)->type == out_re)
         {
-            if (apply_re_out(next_node, node))
+            if (apply_re_out(next_node, node, 1))
                 return (1);
         }
         else if ((*next_node)->type == in_re)
         {
             if (apply_re_in(next_node, node))
+                return (1);
+        }
+        else if ((*next_node)->type == appends)
+        {
+            if (apply_re_out(next_node, node, 2))
                 return (1);
         }
         else

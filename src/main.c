@@ -27,7 +27,7 @@ int	main (int argc, char **argv, char **envp)
 		if (!line)
 		{
 			clear_all(&all);
-			clear_history();
+			rl_clear_history();
 			break;
 		}
 		add_history(line);

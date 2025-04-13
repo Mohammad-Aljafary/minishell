@@ -1,4 +1,0 @@
-Redirection successful, out_fd: 4 -> STDOUT_FILENO
-Duplicated STDIN_FILENO: 6
-3
-Redirection successful, in_fd: 3 -> STDIN_FILENO

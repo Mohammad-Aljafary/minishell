@@ -8,14 +8,11 @@ int redirect_in(int in_fd, int *origin_in)
         perror("dup_out fail");
         return (1);
     }
-    printf("Duplicated STDIN_FILENO: %d\n", *origin_in);
-    printf("%d\n", in_fd);
     if (dup2(in_fd, STDIN_FILENO) == -1)
     {
         perror("dup2_out fail");
         return (1);
     }
-    printf("Redirection successful, in_fd: %d -> STDIN_FILENO\n", in_fd);
     return (0);
 }
 
