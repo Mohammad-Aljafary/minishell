@@ -16,8 +16,8 @@ t_token	*create(char *str)
 	node->quotes = not_quoted;
 	node->in_fd = 0;
 	node->out_fd = 1;
-	node->origin_in = STDIN_FILENO;
-	node->origin_out = STDOUT_FILENO;
+	node->origin_in = -1;
+	node->origin_out = -1;
 	return (node);
 }
 
@@ -55,9 +55,11 @@ void	clear_list(t_token **list)
 		temp->prev = NULL;
 		if(temp->type == command && temp->args)
 			ft_free_split(temp->args);
+		retrieve(temp);
 		free(temp);
 	}
 }
+
 void	delete_token(t_token **list, t_type type)
 {
 	t_token *lst;
@@ -83,8 +85,6 @@ void	delete_token(t_token **list, t_type type)
 		lst = next;
 	}
 }
-
-
 
 void	print_list(t_token *list)
 {

@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/13 17:35:35 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:08:55 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ typedef struct s_all
 	int		exit_status;
 }	t_all;
 
-/***********************************************************\
+/************************************************************\
 \***************** LIST OPERATIONS **************************\
 \************************************************************/
 t_token				*create(char *str);
@@ -92,7 +92,7 @@ void				delete_node_env(t_env **list, char *key);
 t_env 				*create_node_env(char *key, char *value);
 void    			add_node_env(t_env **list, t_env *node, char *key);
 
-/************************************************************\
+/*************************************************************\
 \******************** TOKENIZATION ***************************\
 \*************************************************************/
 int				tokenize(char *line, t_token **list);
@@ -102,7 +102,8 @@ int    			syntax_error(t_token *list);
 int				is_whitespace(char c);
 int 			check_redirection(t_token *list);
 void 			move_command_to_front(t_token **head);
-/************************************************************\
+
+/*************************************************************\
 \***************** BUILT INS COMMANDS ************************\
 \*************************************************************/
 int				pwd();
@@ -112,7 +113,7 @@ void     		unset(char *str, t_env **env);
 int				export(t_token *str, t_env **env);
 void 			ft_echo(t_token *args);
 
-/************************************************************\
+/*************************************************************\
 \********************** Expander *****************************\
 \*************************************************************/
 char    		*search_env(t_env *env, char *key);
@@ -129,4 +130,5 @@ int 			apply_re_out(t_token **re_node, t_token *command, int flag);
 int 			apply_re_in(t_token **re_token, t_token *command);
 int 			redirect_out(int out_fd, int *origin_out);
 int 			redirect_in(int in_fd, int *origin_in);
+void 			retrieve(t_token *cmd);
 #endif
