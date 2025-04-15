@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/14 15:08:55 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:56:29 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ typedef struct s_token
 	int				in_fd;
 	int				origin_out;
 	int				origin_in;
+	int				expaneded;
 	t_quote			quotes;
 	struct s_token	*prev;
 	struct s_token	*next;
@@ -91,6 +92,7 @@ void    			clear_all(t_all *all);
 void				delete_node_env(t_env **list, char *key);
 t_env 				*create_node_env(char *key, char *value);
 void    			add_node_env(t_env **list, t_env *node, char *key);
+void				add_node_token(t_token **list, char *str, t_token *node);
 
 /*************************************************************\
 \******************** TOKENIZATION ***************************\
@@ -125,7 +127,7 @@ int 			break_string(t_token **list, char *token);
 \**************************************************************/
 void 			execute(t_all *lists);
 int 			join_args(t_token *node);
-void			delete_token(t_token **list, t_type type);
+void			delete_token(t_token **list, t_type type, int flag);
 int 			apply_re_out(t_token **re_node, t_token *command, int flag);
 int 			apply_re_in(t_token **re_token, t_token *command);
 int 			redirect_out(int out_fd, int *origin_out);

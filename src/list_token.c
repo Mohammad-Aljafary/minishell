@@ -18,6 +18,7 @@ t_token	*create(char *str)
 	node->out_fd = 1;
 	node->origin_in = -1;
 	node->origin_out = -1;
+	node->expaneded = 0;
 	return (node);
 }
 
@@ -60,7 +61,28 @@ void	clear_list(t_token **list)
 	}
 }
 
-void	delete_token(t_token **list, t_type type)
+void	add_node_token(t_token **list, char *str, t_token *node)
+{
+	t_token *lst;
+
+	lst = *list;
+	while(lst)
+	{
+		if (ft_strcmp(str, lst->word) == 0 && lst->next)
+		{
+
+			lst->next->prev = node;
+			node->next = lst->next;
+			lst->next = node;
+			node->prev = lst;
+			return ; 
+		}
+		lst = lst->next;
+	}
+	add_back(list, node);
+}
+
+void	delete_token(t_token **list, t_type type, int flag)
 {
 	t_token *lst;
 	t_token *next;
@@ -81,6 +103,8 @@ void	delete_token(t_token **list, t_type type)
 				lst->next->prev = lst->prev;
 			free(lst->word);
 			free(lst);
+			if (flag == 0)
+				return ;
 		}
 		lst = next;
 	}
@@ -92,7 +116,7 @@ void	print_list(t_token *list)
 
 	while (list)
 	{
-		printf("%s %d\n", list->word, list->type);
+		printf("string:%s type:%d expanded:%d\n", list->word, list->type, list->expaneded);
 		if (list->type == command && list->args)
 		{
 			i = 0;
@@ -102,6 +126,7 @@ void	print_list(t_token *list)
 				i++;
 			}
 		}
+
 		printf("\n");
 		list = list->next;
 	}

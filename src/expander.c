@@ -100,6 +100,7 @@ int replace_env (t_token *p, t_env *envp, int *i, int *j)
     free(p->word);
     p->word = new_word;
     *i += ft_strlen(env);
+    p->expaneded = 1;
     return (1);
 }
 
@@ -125,6 +126,7 @@ int replace(t_token *p, t_env *envp, char *argv)
                 {
                     if (!replace_num(&p->word, argv))
                         return (0);
+                    p->expaneded = 1;
                     break;
                 }
                 while (p->word[j] || p->word[j] == '_')
@@ -145,7 +147,7 @@ int replace(t_token *p, t_env *envp, char *argv)
     return (1);
 } 
 
-int    join_strings(t_token *p, char   **token)
+int    join_strings(t_token *p, char   **token, t_token *ptr1)
 {
     size_t  length;
     t_token *ptr;
@@ -166,6 +168,8 @@ int    join_strings(t_token *p, char   **token)
     str[0] = '\0';
     while (p)
     {
+        if (p->expaneded)
+            ptr1->expaneded = 1;
         ft_strlcat(str, p->word, length + 1);
         p = p->next;
     }
@@ -180,11 +184,66 @@ int free_return(t_token **p)
     return (0);
 }
 
+char *normalize_whitespace(char *str)
+{
+    char *res = ft_strdup(str);
+    int i = 0;
+
+    if (!res)
+        return (NULL);
+    while (res[i])
+    {
+        if (res[i] == '\t')
+            res[i] = ' ';
+        i++;
+    }
+    return (res);
+}
+
+
+int word_split(t_token **list)
+{
+    t_token *lst;
+    t_token *next;
+    char    *tok;
+    t_token *node;
+    char    *temp;
+
+    lst = *list;
+    temp = NULL;
+    while (lst)
+    {
+        next = lst->next; // Save next in case lst is deleted
+        if (lst->expaneded && lst->quotes != double_quote)
+        {
+            tok = ft_strtok(lst->word, " \t");
+            while (tok != NULL)
+            {
+                temp = ft_strdup(tok);
+                if (!temp)
+                    return (0);
+                node = create(temp);
+                if (!node)
+                    return (0);
+                add_node_token(list, lst->word, node);
+                tok = ft_strtok(NULL, " \t"); // Use NULL to continue
+            }
+            delete_token(list, lst->type, 0); // Free lst
+        }
+        lst = next; // Safe because we saved it before deletion
+    }
+    return (1);
+}
+
+
+
 int    expander(t_token *tok_lst, t_env *env_lst, char *argv)
 {
     t_token *p;
+    t_token *head;
 
     p = NULL;
+    head = tok_lst;
     while (tok_lst)
     {
         if (tok_lst->type == delimiter)
@@ -196,10 +255,12 @@ int    expander(t_token *tok_lst, t_env *env_lst, char *argv)
             return (0);
         if (!replace(p, env_lst, argv))
             return (free_return(&p));
-        if (!join_strings(p, &tok_lst->word))
+        if (!join_strings(p, &tok_lst->word, tok_lst))
             return (free_return(&p));
         clear_list(&p);
         tok_lst = tok_lst->next;
     }
+    if (word_split(&head))
+        return (0);
     return (1);
 }
