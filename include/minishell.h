@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/15 17:56:29 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/16 09:03:50 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void    			clear_all(t_all *all);
 void				delete_node_env(t_env **list, char *key);
 t_env 				*create_node_env(char *key, char *value);
 void    			add_node_env(t_env **list, t_env *node, char *key);
-void				add_node_token(t_token **list, char *str, t_token *node);
+void				add_node_token(t_token **list, t_token *prev_node, t_token *node);
 
 /*************************************************************\
 \******************** TOKENIZATION ***************************\
@@ -119,7 +119,7 @@ void 			ft_echo(t_token *args);
 \********************** Expander *****************************\
 \*************************************************************/
 char    		*search_env(t_env *env, char *key);
-int    			expander(t_token *tok_lst, t_env *env_lst, char *argv);
+int    			expander(t_token **tok_lst, t_env *env_lst, char *argv);
 int 			break_string(t_token **list, char *token);
 
 /**************************************************************\

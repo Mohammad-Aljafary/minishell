@@ -1,7 +1,7 @@
 include src.mk
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 OBJ_DIR = obj
 LIBFT = ./libft
 NAME = minishell

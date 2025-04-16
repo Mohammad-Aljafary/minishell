@@ -44,7 +44,7 @@ int	main (int argc, char **argv, char **envp)
 			free(line);
 			continue;
 		}
-		if (!expander(all.tok_lst, all.env_lst, argv[0]))
+		if (!expander(&all.tok_lst, all.env_lst, argv[0]))
 		{
 			clear_list(&all.tok_lst);
 			free (line);

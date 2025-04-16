@@ -61,21 +61,19 @@ void	clear_list(t_token **list)
 	}
 }
 
-void	add_node_token(t_token **list, char *str, t_token *node)
+void	add_node_token(t_token **list, t_token *prev_node, t_token *node)
 {
 	t_token *lst;
 
 	lst = *list;
 	while(lst)
 	{
-		if (ft_strcmp(str, lst->word) == 0 && lst->next)
+		if (lst == prev_node && lst->next)
 		{
-
 			lst->next->prev = node;
 			node->next = lst->next;
-			lst->next = node;
 			node->prev = lst;
-			return ; 
+			lst->next = node;
 		}
 		lst = lst->next;
 	}
@@ -90,6 +88,18 @@ void	delete_token(t_token **list, t_type type, int flag)
 	if (!list || !*list)
 		return ;
 	lst = *list;
+	if (lst->type == type && lst == *list)
+	{
+		if (lst->next)
+		{
+			(*list) = lst->next;
+			(*list)->prev = NULL;
+			free(lst->word);
+			free(lst);
+			if (flag == 0)
+				return;
+		}
+	}
 	while (lst)
 	{
 		next = lst->next;
