@@ -110,8 +110,8 @@ void create_list_env(t_env **list, char **envp)
     char    **str;
     t_env   *node;
 
-    i = 0;
-    while (envp[i])
+    i = -1;
+    while (envp[++i])
     {
         str = ft_split(envp[i], '=');
         if (str && str[0])                                
@@ -129,7 +129,6 @@ void create_list_env(t_env **list, char **envp)
             add_back_env(list, node);
         }
         ft_free_split(str);
-        i++;
     }
 }
 

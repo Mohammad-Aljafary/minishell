@@ -74,6 +74,7 @@ void	add_node_token(t_token **list, t_token *prev_node, t_token *node)
 			node->next = lst->next;
 			node->prev = lst;
 			lst->next = node;
+			return ;
 		}
 		lst = lst->next;
 	}

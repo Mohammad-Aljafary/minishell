@@ -29,7 +29,7 @@ int	tokenize(char *line, t_token **list)
 	int		j;
 	t_token	*node;
 	char 	q;
-	int	len;
+	int		len;
 	char	*temp;
 	int		flag;//here
 

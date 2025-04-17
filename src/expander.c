@@ -184,43 +184,27 @@ int free_return(t_token **p)
     return (0);
 }
 
-char *normalize_whitespace(char *str)
-{
-    char *res = ft_strdup(str);
-    int i = 0;
-
-    if (!res)
-        return (NULL);
-    while (res[i])
-    {
-        if (res[i] == '\t')
-            res[i] = ' ';
-        i++;
-    }
-    return (res);
-}
-
-void    delete_ptr(t_token **list, t_token *lst) 
+void delete_ptr(t_token **list, t_token *lst) 
 {
     if (lst == *list)
     {
-        if (lst->next)
-        {
-            *list = lst->next;
+        *list = lst->next;
+        if (*list)
             (*list)->prev = NULL;
-            free (lst->word);
-            free(lst);
-        }
-    }
-    else
-    {
-        lst->next->prev = lst->prev;
-        lst->prev->next = lst->next;
         free(lst->word);
         free(lst);
     }
-
+    else
+    {
+        if (lst->next)
+            lst->next->prev = lst->prev;
+        if (lst->prev)
+            lst->prev->next = lst->next;
+        free(lst->word);
+        free(lst);
+    }
 }
+
 
 int word_split(t_token **list)
 {
@@ -249,7 +233,7 @@ int word_split(t_token **list)
                 if (!node)
                     return (0);
                 add_node_token(list, last_inserted, node);
-                last_inserted = node; 
+                last_inserted = node;
                 tok = ft_strtok(NULL, " \t");
             }
             delete_ptr(list, lst);
@@ -259,6 +243,76 @@ int word_split(t_token **list)
     return (1);
 }
 
+void    parser2(t_token *list)
+{
+    while (list)
+    {
+        if(list->type == not_defined)
+        {
+            if(!list->prev || list->prev->type == pipes)
+                list->type = command;
+             else if (list->prev->type == args || list->prev->type == command)
+                list->type = args;
+            else if (list->prev->type == in_re || list->prev->type == out_re 
+                    || list->prev->type == file || list->prev->type == appends)
+                list->type = file; 
+        }
+        list = list->next;
+    }
+}
+
+int remove_quotes(char **line1)
+{
+    int         i;
+    int         j;
+    char        q;
+    char        *temp;
+    char        *line;
+    t_token     *lst;
+    t_token     *node;
+
+    i = 0;
+    lst = NULL;
+    line = *line1;
+    while (line[i])
+    {
+        if (line[i] == '"' || line[i] == '\'')
+        {
+            q = line[i++];
+            j = i;
+            while (line[j] && line[j] != q)
+                j++;
+            if (!line[j])
+                return (free_return(&lst));
+            temp = ft_substr(line, i, j - i);
+            if (!temp)
+                return (free_return(&lst));
+            if (line[j] == q)
+                j++;
+        }
+        else
+        {
+            j = i;
+            while (line[j] && line[j] != '"' && line[j] != '\'')
+                j++;
+            temp = ft_substr(line, i, j - i);
+            if (!temp)
+                return (free_return(&lst));
+        }
+        node = create(temp);
+        if (!node)
+        {
+            free(temp);
+            return (free_return(&lst));
+        }
+        add_back(&lst, node);
+        i = j;
+    }
+    if (!join_strings(lst, line1, node)) 
+        return (free_return(&lst));
+    clear_list(&lst);
+    return (1);
+}
 
 int    expander(t_token **tok_lst, t_env *env_lst, char *argv)
 {
@@ -271,6 +325,11 @@ int    expander(t_token **tok_lst, t_env *env_lst, char *argv)
     {
         if ((head)->type == delimiter)
         {
+            if (head->quotes != not_quoted)
+            {
+                if (!remove_quotes(&head->word))
+                    return (free_return(&p));
+            }
             head = (head)->next;
             continue;
         }
@@ -278,13 +337,14 @@ int    expander(t_token **tok_lst, t_env *env_lst, char *argv)
             return (0);
         if (!replace(p, env_lst, argv))
             return (free_return(&p));
-        if (!join_strings(p, &head->word, head ))
+        if (!join_strings(p, &head->word, head))
             return (free_return(&p));
         clear_list(&p);
         head = head->next;
     }
-     if (!word_split((tok_lst)))
-        return (0);
-    parser2();
+    if (!word_split((tok_lst)))
+        return (0); 
+    head = *tok_lst;
+    parser2 (head);
     return (1);
 }

@@ -88,12 +88,18 @@ int apply_pipes(t_token *cmd, t_token **node)
     return (0);
 }
 
+/* void    execute_command(t_token *cmd, t_env *env, int *exit_status)
+{
+
+} */
+
 void    execute(t_all *lists)
 {
     t_token *node;
-    t_token *cmd = NULL;
+    t_token *cmd;
 
     node = lists->tok_lst;
+    cmd = NULL;
     while (node)
     {
         if (node->type == command)
@@ -117,9 +123,7 @@ void    execute(t_all *lists)
                     exit(lists->exit_status);
                 }           
             } 
-            // Execute the command (placeholder)
-            //word splitting here =)
-            // execute_command(cmd, lists->env_lst);
+            //execute_command(cmd, lists->env_lst, &lists->exit_status);
             retrieve(cmd);
         }
         else

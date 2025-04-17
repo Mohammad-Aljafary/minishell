@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/16 09:03:50 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/16 17:20:06 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void				delete_node_env(t_env **list, char *key);
 t_env 				*create_node_env(char *key, char *value);
 void    			add_node_env(t_env **list, t_env *node, char *key);
 void				add_node_token(t_token **list, t_token *prev_node, t_token *node);
-
+void 				delete_ptr(t_token **list, t_token *lst);
 /*************************************************************\
 \******************** TOKENIZATION ***************************\
 \*************************************************************/
@@ -132,5 +132,6 @@ int 			apply_re_out(t_token **re_node, t_token *command, int flag);
 int 			apply_re_in(t_token **re_token, t_token *command);
 int 			redirect_out(int out_fd, int *origin_out);
 int 			redirect_in(int in_fd, int *origin_in);
+int 			check_ambigious (t_token *node);
 void 			retrieve(t_token *cmd);
 #endif

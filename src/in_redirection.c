@@ -32,6 +32,11 @@ int apply_re_in(t_token **re_token, t_token *command)
 {
     if (!(*re_token)->next)
         return (1);
+    if (!check_ambigious((*re_token)->next))
+    {
+        ft_fprintf(2, "%s: ambiguous redirect\n", (*re_token)->next->word);
+        return (1);
+    }
     if (command->in_fd > 0)
         close(command->in_fd);
     if (open_in((*re_token)->next->word, &command->in_fd))

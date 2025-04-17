@@ -2,29 +2,14 @@
 
 int check_ambigious (t_token *node)
 {
-    int i;
-    int count;
-    int flag;
-
-    i = 0;
-    count = 0;
-    flag = 0;
-    if (node->quotes == double_quote)
-        return (1);
-    while (node->word[i])
+    if (node->type == file)
     {
-        if (is_whitespace(node->word[i]))
-            flag = 0;
-        if (!is_whitespace(node->word[i]) && flag == 0)
-        {
-            count++;
-            flag = 1;
-        }
-        i++;
+        if (node->next && node->next->type == file)
+            return (0);
+        else
+            return (1);
     }
-    if (count != 1)
-        return (0);
-    return (1);
+    return (0);
 }
 
 int redirect_out(int out_fd, int *origin_out)
