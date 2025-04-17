@@ -182,6 +182,38 @@ void ft_echo(t_token *args)
 		return (1);
 } 
 
+
+int	is_built_in(t_token *cmd)
+{
+	if (!ft_strcmp(cmd->word, "export") || !ft_strcmp(cmd->word, "echo")
+		|| !ft_strcmp(cmd->word, "cd") || !ft_strcmp(cmd->word, "pwd")
+		|| !ft_strcmp(cmd->word, "exit") || !ft_strcmp(cmd->word, "unset")
+		|| !ft_strcmp(cmd->word, "env"))
+			return (1);
+	return (0);
+}
+
+void	run_built_in(t_token *cmd, int *exit_status, t_env *env, int in_child)
+{
+	if (!ft_strcmp(cmd->word, "export"))
+		*exit_status = ft_export(cmd, env);
+	else if (!ft_strcmp(cmd->word, "echo"))
+		*exit_status = ft_echo(cmd);
+	else if (!ft_strcmp(cmd->word, "cd"))
+		*exit_status = ft_cd(cmd, env);
+	else if (!ft_strcmp(cmd->word, "pwd"))
+		*exit_status = ft_pwd();
+	else if (!ft_strcmp(cmd->word, "exit"))
+		*exit_status = ft_exit(cmd);
+	else if (!ft_strcmp(cmd->word, "unset"))
+		*exit_status = ft_unset(cmd, env);
+	else if (!ft_strcmp(cmd->word, "env"))
+		*exit_status = ft_env(cmd, env);
+	if (in_child)
+		exit(*exit_status);
+}
+
+
 /* int	export(t_token *str, t_env **env)
 {
 	char	*equal;

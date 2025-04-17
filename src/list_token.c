@@ -61,24 +61,24 @@ void	clear_list(t_token **list)
 	}
 }
 
-void	add_node_token(t_token **list, t_token *prev_node, t_token *node)
+void	add_node_token(t_token **list, t_token *node, t_token *new_node)
 {
 	t_token *lst;
 
 	lst = *list;
 	while(lst)
 	{
-		if (lst == prev_node && lst->next)
+		if (lst == node && lst->next)
 		{
-			lst->next->prev = node;
+			lst->next->prev = new_node;
 			node->next = lst->next;
 			node->prev = lst;
-			lst->next = node;
+			lst->next = new_node;
 			return ;
 		}
 		lst = lst->next;
 	}
-	add_back(list, node);
+	add_back(list, new_node);
 }
 
 void	delete_token(t_token **list, t_type type, int flag)

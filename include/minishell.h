@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/16 17:20:06 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:53:46 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,4 +134,7 @@ int 			redirect_out(int out_fd, int *origin_out);
 int 			redirect_in(int in_fd, int *origin_in);
 int 			check_ambigious (t_token *node);
 void 			retrieve(t_token *cmd);
+void			run_built_in(t_token *cmd, int *exit_status, t_env *env, int in_child);
+int				is_built_in(t_token *cmd);
+void    		execute_external(t_token *cmd, int *exit_status, t_env *env);
 #endif

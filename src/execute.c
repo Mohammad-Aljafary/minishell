@@ -19,7 +19,7 @@ int apply_redirection(t_token **next_node, t_token *node)
             if (apply_re_out(next_node, node, 2))
                 return (1);
         }
-        else
+        else;
             *next_node = (*next_node)->next;
     }
     if (node->out_fd > 1)
@@ -60,7 +60,7 @@ void retrieve(t_token *cmd)
     }
 }
 
-int apply_pipes(t_token *cmd, t_token **node)
+/* int apply_pipes(t_token *cmd, t_token **node)
 {
     int fd[2];
 
@@ -86,12 +86,15 @@ int apply_pipes(t_token *cmd, t_token **node)
     (*node)->next->in_fd = fd[0];
     (*node) = (*node)->next;
     return (0);
-}
-
-/* void    execute_command(t_token *cmd, t_env *env, int *exit_status)
-{
-
 } */
+
+void    execute_command(t_token *cmd, t_env *env, int *exit_status, int has_pipe)
+{
+    if (isbuilt_in(cmd) && !(cmd->prev && cmd->prev->type == pipes))
+        run_built_in(cmd, exit_status, env, 0);
+    else
+        execute_external(cmd, exit_status, env);
+}
 
 void    execute(t_all *lists)
 {
@@ -114,16 +117,7 @@ void    execute(t_all *lists)
                 retrieve(cmd);
                 continue;
             }
-            if (node && node->type == pipes)
-            {
-                lists->exit_status = apply_pipes(cmd, &node);
-                if (lists->exit_status)
-                {
-                    clear_all(lists);
-                    exit(lists->exit_status);
-                }           
-            } 
-            //execute_command(cmd, lists->env_lst, &lists->exit_status);
+            execute_command(cmd, lists->env_lst, &lists->exit_status);
             retrieve(cmd);
         }
         else
