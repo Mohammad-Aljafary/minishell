@@ -19,7 +19,7 @@ int apply_redirection(t_token **next_node, t_token *node)
             if (apply_re_out(next_node, node, 2))
                 return (1);
         }
-        else;
+        else
             *next_node = (*next_node)->next;
     }
     if (node->out_fd > 1)
@@ -88,11 +88,11 @@ void retrieve(t_token *cmd)
     return (0);
 } */
 
-void    execute_command(t_token *cmd, t_env *env, int *exit_status, int has_pipe)
+void    execute_command(t_token *cmd, t_env *env, int *exit_status)
 {
-    if (isbuilt_in(cmd) && !(cmd->prev && cmd->prev->type == pipes))
+/*     if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes))
         run_built_in(cmd, exit_status, env, 0);
-    else
+    else */
         execute_external(cmd, exit_status, env);
 }
 
