@@ -25,6 +25,7 @@ int redirect_out(int out_fd, int *origin_out)
         perror("dup2_out fail");
         return (1);
     }
+    close (out_fd);
     return (0);
 }
 

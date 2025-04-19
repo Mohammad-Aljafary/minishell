@@ -16,8 +16,10 @@ int is_executable (char *cmd, int *exit_status)
 
 int is_absolute_path (t_token *cmd)
 {
-    if (!ft_strncmp(cmd->word, "./", 2) || !ft_strncmp(cmd->word, "../", 3)
-        || !ft_strncmp(cmd->word, "/", 1))
+    if (!cmd->word)
+        return (0);
+    if (ft_strncmp(cmd->word, "./", 2) == 0 || ft_strncmp(cmd->word, "../", 3) == 0
+        || cmd->word[0] == '/')
         return (1);
     return (0);
 }
@@ -85,7 +87,7 @@ char    *check_cmd(t_token *cmd, int *exit_status, t_env *env)
         *exit_status = 126;
         exit (*exit_status);
     }
-    if (!is_absolute_path(cmd))
+    if (is_absolute_path(cmd))
     {
         if (!is_executable(cmd->word, exit_status))
         {
@@ -128,7 +130,7 @@ char    **list_to_arr(t_env *env)
     
     i = 0;
     env_join = NULL;
-    envp = malloc(count_nodes(env + 1) * sizeof(char *));
+    envp = malloc((count_nodes(env) + 1) * sizeof(char *));
     if(!envp)
         return (NULL);
     while(env)
@@ -140,6 +142,7 @@ char    **list_to_arr(t_env *env)
             return (NULL);
         }
         envp[i] = ft_strjoin(env_join, env->value);
+        free (env_join);
         if(!envp[i])
         {
             ft_free_split(envp);
@@ -170,11 +173,7 @@ void    run_external(t_token *cmd, int *exit_status, t_env *env)
         ft_free_split(envp);
         exit (EXIT_FAILURE);
     }
-    free (path);
-    ft_free_split(envp);
-    exit (EXIT_SUCCESS);
 }
-
 
 void    execute_external(t_token *cmd, int *exit_status, t_env *env)
 {

@@ -124,6 +124,7 @@ void    execute(t_all *lists)
         {
             node = node->next;
         }
+        wait(NULL);
     }
 }
 
