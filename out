@@ -1,44 +1,12 @@
-aa
 haahaha.c
-hiii
-hiii       here
 include
 libft
 Makefile
 minishell
 obj
 out
+out1
 readline_curses.supp
 src
 src.mk
 test.c
-total 104
--rw-r--r-- 1 malja-fa 2024_42campus   114 Apr 19 09:30 out
--rwxr-xr-x 1 malja-fa 2024_42campus 72256 Apr 19 08:25 minishell
-drwxr-xr-x 2 malja-fa 2024_42campus  4096 Apr 19 08:25 obj
-drwxr-xr-x 5 malja-fa 2024_42campus    75 Apr 19 07:13 libft
--rw-r--r-- 1 malja-fa 2024_42campus   271 Apr 18 17:54 src.mk
-drwxr-xr-x 2 malja-fa 2024_42campus  4096 Apr 17 16:50 src
-drwxr-xr-x 2 malja-fa 2024_42campus    25 Apr 17 15:05 include
--rw-r--r-- 1 malja-fa 2024_42campus     0 Apr 16 13:59 aa
--rw-r--r-- 1 malja-fa 2024_42campus     0 Apr 16 11:05 hiii       here
--rw-r--r-- 1 malja-fa 2024_42campus     0 Apr 16 11:05 hiii
--rw-r--r-- 1 malja-fa 2024_42campus   560 Apr 16 07:37 Makefile
--rw-r--r-- 1 malja-fa 2024_42campus   251 Apr 13 18:08 readline_curses.supp
--rw-r--r-- 1 malja-fa 2024_42campus  1813 Apr  1 09:58 test.c
--rw-r--r-- 1 malja-fa 2024_42campus  1622 Mar  7 16:30 haahaha.c
-total 104
--rw-r--r-- 1 malja-fa 2024_42campus  1008 Apr 19 09:38 out
--rwxr-xr-x 1 malja-fa 2024_42campus 72256 Apr 19 08:25 minishell
-drwxr-xr-x 2 malja-fa 2024_42campus  4096 Apr 19 08:25 obj
-drwxr-xr-x 5 malja-fa 2024_42campus    75 Apr 19 07:13 libft
--rw-r--r-- 1 malja-fa 2024_42campus   271 Apr 18 17:54 src.mk
-drwxr-xr-x 2 malja-fa 2024_42campus  4096 Apr 17 16:50 src
-drwxr-xr-x 2 malja-fa 2024_42campus    25 Apr 17 15:05 include
--rw-r--r-- 1 malja-fa 2024_42campus     0 Apr 16 13:59 aa
--rw-r--r-- 1 malja-fa 2024_42campus     0 Apr 16 11:05 hiii       here
--rw-r--r-- 1 malja-fa 2024_42campus     0 Apr 16 11:05 hiii
--rw-r--r-- 1 malja-fa 2024_42campus   560 Apr 16 07:37 Makefile
--rw-r--r-- 1 malja-fa 2024_42campus   251 Apr 13 18:08 readline_curses.supp
--rw-r--r-- 1 malja-fa 2024_42campus  1813 Apr  1 09:58 test.c
--rw-r--r-- 1 malja-fa 2024_42campus  1622 Mar  7 16:30 haahaha.c

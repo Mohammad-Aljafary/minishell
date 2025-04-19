@@ -10,7 +10,6 @@ int redirect_in(int in_fd, int *origin_in)
     }
     if (dup2(in_fd, STDIN_FILENO) == -1)
     {
-        fprintf(stderr, "gfdg\n");
         perror("dup2_out fail");
         return (1);
     }

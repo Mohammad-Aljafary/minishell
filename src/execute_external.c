@@ -48,34 +48,35 @@ char    *access_path(t_token *cmd, char **paths, int *exit_status)
     return (NULL);
 }
 
-char    *find_cmd_path(t_token *cmd, int *exit_status, t_env *env)
+char    *find_cmd_path(t_token *cmd, int *exit_status, t_all *all)
 {
     char *path;
     char    **splitted_path;
 
-    path = search_env(env, "PATH");
-    if(path == NULL)
+    path = search_env(all->env_lst, "PATH");
+    if(!path)
     {
-        ft_fprintf(2,"here");
+        ft_fprintf(2, "%s: No such file or directory1\n", cmd->word);
         return (NULL);
     }
     splitted_path = ft_split(path, ':');
     if(!splitted_path)
-        return(NULL);
+        return (NULL);
     path = access_path(cmd, splitted_path, exit_status);
     ft_free_split(splitted_path);
     if (!path)
     {
-        if (*exit_status == 126 || *exit_status == 127)
-        {
-            perror(cmd->word);
-            exit(*exit_status);
-        }
+        if (*exit_status == 127)
+            ft_fprintf (2, "%s: command not found\n", cmd->word);
+        else if (*exit_status == 126)
+            ft_fprintf (2, "%s: Permission denied\n", cmd->word);
+        clear_all(all);
+        exit (*exit_status);
     }
     return(path);
 }
 
-char    *check_cmd(t_token *cmd, int *exit_status, t_env *env)
+char    *check_cmd(t_token *cmd, int *exit_status, t_all *all)
 {
     struct stat sb;
     char    *path;
@@ -83,26 +84,35 @@ char    *check_cmd(t_token *cmd, int *exit_status, t_env *env)
     path = NULL;
     if (!stat(cmd->word, &sb) && S_ISDIR(sb.st_mode))
     {
-        ft_fprintf(2, "%s: Is a directory\n", cmd->word);
-        *exit_status = 126;
-        exit (*exit_status);
+        if (ft_strcmp(cmd->word, ".") == 0 || ft_strcmp(cmd->word, "..") == 0)
+        {
+            ft_fprintf(2, "%s: command not found\n", cmd->word);
+            *exit_status = 127;
+        }
+        else
+        {
+            ft_fprintf(2, "%s: Is a directory\n", cmd->word);
+            *exit_status = 126;
+        }
+        clear_all(all);
+        exit(*exit_status);
     }
     if (is_absolute_path(cmd))
     {
         if (!is_executable(cmd->word, exit_status))
         {
-            printf ("hhhheeeeeerrrrrr\n");
             perror (cmd->word);
+            clear_all(all);
             exit (*exit_status);
         }
         return (ft_strdup(cmd->word));
     }
     else
     {
-        path = find_cmd_path(cmd, exit_status, env);
+        path = find_cmd_path(cmd, exit_status, all);
         if(!path)
         {
-            ft_fprintf(2, "hereeee");
+            clear_all(all);
             exit(*exit_status);
         }
     }
@@ -155,27 +165,34 @@ char    **list_to_arr(t_env *env)
     return (envp);
 }
 
-void    run_external(t_token *cmd, int *exit_status, t_env *env)
+void    run_external(t_token *cmd, int *exit_status, t_all *all)
 {
     char    **envp;
     char    *path;
     
-    path = check_cmd(cmd, exit_status, env);
+    path = check_cmd(cmd, exit_status, all);
     if (!path)
+    {
+        clear_all(all);
         exit(*exit_status);
-    envp = list_to_arr(env);
+    }
+    envp = list_to_arr(all->env_lst);
     if(!envp)
+    {
+        clear_all(all);
         exit (*exit_status);
+    }
     if (execve(path, cmd->args, envp) == -1)
     {
         perror("execve");
         free (path);
         ft_free_split(envp);
+        clear_all(all);
         exit (EXIT_FAILURE);
     }
 }
 
-void    execute_external(t_token *cmd, int *exit_status, t_env *env)
+void    execute_external(t_token *cmd, int *exit_status, t_all *all)
 {
     pid_t id;
 
@@ -191,6 +208,6 @@ void    execute_external(t_token *cmd, int *exit_status, t_env *env)
       /*   if (is_built_in(cmd))
             run_built_in(cmd, exit_status, env, 1);
         else */
-            run_external(cmd, exit_status, env);
+            run_external(cmd, exit_status, all);
     }
 }

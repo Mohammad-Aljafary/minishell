@@ -88,27 +88,59 @@ void retrieve(t_token *cmd)
     return (0);
 } */
 
-void    execute_command(t_token *cmd, t_env *env, int *exit_status)
+void    execute_command(t_token *cmd, t_all *all, int *exit_status)
 {
 /*     if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes))
         run_built_in(cmd, exit_status, env, 0);
     else */
-        execute_external(cmd, exit_status, env);
+        execute_external(cmd, exit_status, all);
+}
+
+int apply_in_pipe(int fd[2], t_token *cmd)
+{
+    if (cmd->prev && cmd->prev->type == pipes)
+    {
+        if (redirect_in(fd[0], &cmd->origin_in))
+            return (1); 
+    }
+    return (0);
+}
+
+int apply_out_pipe(int fd[2], t_token *cmd, t_all *all)
+{
+    if (pipe(fd) == -1)
+    {
+        perror("pipe");
+        clear_all(all);
+        exit(EXIT_FAILURE);
+    }
+    if (cmd->out_fd == 1)
+    {
+        if (redirect_out(fd[1], &cmd->origin_out))
+            return (1);
+        return (0);
+    }
+    close (fd[1]);
+    return (0);
 }
 
 void    execute(t_all *lists)
 {
     t_token *node;
     t_token *cmd;
+    int     pipefd[2];
 
     node = lists->tok_lst;
     cmd = NULL;
+    pipefd[0] = -1;
+    pipefd[1] = -1;
     while (node)
     {
         if (node->type == command)
         {
             cmd = node;
             node = node->next;
+            lists->exit_status = apply_in_pipe(pipefd, cmd);
             lists->exit_status = apply_redirection(&node, cmd);
             if (lists->exit_status)
             {
@@ -117,13 +149,17 @@ void    execute(t_all *lists)
                 retrieve(cmd);
                 continue;
             }
-            execute_command(cmd, lists->env_lst, &lists->exit_status);
+            if (node && node->type == pipes)
+                apply_out_pipe(pipefd, cmd, lists);
+            execute_command(cmd, lists, &lists->exit_status);
             retrieve(cmd);
         }
         else
         {
             node = node->next;
         }
+        wait(NULL);
+        wait(NULL);
         wait(NULL);
     }
 }
