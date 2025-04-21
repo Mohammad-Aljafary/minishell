@@ -13,10 +13,31 @@ void	print_env(char **env)
 void	increment_shlvl(t_env *envp)
 {
 	char	*shlvl;
+	t_env	*create_shlvl;
+	int		convert_atoi;
 
+	convert_atoi = 0;
+	create_shlvl = NULL;
 	shlvl = search_env(envp, "SHLVL");
 	if(!shlvl)
-} 
+	{
+		create_shlvl = create_node_env("SHLVL", "1");
+		if (!create_shlvl)
+			return ;
+		add_back_env(&envp,create_shlvl);
+	}
+	convert_atoi = ft_atoi(shlvl);
+	if (convert_atoi < 0)
+		convert_atoi = -1;
+	shlvl = ft_itoa(convert_atoi + 1);
+	if(!shlvl)
+		return ;
+	create_shlvl = create_node_env("SHLVL", shlvl);
+	free (shlvl);
+	if (!create_shlvl)
+		return ;
+	add_node_env(&envp, create_shlvl, "SHLVL");
+}
 
 int	main (int argc, char **argv, char **envp)
 {
@@ -53,7 +74,7 @@ int	main (int argc, char **argv, char **envp)
 			free(line);
 			continue;
 		}
-		if (!expander(&all.tok_lst, all.env_lst, argv[0]))
+		if (!expander(&all.tok_lst, all.env_lst, argv[0], all.exit_status))
 		{
 			clear_list(&all.tok_lst);
 			free (line);

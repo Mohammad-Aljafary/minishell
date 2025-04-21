@@ -122,12 +122,9 @@ void    execute(t_all *lists)
 {
     t_token *node;
     t_token *cmd;
-    int     pipefd[2];
 
     node = lists->tok_lst;
     cmd = NULL;
-    pipefd[0] = -1;
-    pipefd[1] = -1;
     while (node)
     {
         if (node->type == command)
@@ -151,9 +148,7 @@ void    execute(t_all *lists)
         {
             node = node->next;
         }
-        wait(NULL);
-        wait(NULL);
-        wait(NULL);
+        lists->exit_status = wait(NULL);
     }
 }
 

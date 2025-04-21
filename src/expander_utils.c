@@ -7,7 +7,7 @@ int handle_variable(t_token **list, char *token, int *i)
     t_token *node;
 
     j = *i + 1;
-    while (token[j] && (ft_isalnum(token[j]) || token[j] == '_'))
+    while ((token[j] && (ft_isalnum(token[j]) || token[j] == '_')) || token[j] == '?')
         j++;
     if (j > *i)
     {

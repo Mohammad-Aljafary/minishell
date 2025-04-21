@@ -60,15 +60,32 @@ char    *search_env(t_env *env, char *key)
     }
 } */ 
 
-int    replace_num(char **token, char *argv)
+int    replace_num(char **token, char *minishell_file)
 {
     char    *temp;
     char    *joined;
 
     if ((*token)[1] == '0')
-        temp = ft_strdup(argv);
+        temp = ft_strdup(minishell_file);
     else
         temp = ft_strdup("");
+    if(!temp)
+        return (0);
+    joined = ft_strjoin(temp, *token + 2);
+    free(temp);
+    if (!joined)
+        return (0);
+    free(*token);
+    *token = joined;
+    return (1);
+}
+
+int     replace_exit_status(char **token, int exit_status)
+{
+    char    *temp;
+    char    *joined;
+
+    temp = ft_itoa(exit_status);
     if(!temp)
         return (0);
     joined = ft_strjoin(temp, *token + 2);
@@ -104,7 +121,7 @@ int replace_env (t_token *p, t_env *envp, int *i, int *j)
     return (1);
 }
 
-int replace(t_token *p, t_env *envp, char *argv)
+int replace(t_token *p, t_env *envp, char *argv, int exit_status)
 {
     int i;
     int j;
@@ -122,6 +139,13 @@ int replace(t_token *p, t_env *envp, char *argv)
             if (p->word[i] == '$')
             {
                 j = i + 1;
+                if (p->word[j] == '?')
+                {
+                    if (!replace_exit_status(&p->word, exit_status))
+                        return (0);
+                    p->expaneded = 1;
+                    break;
+                }
                 if (ft_isdigit(p->word[j]))
                 {
                     if (!replace_num(&p->word, argv))
@@ -129,7 +153,7 @@ int replace(t_token *p, t_env *envp, char *argv)
                     p->expaneded = 1;
                     break;
                 }
-                while (p->word[j] || p->word[j] == '_')
+                while (p->word[j] && (ft_isalnum(p->word[j]) || p->word[j] == '_'))
                     j++;
                 if (j == i + 1)
                 {
@@ -314,7 +338,7 @@ int remove_quotes(char **line1)
     return (1);
 }
 
-int    expander(t_token **tok_lst, t_env *env_lst, char *argv)
+int    expander(t_token **tok_lst, t_env *env_lst, char *argv, int exit_status)
 {
     t_token *p;
     t_token *head;
@@ -335,7 +359,7 @@ int    expander(t_token **tok_lst, t_env *env_lst, char *argv)
         }
         if (!break_string(&p, head->word))
             return (0);
-        if (!replace(p, env_lst, argv))
+        if (!replace(p, env_lst, argv, exit_status))
             return (free_return(&p));
         if (!join_strings(p, &head->word, head))
             return (free_return(&p));

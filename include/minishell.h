@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/21 08:52:52 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/21 10:59:01 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ void 			ft_echo(t_token *args);
 \********************** Expander *****************************\
 \*************************************************************/
 char    		*search_env(t_env *env, char *key);
-int    			expander(t_token **tok_lst, t_env *env_lst, char *argv);
+int    			expander(t_token **tok_lst, t_env *env_lst, char *argv, int exit_status);
 int 			break_string(t_token **list, char *token);
 
 /**************************************************************\
