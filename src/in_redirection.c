@@ -1,12 +1,15 @@
 # include <minishell.h>
 
-int redirect_in(int in_fd, int *origin_in)
+int redirect_in(int in_fd, int *origin_in, int in_child)
 {
-    *origin_in = dup(STDIN_FILENO);
-    if (*origin_in == -1)
+    if (!in_child)
     {
-        perror("dup_out fail");
-        return (1);
+        *origin_in = dup(STDIN_FILENO);
+        if (*origin_in == -1)
+        {
+            perror("dup_out fail");
+            return (1);
+        }
     }
     if (dup2(in_fd, STDIN_FILENO) == -1)
     {

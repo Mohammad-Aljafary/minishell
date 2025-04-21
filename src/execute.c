@@ -1,6 +1,6 @@
 #include <minishell.h>
 
-int apply_redirection(t_token **next_node, t_token *node)
+int apply_redirection(t_token **next_node, t_token *node, int in_child)
 {
     while (*next_node && (*next_node)->type != pipes)
     {
@@ -23,10 +23,10 @@ int apply_redirection(t_token **next_node, t_token *node)
             *next_node = (*next_node)->next;
     }
     if (node->out_fd > 1)
-        if (redirect_out(node->out_fd, &node->origin_out))
+        if (redirect_out(node->out_fd, &node->origin_out, in_child))
             return (1);
     if (node->in_fd > 0)
-        if (redirect_in(node->in_fd, &node->origin_in))
+        if (redirect_in(node->in_fd, &node->origin_in, in_child))
             return (1);
     return (0);
 }
@@ -36,12 +36,6 @@ void retrieve(t_token *cmd)
     if (cmd->origin_in != -1)
     {
         if (dup2(cmd->origin_in, STDIN_FILENO) == -1)
-            perror("dup2_retrieve_input");
-        close(cmd->origin_in);
-        cmd->origin_in = -1;
-    }
-    if (cmd->in_fd != STDIN_FILENO && cmd->in_fd > 0)
-    {
         close(cmd->in_fd);
         cmd->in_fd = STDIN_FILENO;
     }
@@ -88,19 +82,19 @@ void retrieve(t_token *cmd)
     return (0);
 } */
 
-void    execute_command(t_token *cmd, t_all *all, int *exit_status)
+void    execute_command(t_token *cmd, t_all *all, int *exit_status, t_token *node)
 {
 /*     if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes))
         run_built_in(cmd, exit_status, env, 0);
     else */
-        execute_external(cmd, exit_status, all);
+        execute_external(cmd, exit_status, all, node);
 }
 
 int apply_in_pipe(int fd[2], t_token *cmd)
 {
     if (cmd->prev && cmd->prev->type == pipes)
     {
-        if (redirect_in(fd[0], &cmd->origin_in))
+        if (redirect_in(fd[0], &cmd->origin_in, 0))
             return (1); 
     }
     return (0);
@@ -116,7 +110,7 @@ int apply_out_pipe(int fd[2], t_token *cmd, t_all *all)
     }
     if (cmd->out_fd == 1)
     {
-        if (redirect_out(fd[1], &cmd->origin_out))
+        if (redirect_out(fd[1], &cmd->origin_out, 0))
             return (1);
         return (0);
     }
@@ -140,8 +134,7 @@ void    execute(t_all *lists)
         {
             cmd = node;
             node = node->next;
-            lists->exit_status = apply_in_pipe(pipefd, cmd);
-            lists->exit_status = apply_redirection(&node, cmd);
+           // lists->exit_status = apply_in_pipe(pipefd, cmd);
             if (lists->exit_status)
             {
                 while (node && node->type != pipes)
@@ -149,9 +142,9 @@ void    execute(t_all *lists)
                 retrieve(cmd);
                 continue;
             }
-            if (node && node->type == pipes)
-                apply_out_pipe(pipefd, cmd, lists);
-            execute_command(cmd, lists, &lists->exit_status);
+/*             if (node && node->type == pipes)
+                apply_out_pipe(pipefd, cmd, lists); */
+            execute_command(cmd, lists, &lists->exit_status, node);
             retrieve(cmd);
         }
         else

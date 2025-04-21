@@ -192,7 +192,7 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
     }
 }
 
-void    execute_external(t_token *cmd, int *exit_status, t_all *all)
+void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node)
 {
     pid_t id;
 
@@ -205,6 +205,12 @@ void    execute_external(t_token *cmd, int *exit_status, t_all *all)
     }
     else if (id == 0)
     {
+        *exit_status = apply_redirection(&node, cmd, 1);
+        if (*exit_status != 0)
+        {
+            clear_all(all);
+            exit (*exit_status);
+        }
       /*   if (is_built_in(cmd))
             run_built_in(cmd, exit_status, env, 1);
         else */

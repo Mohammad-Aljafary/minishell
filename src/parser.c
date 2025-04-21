@@ -44,8 +44,8 @@ void set_command_or_args(t_token *lst)
         lst->type = delimiter;
     else if (lst->prev->type == file || lst->prev->type == delimiter)
     {
-        p = lst;
-        while (p)
+        p = lst->prev;
+        while (p && p->type != pipes)
         {
             if (p->type == command)
             {
@@ -57,6 +57,7 @@ void set_command_or_args(t_token *lst)
         lst->type = command;
     }
 }
+
 
 void parser(t_token **list)
 {
@@ -88,7 +89,7 @@ int syntax_error(t_token *list)
     lst = list;
     while (lst->next) 
     {
-        if (check_type(lst) != not_defined && check_type(lst->next) != not_defined)
+        if (check_type(lst) != not_defined && check_type(lst->next) != not_defined && lst->type != pipes)
         {
             ft_fprintf(2, "syntax error near unexpected token `%s'\n", lst->next->word);
             return (1);

@@ -12,13 +12,16 @@ int check_ambigious (t_token *node)
     return (0);
 }
 
-int redirect_out(int out_fd, int *origin_out)
+int redirect_out(int out_fd, int *origin_out, int in_child)
 {
-    *origin_out = dup(STDOUT_FILENO);
-    if (*origin_out == -1)
+    if (!in_child)
     {
-        perror("dup_out fail");
-        return (1);
+        *origin_out = dup(STDOUT_FILENO);
+        if (*origin_out == -1)
+        {
+            perror("dup_out fail");
+            return (1);
+        }
     }
     if (dup2(out_fd, STDOUT_FILENO) == -1)
     {

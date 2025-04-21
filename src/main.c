@@ -10,6 +10,14 @@ void	print_env(char **env)
 	}
 }
 
+void	increment_shlvl(t_env *envp)
+{
+	char	*shlvl;
+
+	shlvl = search_env(envp, "SHLVL");
+	if(!shlvl)
+} 
+
 int	main (int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -21,6 +29,7 @@ int	main (int argc, char **argv, char **envp)
 	all.exit_status = 0;
 	create_list_env(&all.env_lst, envp);
 	env(all.env_lst);
+	increment_shlvl(all.env_lst);
 	while (1)
 	{
 		line = readline("minishell> ");

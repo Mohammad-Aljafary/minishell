@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/19 11:59:01 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/04/21 08:52:52 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,11 +131,12 @@ int 			join_args(t_token *node);
 void			delete_token(t_token **list, t_type type, int flag);
 int 			apply_re_out(t_token **re_node, t_token *command, int flag);
 int 			apply_re_in(t_token **re_token, t_token *command);
-int 			redirect_out(int out_fd, int *origin_out);
-int 			redirect_in(int in_fd, int *origin_in);
+int 			redirect_out(int out_fd, int *origin_out, int in_child);
+int 			redirect_in(int in_fd, int *origin_in, int in_child);
 int 			check_ambigious (t_token *node);
+int 			apply_redirection(t_token **next_node, t_token *node, int in_child);
 void 			retrieve(t_token *cmd);
 void			run_built_in(t_token *cmd, int *exit_status, t_env *env, int in_child);
 int				is_built_in(t_token *cmd);
-void    		execute_external(t_token *cmd, int *exit_status, t_all *all);
+void    		execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node);
 #endif
