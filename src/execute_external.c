@@ -216,4 +216,6 @@ void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *no
         else */
             run_external(cmd, exit_status, all);
     }
+    all->last_pid = id;
+    all->num_of_child++;
 }

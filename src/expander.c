@@ -145,7 +145,7 @@ int replace(t_token *p, t_env *envp, char *argv, int exit_status)
                         return (0);
                     p->expaneded = 1;
                     break;
-                }
+                } 
                 if (ft_isdigit(p->word[j]))
                 {
                     if (!replace_num(&p->word, argv))

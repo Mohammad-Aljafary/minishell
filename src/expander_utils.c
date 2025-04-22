@@ -2,7 +2,7 @@
 
 int handle_variable(t_token **list, char *token, int *i)
 {
-    int j; 
+    int j;
     char *temp;
     t_token *node;
 
@@ -17,7 +17,7 @@ int handle_variable(t_token **list, char *token, int *i)
         node = create(temp);
         if (!node)
         {
-            free (temp);
+            free(temp);
             return (0);
         }
         add_back(list, node);
@@ -84,7 +84,6 @@ int handle_double_utile(t_token **list, char *token, int length, int *i)
     char    *temp;
     t_token *node;
 
-    temp = NULL;
     node = NULL;
     temp = ft_substr(token, *i, length);
     if (!temp)
@@ -103,7 +102,7 @@ int handle_double_quotes(t_token **list, char *token, int *i)
 {
     int j;
 
-    j = ++*i;
+    j = ++(*i);
     while (token[j] && token[j] != '"')
     {
         if (token[j] == '$')
@@ -113,7 +112,8 @@ int handle_double_quotes(t_token **list, char *token, int *i)
                 if (!handle_double_utile(list, token, j - *i, i))
                     return (0);
             }
-            handle_variable(list, token, &j);
+            if (!handle_variable(list, token, &j))
+                return (0);
             *i = j;
             continue;
         }

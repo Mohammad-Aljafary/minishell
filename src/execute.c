@@ -118,6 +118,25 @@ int apply_out_pipe(int fd[2], t_token *cmd, t_all *all)
     return (0);
 }
 
+void    wait_status(t_all *wait_statuss)
+{
+    int status;
+    pid_t pid;
+
+    while (wait_statuss->num_of_child)
+    {
+        pid = waitpid(-1, &status, 0);
+        if (pid == wait_statuss->last_pid)
+        {
+            if (WIFEXITED(status))
+                wait_statuss->exit_status = WEXITSTATUS(status);
+            else
+                wait_statuss->exit_status = 1;
+        }
+        wait_statuss->num_of_child--;
+    }
+}
+
 void    execute(t_all *lists)
 {
     t_token *node;
@@ -148,7 +167,8 @@ void    execute(t_all *lists)
         {
             node = node->next;
         }
-        lists->exit_status = wait(NULL);
+        wait(NULL);
+        //wait_status(lists);
     }
 }
 

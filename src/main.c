@@ -48,8 +48,9 @@ int	main (int argc, char **argv, char **envp)
 	all.tok_lst = NULL;
 	all.env_lst = NULL;
 	all.exit_status = 0;
+	all.num_of_child = 0;
+	all.last_pid = 0;
 	create_list_env(&all.env_lst, envp);
-	env(all.env_lst);
 	increment_shlvl(all.env_lst);
 	while (1)
 	{

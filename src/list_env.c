@@ -132,18 +132,6 @@ void create_list_env(t_env **list, char **envp)
     }
 }
 
-void env(t_env *list)
-{
-    while (list)
-    {
-        if (list->value)
-            printf("%s=%s\n", list->key, list->value);
-        else
-            printf("%s=\n", list->key);
-        list = list->next;
-    }
-}
-
 void print_env_export(t_env *list)
 {
     while (list)

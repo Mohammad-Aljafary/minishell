@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/21 10:59:01 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/04/22 18:12:22 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ typedef struct s_all
 	t_token	*tok_lst;
 	t_env	*env_lst;
 	int		exit_status;
+	int		num_of_child;
+	pid_t	last_pid;
 }	t_all;
 
 /************************************************************\
@@ -86,7 +88,6 @@ void				clear_list(t_token **list);
 void				print_list(t_token *list);
 void    			create_list_env(t_env **list, char **envp);
 void				add_back_env(t_env **list, t_env *node);
-void				env(t_env *list);
 void 				print_env_export(t_env *list);
 void    			clear_list_env(t_env **list);
 void    			clear_all(t_all *all);
@@ -105,16 +106,6 @@ int    			syntax_error(t_token *list);
 int				is_whitespace(char c);
 int 			check_redirection(t_token *list);
 void 			move_command_to_front(t_token **head);
-
-/*************************************************************\
-\***************** BUILT INS COMMANDS ************************\
-\*************************************************************/
-int				pwd();
-int 			cd(char *path, t_env **env);
-void			exits(char *str);
-void     		unset(char *str, t_env **env);
-int				export(t_token *str, t_env **env);
-void 			ft_echo(t_token *args);
 
 /*************************************************************\
 \********************** Expander *****************************\
@@ -139,4 +130,14 @@ void 			retrieve(t_token *cmd);
 void			run_built_in(t_token *cmd, int *exit_status, t_env *env, int in_child);
 int				is_built_in(t_token *cmd);
 void    		execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node);
+
+/**************************************************************\
+\*********************** Built-ins ****************************\
+\**************************************************************/
+int				count_args(char **args);
+int				ft_cd(t_token *cmd, t_env **env);
+int				pwd(void);
+int				ft_exits(t_token *cmd);
+int				ft_env(t_token *cmd, t_env *list);
+int				ft_echo(t_token *cmd);
 #endif
