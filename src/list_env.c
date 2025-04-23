@@ -1,7 +1,6 @@
-
 #include <minishell.h>
 
-t_env *create_node_env(char *key, char *value)
+t_env   *create_node_env(char *key, char *value)
 {
     t_env *node;
 
@@ -10,16 +9,21 @@ t_env *create_node_env(char *key, char *value)
         return (NULL);
     if (key)
         node->key = ft_strdup(key);
-    else
-        node->key = ft_strdup("");
     if (!node->key)
+    {
+        free(node);
         return (NULL);
+    }
     if (value)
         node->value = ft_strdup(value);
     else
         node->value = ft_strdup("");
     if (!node->value)
+    {
+        free (key);
+        free (node);
         return (NULL);
+    }
     node->next = NULL;
     return (node);
 }
@@ -104,7 +108,7 @@ void    delete_node_env(t_env **list, char *key)
     }
 }
 
-void create_list_env(t_env **list, char **envp)
+void    create_list_env(t_env **list, char **envp)
 {
     int     i;
     char    **str;
@@ -132,14 +136,23 @@ void create_list_env(t_env **list, char **envp)
     }
 }
 
-void print_env_export(t_env *list)
+void    create_list_exp(t_env *env, t_env **exp)
 {
-    while (list)
+    t_env   *node;
+
+    node = NULL;
+    while (env)
     {
-        if (list->value)
-            printf("declare -x %s=%s\n", list->key, list->value);
+        if (env->value)
+            node = create_node_env(env->key, env->value);
         else
-            printf("%s=\n", list->key);
-        list = list->next;
+            node = create_node_env(env->key, "");
+        if (!node)
+        {
+            clear_list_env(exp);
+            return ;
+        }
+        add_back_env(exp, node);
+        env = env->next;
     }
 }

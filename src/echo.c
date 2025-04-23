@@ -9,11 +9,12 @@ int    ft_echo(t_token *cmd)
     ne = 1;
     i = 1;
     j = 2;
-    if (cmd && ft_strncmp(cmd->args[2], "-n", 2) == 0)
+    if (cmd && cmd->args[i] && (ft_strncmp(cmd->args[i], "-n", 2) == 0 
+        || ft_strncmp(cmd->args[i], "-en", 3) == 0))
     {
-        while (cmd->args[2][j] == 'n' || cmd->args[2][j] == 'e')
+        while (cmd->args[i][j] && (cmd->args[i][j] == 'n' || cmd->args[i][j] == 'e'))
             j++;
-        if (cmd->args[2][j] == '\0')
+        if (cmd->args[i][j] == '\0')
         {
             ne = 0;
             i = 2;

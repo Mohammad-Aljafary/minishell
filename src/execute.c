@@ -84,9 +84,9 @@ void retrieve(t_token *cmd)
 
 void    execute_command(t_token *cmd, t_all *all, int *exit_status, t_token *node)
 {
-/*     if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes))
-        run_built_in(cmd, exit_status, env, 0);
-    else */
+    if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes))
+        run_built_in(cmd, exit_status, all, 0);
+    else 
         execute_external(cmd, exit_status, all, node);
 }
 
@@ -151,13 +151,13 @@ void    execute(t_all *lists)
             cmd = node;
             node = node->next;
            // lists->exit_status = apply_in_pipe(pipefd, cmd);
-            if (lists->exit_status)
-            {
-                while (node && node->type != pipes)
-                    node = node->next;
-                retrieve(cmd);
-                continue;
-            }
+            // if (lists->exit_status)
+            // {
+            //     while (node && node->type != pipes)
+            //         node = node->next;
+            //     retrieve(cmd);
+            //     continue;
+            // }
 /*             if (node && node->type == pipes)
                 apply_out_pipe(pipefd, cmd, lists); */
             execute_command(cmd, lists, &lists->exit_status, node);
@@ -167,8 +167,8 @@ void    execute(t_all *lists)
         {
             node = node->next;
         }
-        wait(NULL);
-        //wait_status(lists);
+        //wait(NULL);
     }
+    wait_status(lists);
 }
 

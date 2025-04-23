@@ -2,14 +2,26 @@
 
 int count_args_for_exit(t_token *cmd)
 {
-	if (count_args(cmd->args) > 2)
+	if (args_count(cmd->args) > 2)
 	{
 		ft_fprintf(2, "exit: too many arguments\n");
 		return (1);
 	}
 	return(0);
 }
-int	ft_exits(t_token *cmd)
+
+void	normalize_n (int *n, char *arg, int *i)
+{
+	*n = ft_atoi(arg);
+	if (*n < 0)
+		*i = 1;
+	while (*n >= 256)
+		*n = *n - 256;
+	while (*n < 0)
+		*n = *n + 256;
+}
+
+int	ft_exits(t_token *cmd, t_all *all)
 {
 	int	n;
 	int	i;
@@ -17,23 +29,23 @@ int	ft_exits(t_token *cmd)
 	i = 0;
 	printf("exit\n");
 	if (count_args_for_exit(cmd))
-		return (1);
-	n = ft_atoi(cmd->args[1]);
-	if (n < 0)
-		i = 1;
+		return (EXIT_FAILURE);
+	if (!cmd->args[1])
+	{
+		clear_all(all);
+		exit(EXIT_SUCCESS);
+	}
+	normalize_n (&n, cmd->args[1], &i);
 	while (cmd->args[1][i])
 	{
 		if (!ft_isdigit(cmd->args[1][i]))
 		{
 			ft_fprintf(2, "%s: numeric argument required\n", cmd->args[1]);
-			return (2);
+			clear_all(all);
+			exit (2);
 		}
 		i++;
 	}
-	while (n >= 256)
-		n = n - 256;
-	while (n < 0)
-		n = n + 256;
-	exit(n);
-	return (0);
+	clear_all(all);
+	exit (n);
 }

@@ -1,6 +1,6 @@
 # include <minishell.h>
 
-int unset(t_token *cmd, t_env **env)
+int ft_unset(t_token *cmd, t_env **env, t_env **exp)
 {
 	int	i;
 
@@ -8,6 +8,7 @@ int unset(t_token *cmd, t_env **env)
 	while (cmd->args[i])
 	{
 		delete_node_env(env, cmd->args[i]);
+		delete_node_env(exp, cmd->args[i]);
 		i++;
 	}
 	return (0);

@@ -56,7 +56,7 @@ char    *find_cmd_path(t_token *cmd, int *exit_status, t_all *all)
     path = search_env(all->env_lst, "PATH");
     if(!path)
     {
-        ft_fprintf(2, "%s: No such file or directory1\n", cmd->word);
+        ft_fprintf(2, "%s: No such file or directory\n", cmd->word);
         return (NULL);
     }
     splitted_path = ft_split(path, ':');
@@ -182,21 +182,22 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
         clear_all(all);
         exit (*exit_status);
     }
-    if (execve(path, cmd->args, envp) == -1)
-    {
-        perror("execve");
-        free (path);
-        ft_free_split(envp);
-        clear_all(all);
-        exit (EXIT_FAILURE);
-    }
+    execve(path, cmd->args, envp);
+    perror("execve");
+    free (path);
+    ft_free_split(envp);
+    clear_all(all);
+    exit (EXIT_FAILURE);
 }
 
 void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node)
 {
     pid_t id;
 
+
     id = fork();
+    
+
     if(id == -1)
     {
         perror("fork failure");
@@ -211,9 +212,9 @@ void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *no
             clear_all(all);
             exit (*exit_status);
         }
-      /*   if (is_built_in(cmd))
-            run_built_in(cmd, exit_status, env, 1);
-        else */
+        if (is_built_in(cmd))
+            run_built_in(cmd, exit_status, all, 1);
+        else
             run_external(cmd, exit_status, all);
     }
     all->last_pid = id;

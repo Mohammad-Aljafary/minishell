@@ -2,7 +2,7 @@
 
 int    ft_env(t_token *cmd, t_env *list)
 {
-    if (count_args(cmd->args) > 1)
+    if (args_count(cmd->args) > 1)
     {
         ft_fprintf(2, "env: ‘%s’: No such file or directory\n", cmd->args[1]);
         return (127);

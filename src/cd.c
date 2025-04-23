@@ -2,7 +2,7 @@
 
 int	check_cd_args(t_token *cmd)
 {
-	if (count_args(cmd->args) > 2)
+	if (args_count(cmd->args) > 2)
 	{
 		ft_fprintf(2, "cd: too many arguments\n");
 		return (1);

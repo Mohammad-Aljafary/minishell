@@ -45,12 +45,9 @@ int	main (int argc, char **argv, char **envp)
 	t_all	all;
 	
 	(void)argc;
-	all.tok_lst = NULL;
-	all.env_lst = NULL;
-	all.exit_status = 0;
-	all.num_of_child = 0;
-	all.last_pid = 0;
+	ft_bzero(&all, sizeof(all));
 	create_list_env(&all.env_lst, envp);
+	create_list_exp(all.env_lst, &all.exp_lst);
 	increment_shlvl(all.env_lst);
 	while (1)
 	{
@@ -89,7 +86,9 @@ int	main (int argc, char **argv, char **envp)
 		delete_token(&all.tok_lst, args, 1);
 		move_command_to_front(&all.tok_lst);
 		execute (&all);
+#ifdef DEBUG
 		print_list(all.tok_lst);
+#endif
 		clear_list(&all.tok_lst);
 		free(line);
 	}
