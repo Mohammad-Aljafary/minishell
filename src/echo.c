@@ -22,7 +22,6 @@ int    ft_echo(t_token *cmd)
     }
     while (cmd->args[i])
         printf("%s ", cmd->args[i++]);
-    printf("\b");
     if (ne == 1)
         printf("\n");
     return (0);

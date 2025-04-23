@@ -84,7 +84,7 @@ void retrieve(t_token *cmd)
 
 void    execute_command(t_token *cmd, t_all *all, int *exit_status, t_token *node, t_token *search)
 {
-    if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes) && !(search && search->type != pipes))
+    if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes) && !(search && search->type == pipes))
         run_built_in(cmd, exit_status, all, 0);
     else 
         execute_external(cmd, exit_status, all, node);
@@ -153,7 +153,7 @@ void    execute(t_all *lists)
             cmd = node;
             node = node->next;
             search = node;
-            while (search && search->type != pipes)
+            while (search && search->type != pipes) 
                 search = search->next;
             if (!search)
                 lists->exit_status = apply_redirection(&search, cmd, 0);
