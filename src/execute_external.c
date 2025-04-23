@@ -196,8 +196,6 @@ void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *no
 
 
     id = fork();
-    
-
     if(id == -1)
     {
         perror("fork failure");
@@ -206,6 +204,7 @@ void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *no
     }
     else if (id == 0)
     {
+        printf ("hiiiiiiiiiiiiiiiiiii\n");
         *exit_status = apply_redirection(&node, cmd, 1);
         if (*exit_status != 0)
         {

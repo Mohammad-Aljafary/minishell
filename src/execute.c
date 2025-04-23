@@ -82,9 +82,9 @@ void retrieve(t_token *cmd)
     return (0);
 } */
 
-void    execute_command(t_token *cmd, t_all *all, int *exit_status, t_token *node)
+void    execute_command(t_token *cmd, t_all *all, int *exit_status, t_token *node, t_token *search)
 {
-    if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes))
+    if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes) && !(search && search->type != pipes))
         run_built_in(cmd, exit_status, all, 0);
     else 
         execute_external(cmd, exit_status, all, node);
@@ -141,33 +141,32 @@ void    execute(t_all *lists)
 {
     t_token *node;
     t_token *cmd;
+    t_token *search;
 
     node = lists->tok_lst;
     cmd = NULL;
+    search = NULL;
     while (node)
     {
         if (node->type == command)
         {
             cmd = node;
             node = node->next;
-           // lists->exit_status = apply_in_pipe(pipefd, cmd);
-            // if (lists->exit_status)
-            // {
-            //     while (node && node->type != pipes)
-            //         node = node->next;
-            //     retrieve(cmd);
-            //     continue;
-            // }
-/*             if (node && node->type == pipes)
-                apply_out_pipe(pipefd, cmd, lists); */
-            execute_command(cmd, lists, &lists->exit_status, node);
+            search = node;
+            while (search && search->type != pipes)
+                search = search->next;
+            if (!search)
+                lists->exit_status = apply_redirection(&search, cmd, 0);
+            execute_command(cmd, lists, &lists->exit_status, node, search);
             retrieve(cmd);
         }
         else
         {
-            node = node->next;
+              while (node && node->type != pipes)
+                    node = node->next;
+            if (node)
+                node = node->next;
         }
-        //wait(NULL);
     }
     wait_status(lists);
 }
