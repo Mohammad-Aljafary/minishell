@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/24 09:05:25 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/24 18:28:16 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ void    			clear_all(t_all *all);
 void				delete_node_env(t_env **list, char *key);
 t_env 				*create_node_env(char *key, char *value);
 void    			add_node_env(t_env **list, t_env *node, char *key);
-int	add_node_env1(t_env **lst, char *key, char *value);
 void				add_node_token(t_token **list, t_token *prev_node, t_token *node);
 void 				delete_ptr(t_token **list, t_token *lst);
 void    			create_list_exp(t_env *env, t_env **exp);
@@ -127,12 +126,13 @@ int 			apply_re_in(t_token **re_token, t_token *command);
 int 			redirect_out(int out_fd, int *origin_out, int in_child);
 int 			redirect_in(int in_fd, int *origin_in, int in_child);
 int 			check_ambigious (t_token *node);
-int 			apply_redirection(t_token **next_node, t_token *node, int in_child);
+int				apply_redirection(t_token **next_node, t_token *node, int in_child, int re_alone);
 void 			retrieve(t_token *cmd);
 void			run_built_in(t_token *cmd, int *exit_status, t_all *all, int in_child);
 int				is_built_in(t_token *cmd);
-void    		execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node);
-
+void			execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node, int fd[2]);
+int apply_out_pipe(int fd[2], t_token *cmd);
+int apply_in_pipe(int fd[2], t_token *cmd);
 /**************************************************************\
 \*********************** Built-ins ****************************\
 \**************************************************************/

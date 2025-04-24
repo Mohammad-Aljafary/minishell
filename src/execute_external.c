@@ -190,10 +190,9 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
     exit (EXIT_FAILURE);
 }
 
-void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node)
+void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node, int fd[2])
 {
     pid_t id;
-
 
     id = fork();
     if(id == -1)
@@ -205,17 +204,36 @@ void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *no
     else if (id == 0)
     {
         printf ("hiiiiiiiiiiiiiiiiiii\n");
-        *exit_status = apply_redirection(&node, cmd, 1);
+        if (cmd->prev && cmd->prev->type == pipes)
+        {
+            apply_in_pipe(fd, cmd);
+        } 
+        *exit_status = apply_redirection(&node, cmd, 1, 1);
         if (*exit_status != 0)
         {
             clear_all(all);
             exit (*exit_status);
+        }
+
+        if (node && node->type == pipes)
+        {
+            apply_out_pipe(fd, cmd);
         }
         if (is_built_in(cmd))
             run_built_in(cmd, exit_status, all, 1);
         else
             run_external(cmd, exit_status, all);
     }
+        if (fd[0] != -1)
+        {
+            close(fd[0]);
+            fd[0] = -1;
+        }
+        if (fd[1] != -1)
+        {
+            close(fd[1]);
+            fd[1] = -1;
+        }
     all->last_pid = id;
     all->num_of_child++;
 }

@@ -1,6 +1,6 @@
 #include <minishell.h>
 
-int apply_redirection(t_token **next_node, t_token *node, int in_child)
+int apply_redirection(t_token **next_node, t_token *node, int in_child, int re_alone)
 {
     while (*next_node && (*next_node)->type != pipes)
     {
@@ -22,12 +22,15 @@ int apply_redirection(t_token **next_node, t_token *node, int in_child)
         else
             *next_node = (*next_node)->next;
     }
-    if (node->out_fd > 1)
-        if (redirect_out(node->out_fd, &node->origin_out, in_child))
-            return (1);
-    if (node->in_fd > 0)
-        if (redirect_in(node->in_fd, &node->origin_in, in_child))
-            return (1);
+    if (re_alone)
+    {
+        if (node->out_fd > 1)
+            if (redirect_out(node->out_fd, &node->origin_out, in_child))
+                return (1);
+        if (node->in_fd > 0)
+            if (redirect_in(node->in_fd, &node->origin_in, in_child))
+                return (1);
+    }
     return (0);
 }
 
@@ -82,12 +85,12 @@ void retrieve(t_token *cmd)
     return (0);
 } */
 
-void    execute_command(t_token *cmd, t_all *all, t_token *node, t_token *search)
+void    execute_command(t_token *cmd, t_all *all, t_token *node, int fd[2])
 {
-    if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes) && !(search && search->type == pipes))
+    if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes) && fd[0] == -1 && fd[1] == -1)
         run_built_in(cmd, &all->exit_status, all, 0);
     else 
-        execute_external(cmd, &all->exit_status, all, node);
+        execute_external(cmd, &all->exit_status, all, node, fd);
 }
 
 int apply_in_pipe(int fd[2], t_token *cmd)
@@ -100,14 +103,8 @@ int apply_in_pipe(int fd[2], t_token *cmd)
     return (0);
 }
 
-int apply_out_pipe(int fd[2], t_token *cmd, t_all *all)
+int apply_out_pipe(int fd[2], t_token *cmd)
 {
-    if (pipe(fd) == -1)
-    {
-        perror("pipe");
-        clear_all(all);
-        exit(EXIT_FAILURE);
-    }
     if (cmd->out_fd == 1)
     {
         if (redirect_out(fd[1], &cmd->origin_out, 0))
@@ -139,36 +136,56 @@ void    wait_status(t_all *wait_statuss)
 
 void    execute(t_all *lists)
 {
-    t_token *node;
-    t_token *cmd;
-    t_token *search;
+    t_token *node   = lists->tok_lst;
+    t_token *cmd    = NULL;
+    t_token *search = NULL;
+    int     fd[2];
 
-    node = lists->tok_lst;
-    cmd = NULL;
-    search = NULL;
+    fd[0] = -1;
+    fd[1] = -1;
     while (node)
     {
         if (node->type == command)
         {
-            cmd = node;
-            node = node->next;
+            cmd   = node;
+            node  = node->next;
             search = node;
-            while (search && search->type != pipes) 
+            while (search && search->type != pipes)
                 search = search->next;
-            if (!search && is_built_in(cmd) && search != node 
+            if (!search
+                && is_built_in(cmd)
                 && !(cmd->prev && cmd->prev->type == pipes))
-                lists->exit_status = apply_redirection(&node, cmd, 0);
-            execute_command(cmd, lists, node, search);
+            {
+                lists->exit_status = apply_redirection(&node, cmd, 0, 1);
+            }
+            else if (search && search->type == pipes)
+            {
+                if (pipe(fd) == -1)
+                {
+                    clear_all(lists);
+                    exit (EXIT_FAILURE);
+                }
+            }
+            execute_command(cmd, lists, node, fd);
             retrieve(cmd);
+            node = search;
+            if (node && node->type == pipes)
+                node = node->next;
         }
         else
         {
-            while (node && node->type != pipes)
+            cmd = node;
+            lists->exit_status = apply_redirection(&node, cmd, 0, 0);
+            if (lists->exit_status)
+            {
                 node = node->next;
-            if (node)
-                node = node->next;
+                return ;
+            }
         }
     }
+    if (fd[0] != -1)
+        close(fd[0]);
+    if (fd[1] != -1)
+        close (fd[1]);
     wait_status(lists);
 }
-
