@@ -27,13 +27,13 @@ int	ft_exits(t_token *cmd, t_all *all)
 	int	i;
 
 	i = 0;
-	printf("exit\n");
+	ft_fprintf(2, "exit\n");
 	if (count_args_for_exit(cmd))
 		return (EXIT_FAILURE);
 	if (!cmd->args[1])
 	{
 		clear_all(all);
-		exit(EXIT_SUCCESS);
+		exit(all->exit_status);
 	}
 	normalize_n (&n, cmd->args[1], &i);
 	while (cmd->args[1][i])

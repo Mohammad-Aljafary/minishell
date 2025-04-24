@@ -19,14 +19,14 @@ int	check_valid_arg(char *arg)
 	i = 0;
 	if (!ft_isalpha(arg[i]) && arg[i] != '_')
 	{
-		ft_fprintf(2, "export: `%s': not a valid identifier\n", arg);
+		ft_fprintf(2, "export: `%s': 1not a valid identifier\n", arg);
 		return (1);
 	}
-	while (arg[i])
+	while (arg[i] && arg[i] != '=')
 	{
-		if (!ft_isalnum(arg[i]) && arg[i] != '_' && arg[i] != '=')
+		if (!ft_isalnum(arg[i]) && arg[i] != '_')
 		{
-			ft_fprintf(2, "export: `%s': not a valid identifier\n", arg);
+			ft_fprintf(2, "export: `%s': 2not a valid identifier\n", arg);
 			return (1);
 		}
 		i++;
@@ -47,7 +47,10 @@ int	split_key_value(char *arg, t_env **env, t_env **exp)
 	key = ft_substr(arg, 0, equal - arg);
 	if (!key)
 		return (1);
-	value = ft_strdup(equal + 1);
+	if (equal + 1)
+		value = ft_strdup(equal + 1);
+	else
+		value = ft_strdup("");
 	if (!value)
 	{
 		free(key);

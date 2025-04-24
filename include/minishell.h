@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/23 17:20:29 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/04/24 09:05:25 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ void    			clear_all(t_all *all);
 void				delete_node_env(t_env **list, char *key);
 t_env 				*create_node_env(char *key, char *value);
 void    			add_node_env(t_env **list, t_env *node, char *key);
+int	add_node_env1(t_env **lst, char *key, char *value);
 void				add_node_token(t_token **list, t_token *prev_node, t_token *node);
 void 				delete_ptr(t_token **list, t_token *lst);
 void    			create_list_exp(t_env *env, t_env **exp);

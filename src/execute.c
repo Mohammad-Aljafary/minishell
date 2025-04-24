@@ -82,12 +82,12 @@ void retrieve(t_token *cmd)
     return (0);
 } */
 
-void    execute_command(t_token *cmd, t_all *all, int *exit_status, t_token *node, t_token *search)
+void    execute_command(t_token *cmd, t_all *all, t_token *node, t_token *search)
 {
     if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes) && !(search && search->type == pipes))
-        run_built_in(cmd, exit_status, all, 0);
+        run_built_in(cmd, &all->exit_status, all, 0);
     else 
-        execute_external(cmd, exit_status, all, node);
+        execute_external(cmd, &all->exit_status, all, node);
 }
 
 int apply_in_pipe(int fd[2], t_token *cmd)
@@ -155,15 +155,16 @@ void    execute(t_all *lists)
             search = node;
             while (search && search->type != pipes) 
                 search = search->next;
-            if (!search)
-                lists->exit_status = apply_redirection(&search, cmd, 0);
-            execute_command(cmd, lists, &lists->exit_status, node, search);
+            if (!search && is_built_in(cmd) && search != node 
+                && !(cmd->prev && cmd->prev->type == pipes))
+                lists->exit_status = apply_redirection(&node, cmd, 0);
+            execute_command(cmd, lists, node, search);
             retrieve(cmd);
         }
         else
         {
-              while (node && node->type != pipes)
-                    node = node->next;
+            while (node && node->type != pipes)
+                node = node->next;
             if (node)
                 node = node->next;
         }
