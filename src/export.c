@@ -12,6 +12,17 @@ void	print_export_list(t_env *exp)
 	}
 }
 
+void	free_env_node(t_env *node)
+{
+	if (!node)
+		return;
+	if (node->key)
+		free(node->key);
+	if (node->value)
+		free(node->value);
+	free(node);
+}
+
 int	check_valid_arg(char *arg)
 {
 	int	i;
@@ -34,12 +45,33 @@ int	check_valid_arg(char *arg)
 	return (0);
 }
 
+int	add_to_export(char **key, char **value,t_env **env, t_env **exp)
+{
+	t_env	*node1;
+	t_env	*node2;
+
+	node1 = create_node_env(*key, *value);
+	node2 = create_node_env(*key, *value);
+	free(*key);
+	free(*value);
+	if (!node1 || !node2)
+	{
+		if (node1)
+			free_env_node(node1);
+		if (node2)
+			free_env_node(node2);
+		return (1);
+	}
+	add_node_env(env, node1, node1->key);
+	add_node_env(exp, node2, node2->key);
+	return (0);
+}
+
 int	split_key_value(char *arg, t_env **env, t_env **exp)
 {
 	char	*equal;
 	char	*key;
 	char	*value;
-	t_env	*node;
 
 	equal = ft_strchr(arg, '=');
 	if (!equal)
@@ -47,8 +79,8 @@ int	split_key_value(char *arg, t_env **env, t_env **exp)
 	key = ft_substr(arg, 0, equal - arg);
 	if (!key)
 		return (1);
-	if (equal + 1)
-		value = ft_strdup(equal + 1);
+	if (*(++equal) != '\0')
+		value = ft_strdup(equal);
 	else
 		value = ft_strdup("");
 	if (!value)
@@ -56,13 +88,8 @@ int	split_key_value(char *arg, t_env **env, t_env **exp)
 		free(key);
 		return (1);
 	}
-	node = create_node_env(key, value);
-	free(key);
-	free(value);
-	if (!node)
+	if(add_to_export(&key, &value, env, exp))
 		return (1);
-	add_node_env(env, node, node->key);
-	add_node_env(exp, node, node->key);
 	return (0);
 }
 
