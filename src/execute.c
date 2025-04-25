@@ -141,7 +141,7 @@ void    execute(t_all *lists)
     t_token *cmd    = NULL;
     t_token *search = NULL;
     int     fd[2];
-    int prev_fd = -1;
+    int     prev_fd = -1;
 
     fd[0] = -1;
     fd[1] = -1;

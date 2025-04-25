@@ -34,7 +34,10 @@ int open_in (char *file, int *in_fd)
 int apply_re_in(t_token **re_token, t_token *command)
 {
     if (!(*re_token)->next)
+    {
+        ft_fprintf(2, "%s: ambiguous redirect\n", (*re_token)->word);
         return (1);
+    }
     if (!check_ambigious((*re_token)->next))
     {
         ft_fprintf(2, "%s: ambiguous redirect\n", (*re_token)->next->word);

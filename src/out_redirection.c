@@ -49,7 +49,10 @@ int open_file(char *file, int *out_fd, int flag)
 int apply_re_out(t_token **re_node, t_token *command, int flag)
 {
     if (!(*re_node)->next)
+    {
+        ft_fprintf(2, "%s: ambiguous redirect\n", (*re_node)->word);
         return (1);
+    }
     if (!check_ambigious((*re_node)->next))
     {
         ft_fprintf(2, "%s: ambiguous redirect\n", (*re_node)->next->word);
