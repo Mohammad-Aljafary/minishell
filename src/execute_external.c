@@ -190,7 +190,7 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
     exit (EXIT_FAILURE);
 }
 
-void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node, int fd[2])
+void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node, int fd[2], int *prev)
 {
     pid_t id;
 
@@ -204,36 +204,34 @@ void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *no
     else if (id == 0)
     {
         printf ("hiiiiiiiiiiiiiiiiiii\n");
-        if (cmd->prev && cmd->prev->type == pipes)
+        if (*prev != -1)
         {
-            apply_in_pipe(fd, cmd);
-        } 
+            dup2(*prev, STDIN_FILENO);
+            close(*prev);
+        }
+        if (fd[1] != -1)
+        {
+            dup2(fd[1], STDOUT_FILENO);
+            close(fd[1]);
+        }
+        if (fd[0] != -1)
+            close(fd[0]);
         *exit_status = apply_redirection(&node, cmd, 1, 1);
         if (*exit_status != 0)
         {
             clear_all(all);
             exit (*exit_status);
         }
-
-        if (node && node->type == pipes)
-        {
-            apply_out_pipe(fd, cmd);
-        }
         if (is_built_in(cmd))
             run_built_in(cmd, exit_status, all, 1);
         else
             run_external(cmd, exit_status, all);
     }
-        if (fd[0] != -1)
-        {
-            close(fd[0]);
-            fd[0] = -1;
-        }
-        if (fd[1] != -1)
-        {
-            close(fd[1]);
-            fd[1] = -1;
-        }
+    if (*prev != -1)
+        close(*prev); // Close the last read en  
+    if (fd[1] != -1)
+        close(fd[1]); // Close current write end in paren 
+    *prev = fd[0]; 
     all->last_pid = id;
     all->num_of_child++;
 }

@@ -54,6 +54,7 @@ int	main (int argc, char **argv, char **envp)
 		line = readline("minishell> ");
 		if (!line)
 		{
+			ft_fprintf(2, "exit\n");
 			clear_all(&all);
 			rl_clear_history();
 			break;
