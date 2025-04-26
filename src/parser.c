@@ -1,4 +1,3 @@
-
 #include<minishell.h>
 
 int check_type(t_token *list)
@@ -58,7 +57,6 @@ void set_command_or_args(t_token *lst)
     }
 }
 
-
 void parser(t_token **list)
 {
     t_token *lst;
@@ -77,29 +75,39 @@ void parser(t_token **list)
 
 int syntax_error(t_token *list)
 {
-    t_token *lst;
+    t_token *curr;
 
     if (!list)
         return (0);
-    if (check_type(list) == pipes)
+    curr = list;
+    if (check_type(curr) == pipes)
     {
-        ft_fprintf(2, "syntax error near unexpected token `%s'\n", list->word);
+        ft_fprintf(2, "syntax error near unexpected token `%s'\n", curr->word);
         return (1);
     }
-    lst = list;
-    while (lst->next) 
+    while (curr)
     {
-        if (check_type(lst) != not_defined && check_type(lst->next) != not_defined && lst->type != pipes)
+        if (check_type(curr) != not_defined)
         {
-            ft_fprintf(2, "syntax error near unexpected token `%s'\n", lst->next->word);
-            return (1);
+            if (!curr->next)
+            {
+                ft_fprintf(2, "syntax error near unexpected token `newline'\n");
+                return (1);
+            }
+            if (check_type(curr) == pipes && check_type(curr->next) == pipes)
+            {
+                ft_fprintf(2, "syntax error near unexpected token `%s'\n", curr->next->word);
+                return (1);
+            }
+            if ((check_type(curr) == out_re || check_type(curr) == in_re
+                 || check_type(curr) == appends || check_type(curr) == here_doc)
+                && (check_type(curr->next) != not_defined))
+            {
+                ft_fprintf(2, "syntax error near unexpected token `%s'\n", curr->next->word);
+                return (1);
+            }
         }
-        lst = lst->next;
-    }
-    if (check_type(lst) != not_defined)
-    {
-        ft_fprintf(2, "syntax error near unexpected token `newline'\n");
-        return (1);
+        curr = curr->next;
     }
     return (0);
 }

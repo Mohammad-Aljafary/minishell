@@ -1,0 +1,17 @@
+argc.c
+fd
+haahaha.c
+include
+libft
+ll
+Makefile
+minishell
+obj
+out
+out_1
+out1
+readline_curses.supp
+src
+src.mk
+test.c
+ttt
