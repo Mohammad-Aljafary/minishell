@@ -90,7 +90,7 @@ void    execute_command(t_token *cmd, t_all *all, t_token *node, int fd[2], int 
     if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes) && fd[0] == -1 && fd[1] == -1)
         run_built_in(cmd, &all->exit_status, all, 0);
     else 
-        execute_external(cmd, &all->exit_status, all, node, fd, prev);
+        execute_external(cmd, all, node, fd, prev);
 }
 
 int apply_in_pipe(int fd[2], t_token *cmd)
@@ -192,3 +192,5 @@ void    execute(t_all *lists)
         close (fd[1]);
     wait_status(lists);
 }
+
+

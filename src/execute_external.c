@@ -67,7 +67,10 @@ char    *find_cmd_path(t_token *cmd, int *exit_status, t_all *all)
     if (!path)
     {
         if (*exit_status == 127)
-            ft_fprintf (2, "%s: command not found\n", cmd->word);
+        {
+            write (2, cmd->word, ft_strlen(cmd->word));
+            write (2, ": command not found\n", 21);
+        }
         else if (*exit_status == 126)
             ft_fprintf (2, "%s: Permission denied\n", cmd->word);
         clear_all(all);
@@ -76,12 +79,10 @@ char    *find_cmd_path(t_token *cmd, int *exit_status, t_all *all)
     return(path);
 }
 
-char    *check_cmd(t_token *cmd, int *exit_status, t_all *all)
+void    check_if_dir(t_token *cmd, int *exit_status, t_all *all)
 {
     struct stat sb;
-    char    *path;
 
-    path = NULL;
     if (!stat(cmd->word, &sb) && S_ISDIR(sb.st_mode))
     {
         if (ft_strcmp(cmd->word, ".") == 0 || ft_strcmp(cmd->word, "..") == 0)
@@ -97,6 +98,35 @@ char    *check_cmd(t_token *cmd, int *exit_status, t_all *all)
         clear_all(all);
         exit(*exit_status);
     }
+}
+
+char    *check_cmd(t_token *cmd, int *exit_status, t_all *all)
+{
+    char    *path;
+    char    *accs;
+    char    *slash;
+
+    path = NULL;
+    check_if_dir (cmd, exit_status, all);
+    path = getcwd(NULL, 0);
+    if (!path)
+    {
+        clear_all(all);
+        exit (EXIT_FAILURE);
+    }
+    slash = ft_strjoin(path, "/"); // make the norm and fix some frees
+    free (path);
+    accs = ft_strjoin(slash, cmd->word);
+    free (slash);
+    if (!accs)
+    {
+        clear_all(all);
+        exit (EXIT_FAILURE);
+    }
+    if (is_executable(accs, exit_status))
+        return (accs);
+    else
+        free (accs);
     if (is_absolute_path(cmd))
     {
         if (!is_executable(cmd->word, exit_status))
@@ -190,7 +220,7 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
     exit (EXIT_FAILURE);
 }
 
-void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node, int fd[2], int *prev)
+void    execute_external(t_token *cmd, t_all *all, t_token *node, int fd[2], int *prev)
 {
     pid_t id;
 
@@ -198,12 +228,11 @@ void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *no
     if(id == -1)
     {
         perror("fork failure");
-        *exit_status = 1;
+        all->exit_status = 1;
         return ;
     }
     else if (id == 0)
     {
-        printf ("hiiiiiiiiiiiiiiiiiii\n");
         if (*prev != -1)
         {
             dup2(*prev, STDIN_FILENO);
@@ -216,21 +245,21 @@ void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *no
         }
         if (fd[0] != -1)
             close(fd[0]);
-        *exit_status = apply_redirection(&node, cmd, 1, 1);
-        if (*exit_status != 0)
+        all->exit_status = apply_redirection(&node, cmd, 1, 1);
+        if (all->exit_status != 0)
         {
             clear_all(all);
-            exit (*exit_status);
+            exit (all->exit_status);
         }
         if (is_built_in(cmd))
-            run_built_in(cmd, exit_status, all, 1);
+            run_built_in(cmd, &all->exit_status, all, 1);
         else
-            run_external(cmd, exit_status, all);
+            run_external(cmd, &all->exit_status, all);
     }
     if (*prev != -1)
-        close(*prev); // Close the last read en  
+        close(*prev); 
     if (fd[1] != -1)
-        close(fd[1]); // Close current write end in paren 
+        close(fd[1]);
     *prev = fd[0]; 
     all->last_pid = id;
     all->num_of_child++;

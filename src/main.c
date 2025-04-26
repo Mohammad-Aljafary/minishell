@@ -39,6 +39,25 @@ void	increment_shlvl(t_env *envp)
 	add_node_env(&envp, create_shlvl, "SHLVL");
 }
 
+/* void	sig_handler(int sig)
+{
+	if (sig == 2)
+		g_sig = 2;
+	
+}
+void	signal_setup()
+{
+	struct sigaction action;
+
+	sa.sa_sigaction = signal_handler;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	if (sigaction(SIGINT, &sa, NULL) == -1)
+		return (1);
+	if (sigaction(SIGQUIT, &sa, NULL) == -1)
+		return (1);
+} */
+
 int	main (int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -59,7 +78,8 @@ int	main (int argc, char **argv, char **envp)
 			rl_clear_history();
 			break;
 		}
-		add_history(line);
+		if (line[0] != '\0')
+			add_history(line);
 		if (!tokenize(line, &all.tok_lst))
 		{
 			clear_list(&all.tok_lst);
@@ -87,9 +107,24 @@ int	main (int argc, char **argv, char **envp)
 		delete_token(&all.tok_lst, args, 1);
 		move_command_to_front(&all.tok_lst);
 		execute (&all);
-		print_list(all.tok_lst);
+		//print_list(all.tok_lst);
 		clear_list(&all.tok_lst);
 		free(line);
 	}
 	return (0);
 }
+
+// static void	check_tty_or_stop_program(int flag, char **envp, int exit_status)
+// {
+// 	if (flag == 1)
+// 	{
+// 		if (!isatty(0) || !isatty(1) || !isatty(2))
+// 			exit(1);
+// 	}
+// 	else
+// 	{
+// 		ft_free_matrix(&envp);
+// 		clear_history();
+// 		exit(exit_status);
+// 	}
+// }

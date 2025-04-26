@@ -6,27 +6,30 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/25 16:53:49 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/26 13:20:16 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# include "../libft/includes/libft.h"
 # include "../libft/includes/get_next_line.h"
+# include "../libft/includes/libft.h"
+# include <curses.h>
+# include <errno.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <unistd.h>
-# include <term.h>
-# include <curses.h>
-# include <sys/types.h>
 # include <sys/stat.h>
-# include <errno.h>
+# include <sys/types.h>
 # include <sys/wait.h>
+# include <term.h>
+# include <unistd.h>
+# include <signal.h>
 
-typedef enum	e_type
+extern int			g_sig;
+
+typedef enum e_type
 {
 	not_defined,
 	pipes,
@@ -38,15 +41,15 @@ typedef enum	e_type
 	delimiter,
 	args,
 	file,
-	s_quote	
-}				t_type;
+	s_quote
+}					t_type;
 
-typedef enum	e_quote
+typedef enum e_quote
 {
 	single_quote,
 	double_quote,
 	not_quoted
-}				t_quote;
+}					t_quote;
 
 typedef struct s_token
 {
@@ -63,22 +66,22 @@ typedef struct s_token
 	struct s_token	*next;
 }					t_token;
 
-typedef	struct s_env
+typedef struct s_env
 {
-	char	*key;
-	char	*value;
+	char			*key;
+	char			*value;
 	struct s_env	*next;
 }					t_env;
 
 typedef struct s_all
 {
-	t_token	*tok_lst;
-	t_env	*env_lst;
-	t_env	*exp_lst;
-	int		exit_status;
-	int		num_of_child;
-	pid_t	last_pid;
-}	t_all;
+	t_token			*tok_lst;
+	t_env			*env_lst;
+	t_env			*exp_lst;
+	int				exit_status;
+	int				num_of_child;
+	pid_t			last_pid;
+}					t_all;
 
 /************************************************************\
 \***************** LIST OPERATIONS **************************\
@@ -87,60 +90,67 @@ t_token				*create(char *str);
 void				add_back(t_token **list, t_token *new_node);
 void				clear_list(t_token **list);
 void				print_list(t_token *list);
-void    			create_list_env(t_env **list, char **envp);
-void 				add_back_env(t_env **list, t_env *node);
-void    			clear_list_env(t_env **list);
-void    			clear_all(t_all *all);
+void				create_list_env(t_env **list, char **envp);
+void				add_back_env(t_env **list, t_env *node);
+void				clear_list_env(t_env **list);
+void				clear_all(t_all *all);
 void				delete_node_env(t_env **list, char *key);
-t_env 				*create_node_env(char *key, char *value);
-void    			add_node_env(t_env **list, t_env *node, char *key);
-void				add_node_token(t_token **list, t_token *prev_node, t_token *node);
-void 				delete_ptr(t_token **list, t_token *lst);
-void    			create_list_exp(t_env *env, t_env **exp);
+t_env				*create_node_env(char *key, char *value);
+void				add_node_env(t_env **list, t_env *node, char *key);
+void				add_node_token(t_token **list, t_token *prev_node,
+						t_token *node);
+void				delete_ptr(t_token **list, t_token *lst);
+void				create_list_exp(t_env *env, t_env **exp);
+
 /*************************************************************\
 \******************** TOKENIZATION ***************************\
 \*************************************************************/
-int				tokenize(char *line, t_token **list);
-int    			check_type(t_token *list);
-void			parser(t_token **list);
-int    			syntax_error(t_token *list);
-int				is_whitespace(char c);
-int 			check_redirection(t_token *list);
-void 			move_command_to_front(t_token **head);
+int					tokenize(char *line, t_token **list);
+int					check_type(t_token *list);
+void				parser(t_token **list);
+int					syntax_error(t_token *list);
+int					is_whitespace(char c);
+int					check_redirection(t_token *list);
+void				move_command_to_front(t_token **head);
 
 /*************************************************************\
 \********************** Expander *****************************\
 \*************************************************************/
-char    		*search_env(t_env *env, char *key);
-int    			expander(t_token **tok_lst, t_env *env_lst, char *argv, int exit_status);
-int 			break_string(t_token **list, char *token);
+char				*search_env(t_env *env, char *key);
+int					expander(t_token **tok_lst, t_env *env_lst, char *argv,
+						int exit_status);
+int					break_string(t_token **list, char *token);
 
 /**************************************************************\
 \*********************** Execution ****************************\
 \**************************************************************/
-void 			execute(t_all *lists);
-int 			join_args(t_token *node);
-void			delete_token(t_token **list, t_type type, int flag);
-int 			apply_re_out(t_token **re_node, t_token *command, int flag);
-int 			apply_re_in(t_token **re_token, t_token *command);
-int 			redirect_out(int out_fd, int *origin_out, int in_child);
-int 			redirect_in(int in_fd, int *origin_in, int in_child);
-int 			check_ambigious (t_token *node);
-int				apply_redirection(t_token **next_node, t_token *node, int in_child, int re_alone);
-void 			retrieve(t_token *cmd);
-void			run_built_in(t_token *cmd, int *exit_status, t_all *all, int in_child);
-int				is_built_in(t_token *cmd);
-void    execute_external(t_token *cmd, int *exit_status, t_all *all, t_token *node, int fd[2], int *prev);
+void				execute(t_all *lists);
+int					join_args(t_token *node);
+void				delete_token(t_token **list, t_type type, int flag);
+int					apply_re_out(t_token **re_node, t_token *command, int flag);
+int					apply_re_in(t_token **re_token, t_token *command);
+int					redirect_out(int out_fd, int *origin_out, int in_child);
+int					redirect_in(int in_fd, int *origin_in, int in_child);
+int					check_ambigious(t_token *node);
+int					apply_redirection(t_token **next_node, t_token *node,
+						int in_child, int re_alone);
+void				retrieve(t_token *cmd);
+void				run_built_in(t_token *cmd, int *exit_status, t_all *all,
+						int in_child);
+int					is_built_in(t_token *cmd);
+void				execute_external(t_token *cmd, t_all *all, t_token *node,
+						int fd[2], int *prev);
 
 /**************************************************************\
 \*********************** Built-ins ****************************\
 \**************************************************************/
-int				args_count(char **args);
-int				ft_cd(t_token *cmd, t_env **env);
-int    			ft_echo(t_token *cmd);
-int    			ft_env(t_token *cmd, t_env *list);
-int				ft_exits(t_token *cmd, t_all *all);
-void			ft_export(t_token *cmd, t_env **env, t_env **exp, int *exit_status);
-int 			ft_pwd(void);
-int 			ft_unset(t_token *cmd, t_env **env, t_env **exp);
+int					args_count(char **args);
+int					ft_cd(t_token *cmd, t_env **env);
+int					ft_echo(t_token *cmd);
+int					ft_env(t_token *cmd, t_env *list);
+int					ft_exits(t_token *cmd, t_all *all);
+void				ft_export(t_token *cmd, t_env **env, t_env **exp,
+						int *exit_status);
+int					ft_pwd(void);
+int					ft_unset(t_token *cmd, t_env **env, t_env **exp);
 #endif

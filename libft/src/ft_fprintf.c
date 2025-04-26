@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 19:59:58 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/16 17:42:22 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/26 08:38:39 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,7 @@ int	ft_handle_string(int fd, char *str)
 	i = 0;
 	if (!str)
 		return (write(fd, "(null)", 6));
-	while (str[i])
-	{
-		write(fd, &str[i], 1);
-		i++;
-	}
+	write(fd, str, ft_strlen(str));
 	return (i);
 }
 
