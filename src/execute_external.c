@@ -246,7 +246,7 @@ void    execute_external(t_token *cmd, t_all *all, t_token *node, int fd[2], int
         if (fd[0] != -1)
             close(fd[0]);
         all->exit_status = apply_redirection(&node, cmd, 1, 1);
-        if (all->exit_status != 0)
+        if (all->exit_status)
         {
             clear_all(all);
             exit (all->exit_status);

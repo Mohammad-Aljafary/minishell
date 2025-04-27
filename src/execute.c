@@ -41,6 +41,7 @@ void retrieve(t_token *cmd)
         if (dup2(cmd->origin_in, STDIN_FILENO) == -1)
         close(cmd->in_fd);
         cmd->in_fd = STDIN_FILENO;
+        close (cmd->origin_in);
     }
 
     if (cmd->origin_out != -1)
@@ -137,12 +138,14 @@ void    wait_status(t_all *wait_statuss)
 
 void    execute(t_all *lists)
 {
-    t_token *node   = lists->tok_lst;
+    t_token *node;
     t_token *cmd    = NULL;
     t_token *search = NULL;
     int     fd[2];
-    int     prev_fd = -1;
+    int     prev_fd;
 
+    node   = lists->tok_lst;
+    prev_fd = -1;
     fd[0] = -1;
     fd[1] = -1;
     while (node)
@@ -159,6 +162,8 @@ void    execute(t_all *lists)
                 && !(cmd->prev && cmd->prev->type == pipes))
             {
                 lists->exit_status = apply_redirection(&node, cmd, 0, 1);
+                if (lists->exit_status)
+                    continue;
             }
             else if (search && search->type == pipes)
             {
@@ -178,12 +183,23 @@ void    execute(t_all *lists)
         else
         {
             cmd = node;
-            lists->exit_status = apply_redirection(&node, cmd, 0, 0);
+            lists->exit_status = apply_redirection(&node, cmd, 0, 1);
             if (lists->exit_status)
             {
                 node = node->next;
-                return ;
+                continue ;
             }
+            if (node && node->type == pipes)
+            {
+                if (pipe(fd) == -1)
+                {
+                    perror("pipe");
+                    clear_all(lists);
+                    exit (EXIT_FAILURE);
+                }
+                node = node->next;
+            }
+            retrieve(cmd);
         }
     }
     if (fd[0] != -1)
@@ -192,5 +208,3 @@ void    execute(t_all *lists)
         close (fd[1]);
     wait_status(lists);
 }
-
-
