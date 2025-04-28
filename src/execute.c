@@ -41,6 +41,8 @@ void retrieve(t_token *cmd)
         if (dup2(cmd->origin_in, STDIN_FILENO) == -1)
         close(cmd->in_fd);
         cmd->in_fd = STDIN_FILENO;
+        close (cmd->origin_in);
+        cmd->origin_in = -1;
     }
 
     if (cmd->origin_out != -1)
@@ -48,13 +50,15 @@ void retrieve(t_token *cmd)
         if (dup2(cmd->origin_out, STDOUT_FILENO) == -1)
             perror("dup2_retrieve_output");
         close(cmd->origin_out);
-        cmd->origin_out = -1;
-    }
-    if (cmd->out_fd != STDOUT_FILENO && cmd->out_fd > 1)
-    {
         close(cmd->out_fd);
         cmd->out_fd = STDOUT_FILENO;
+        cmd->origin_out = -1;
     }
+/*     if (cmd->out_fd != STDOUT_FILENO && cmd->out_fd > 1)
+    {
+        
+        
+    } */
 }
 
 /* int apply_pipes(t_token *cmd, t_token **node)
@@ -131,18 +135,25 @@ void    wait_status(t_all *wait_statuss)
             else
                 wait_statuss->exit_status = 1;
         }
+        if (WIFSIGNALED(status))
+        {
+            wait_statuss->exit_status = WTERMSIG(status) + 128;
+            g_sig = 0;
+        }
         wait_statuss->num_of_child--;
     }
 }
 
 void    execute(t_all *lists)
 {
-    t_token *node   = lists->tok_lst;
+    t_token *node;
     t_token *cmd    = NULL;
     t_token *search = NULL;
     int     fd[2];
-    int     prev_fd = -1;
+    int     prev_fd;
 
+    node   = lists->tok_lst;
+    prev_fd = -1;
     fd[0] = -1;
     fd[1] = -1;
     while (node)
@@ -159,6 +170,8 @@ void    execute(t_all *lists)
                 && !(cmd->prev && cmd->prev->type == pipes))
             {
                 lists->exit_status = apply_redirection(&node, cmd, 0, 1);
+                if (lists->exit_status)
+                    continue;
             }
             else if (search && search->type == pipes)
             {
@@ -178,12 +191,24 @@ void    execute(t_all *lists)
         else
         {
             cmd = node;
-            lists->exit_status = apply_redirection(&node, cmd, 0, 0);
+            lists->exit_status = apply_redirection(&node, cmd, 0, 1);
             if (lists->exit_status)
             {
                 node = node->next;
-                return ;
+                continue ;
             }
+            if (node && node->type == pipes)
+            {
+                if (pipe(fd) == -1)
+                {
+                    perror("pipe");
+                    clear_all(lists);
+                    exit (EXIT_FAILURE);
+                }
+                close (fd[1]);
+                node = node->next;
+            }
+            retrieve(cmd);
         }
     }
     if (fd[0] != -1)

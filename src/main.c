@@ -1,5 +1,7 @@
 #include <minishell.h>
 
+int	g_sig ;
+
 void	print_env(char **env)
 {
 	int i = 0;
@@ -39,24 +41,42 @@ void	increment_shlvl(t_env *envp)
 	add_node_env(&envp, create_shlvl, "SHLVL");
 }
 
-/* void	sig_handler(int sig)
+static void	restore_prompt(int sig)
 {
-	if (sig == 2)
-		g_sig = 2;
-	
+	g_sig = sig;
+	write(STDOUT_FILENO, "\n", 1);
+	rl_on_new_line();
+	rl_redisplay();
 }
-void	signal_setup()
-{
-	struct sigaction action;
 
-	sa.sa_sigaction = signal_handler;
-	sa.sa_flags = 0;
+static void	signal_handler(int sig)
+{
+	g_sig = sig;
+}
+
+void	setup_signals(void)
+{
+	struct sigaction	sa;
+
+	sa.sa_handler = restore_prompt;
+	sa.sa_flags = SA_RESTART;
 	sigemptyset(&sa.sa_mask);
-	if (sigaction(SIGINT, &sa, NULL) == -1)
-		return (1);
-	if (sigaction(SIGQUIT, &sa, NULL) == -1)
-		return (1);
-} */
+	sigaction(SIGINT, &sa, NULL);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGTSTP, SIG_IGN);
+}
+
+void	setup_signals2(void)
+{
+	struct sigaction	sa;
+
+	sa.sa_handler = signal_handler;
+	sa.sa_flags = SA_RESTART;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGINT, &sa, NULL);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGTSTP, SIG_IGN);
+}
 
 int	main (int argc, char **argv, char **envp)
 {
@@ -70,6 +90,7 @@ int	main (int argc, char **argv, char **envp)
 	increment_shlvl(all.env_lst);
 	while (1)
 	{
+		setup_signals();
 		line = readline("minishell> ");
 		if (!line)
 		{
@@ -78,6 +99,9 @@ int	main (int argc, char **argv, char **envp)
 			rl_clear_history();
 			break;
 		}
+		setup_signals2();
+		if (g_sig == 2)
+			all.exit_status = 130;
 		if (line[0] != '\0')
 			add_history(line);
 		if (!tokenize(line, &all.tok_lst))
@@ -105,13 +129,13 @@ int	main (int argc, char **argv, char **envp)
 			continue;
 		}
 		delete_token(&all.tok_lst, args, 1);
+		print_list(all.tok_lst);
 		move_command_to_front(&all.tok_lst);
 		execute (&all);
-		//print_list(all.tok_lst);
 		clear_list(&all.tok_lst);
 		free(line);
 	}
-	return (0);
+	return (all.exit_status);
 }
 
 // static void	check_tty_or_stop_program(int flag, char **envp, int exit_status)

@@ -1,4 +1,4 @@
-#include <minishell.h>
+# include <minishell.h>
 
 int count_args(t_token *node, t_token **cmd)
 {
@@ -8,7 +8,7 @@ int count_args(t_token *node, t_token **cmd)
     count = 0;
     while (node)
     {
-        if (node->type == command)
+        if (node->type == command && !*cmd)
             *cmd = node;
         if (node->type == args)
             count++;
@@ -19,19 +19,7 @@ int count_args(t_token *node, t_token **cmd)
     return (count);
 }
 
-int allocate_args(t_token *cmd, int count)
-{
-    cmd->args = malloc((count + 2) * sizeof(char *));
-    if (!cmd->args)
-        return (0);
-    cmd->args[0] = ft_strdup(cmd->word);
-    if (!cmd->args[0])
-    {
-        ft_free_split(cmd->args);
-        return (0);
-    }
-    return (1);
-}
+
 
 int fill_args(t_token *cmd, t_token *node)
 {
@@ -52,21 +40,46 @@ int fill_args(t_token *cmd, t_token *node)
         node = node->next;
     }
     cmd->args[i] = NULL;
-    if (node)
-        return (join_args(node->next));
+    if (node && node->type == pipes && node->next)
+        return join_args(node->next);
     return (1);
 }
+
+int allocate_args(t_token *cmd, int count)
+{
+    cmd->args = malloc((count + 2) * sizeof(char *));
+    if (!cmd->args)
+        return (0);
+    cmd->args[0] = ft_strdup(cmd->word);
+    if (!cmd->args[0])
+    {
+        ft_free_split(cmd->args);
+        return (0);
+    }
+    return (1);
+}
+
 
 int join_args(t_token *node)
 {
     t_token *cmd;
     int     count;
+    int     result;
 
+    while (node && node->type != command && node->type != pipes)
+        node = node->next;
+    if (!node || node->type == pipes)
+    {
+        if (node && node->type == pipes && node->next)
+            return join_args(node->next);
+        return 1;
+    }
     cmd = NULL;
     count = count_args(node, &cmd);
     if (!cmd)
         return (1);
     else if (!allocate_args(cmd, count))
         return (0);
-    return (fill_args(cmd, cmd->next));
+    result = fill_args(cmd, cmd->next);
+    return (result);
 }

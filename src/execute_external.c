@@ -212,6 +212,8 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
         clear_all(all);
         exit (*exit_status);
     }
+    signal(SIGINT, SIG_DFL);
+	// signal(SIGQUIT, SIG_DFL);
     execve(path, cmd->args, envp);
     perror("execve");
     free (path);
@@ -233,6 +235,8 @@ void    execute_external(t_token *cmd, t_all *all, t_token *node, int fd[2], int
     }
     else if (id == 0)
     {
+        signal (SIGINT, SIG_DFL);
+        signal (SIGQUIT, SIG_DFL);
         if (*prev != -1)
         {
             dup2(*prev, STDIN_FILENO);
