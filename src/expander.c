@@ -108,7 +108,7 @@ int replace_env (t_token *p, t_env *envp, int *i, int *j)
         return (0); 
     env = search_env(envp, temp);  
     free(temp);
-    if(!env)
+    if (!env)
         new_word = ft_strdup("");
     else
         new_word = ft_strdup(env);
@@ -228,7 +228,6 @@ void delete_ptr(t_token **list, t_token *lst)
         free(lst);
     }
 }
-
 
 int word_split(t_token **list)
 {

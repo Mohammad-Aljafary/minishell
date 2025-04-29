@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/28 07:38:05 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/29 15:42:08 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,8 @@ void				run_built_in(t_token *cmd, int *exit_status, t_all *all,
 int					is_built_in(t_token *cmd);
 void				execute_external(t_token *cmd, t_all *all, t_token *node,
 						int fd[2], int *prev);
+void    run_external(t_token *cmd, int *exit_status, t_all *all);
+
 
 /**************************************************************\
 \*********************** Built-ins ****************************\

@@ -213,7 +213,7 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
         exit (*exit_status);
     }
     signal(SIGINT, SIG_DFL);
-	// signal(SIGQUIT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
     execve(path, cmd->args, envp);
     perror("execve");
     free (path);
@@ -235,25 +235,22 @@ void    execute_external(t_token *cmd, t_all *all, t_token *node, int fd[2], int
     }
     else if (id == 0)
     {
-        signal (SIGINT, SIG_DFL);
-        signal (SIGQUIT, SIG_DFL);
         if (*prev != -1)
         {
             dup2(*prev, STDIN_FILENO);
             close(*prev);
+            close(fd[0]);
         }
         if (fd[1] != -1)
         {
             dup2(fd[1], STDOUT_FILENO);
             close(fd[1]);
         }
-        if (fd[0] != -1)
-            close(fd[0]);
         all->exit_status = apply_redirection(&node, cmd, 1, 1);
         if (all->exit_status != 0)
         {
             clear_all(all);
-            exit (all->exit_status);
+            exit(all->exit_status);
         }
         if (is_built_in(cmd))
             run_built_in(cmd, &all->exit_status, all, 1);
@@ -261,10 +258,13 @@ void    execute_external(t_token *cmd, t_all *all, t_token *node, int fd[2], int
             run_external(cmd, &all->exit_status, all);
     }
     if (*prev != -1)
-        close(*prev); 
+        close(*prev);
     if (fd[1] != -1)
         close(fd[1]);
-    *prev = fd[0]; 
+    if (fd[0] != -1)
+        close(fd[0]);
+    *prev = fd[0];
     all->last_pid = id;
     all->num_of_child++;
 }
+

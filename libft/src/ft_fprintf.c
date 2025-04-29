@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 19:59:58 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/26 08:38:39 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/29 15:51:50 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int	ft_fprintf(int fd, const char *format, ...)
 				count += ft_handle_format(format, arg, fd);
 		}
 		else
-			count += write(1, format, 1);
+			count += write(fd, format, 1);
 		format++;
 	}
 	va_end(arg);

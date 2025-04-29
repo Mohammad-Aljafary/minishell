@@ -90,8 +90,6 @@ int	ft_exits(t_token *cmd, t_all *all)
 
 	i = 0;
 	ft_fprintf(2, "exit\n");
-	if (count_args_for_exit(cmd))
-		return (EXIT_FAILURE);
 	if (!cmd->args[1])
 	{
 		clear_all(all);
@@ -111,6 +109,8 @@ int	ft_exits(t_token *cmd, t_all *all)
 		}
 		i++;
 	}
+	if (count_args_for_exit(cmd))
+		return (EXIT_FAILURE);
 	if (!ft_atoll(cmd->args[1], &value))
 	{
 		ft_fprintf(2, "exit: %s: numeric argument required\n", cmd->args[1]);

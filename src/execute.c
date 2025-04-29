@@ -54,40 +54,7 @@ void retrieve(t_token *cmd)
         cmd->out_fd = STDOUT_FILENO;
         cmd->origin_out = -1;
     }
-/*     if (cmd->out_fd != STDOUT_FILENO && cmd->out_fd > 1)
-    {
-        
-        
-    } */
 }
-
-/* int apply_pipes(t_token *cmd, t_token **node)
-{
-    int fd[2];
-
-    if (pipe(fd) == -1)
-    {
-        perror("pipe");
-        return (1);
-    }
-    if (cmd->out_fd <= 1)
-    {
-        if (redirect_out(fd[1], &cmd->origin_out)) 
-            return (1);
-    }
-    if ((*node)->next && (*node)->next->type == command)
-    {
-        if ((*node)->next->in_fd <= 0)
-        {
-            if (redirect_in(fd[0], &(*node)->next->origin_in))
-                return (1);
-        }
-    }
-    cmd->out_fd = fd[1];
-    (*node)->next->in_fd = fd[0];
-    (*node) = (*node)->next;
-    return (0);
-} */
 
 void    execute_command(t_token *cmd, t_all *all, t_token *node, int fd[2], int *prev)
 {
@@ -95,29 +62,6 @@ void    execute_command(t_token *cmd, t_all *all, t_token *node, int fd[2], int 
         run_built_in(cmd, &all->exit_status, all, 0);
     else 
         execute_external(cmd, all, node, fd, prev);
-}
-
-int apply_in_pipe(int fd[2], t_token *cmd)
-{
-    if (cmd->prev && cmd->prev->type == pipes)
-    {
-        if (redirect_in(fd[0], &cmd->origin_in, 0))
-            return (1); 
-    }
-    close (fd[1]);
-    return (0);
-}
-
-int apply_out_pipe(int fd[2], t_token *cmd)
-{
-    if (cmd->out_fd == 1)
-    {
-        if (redirect_out(fd[1], &cmd->origin_out, 0))
-            return (1);
-        return (0);
-    }
-    close (fd[0]);
-    return (0);
 }
 
 void    wait_status(t_all *wait_statuss)
@@ -137,6 +81,8 @@ void    wait_status(t_all *wait_statuss)
         }
         if (WIFSIGNALED(status))
         {
+            if (WTERMSIG(status) == SIGQUIT)
+                write (1, "Quit (core dumped)\n", 20);
             wait_statuss->exit_status = WTERMSIG(status) + 128;
             g_sig = 0;
         }

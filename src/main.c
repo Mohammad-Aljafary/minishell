@@ -78,6 +78,12 @@ void	setup_signals2(void)
 	signal(SIGTSTP, SIG_IGN);
 }
 
+static void	check_tty_or_stop_program()
+{
+	if (!isatty(0) || !isatty(1) || !isatty(2))
+		exit(1);
+}
+
 int	main (int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -85,23 +91,22 @@ int	main (int argc, char **argv, char **envp)
 	
 	(void)argc;
 	ft_bzero(&all, sizeof(all));
+	check_tty_or_stop_program();
 	create_list_env(&all.env_lst, envp);
 	create_list_exp(all.env_lst, &all.exp_lst);
 	increment_shlvl(all.env_lst);
 	while (1)
 	{
 		setup_signals();
-		line = readline("minishell> ");
+		line = readline("\033[0;31mminishell> \033[0m");
 		if (!line)
-		{
-			ft_fprintf(2, "exit\n");
-			clear_all(&all);
-			rl_clear_history();
 			break;
-		}
 		setup_signals2();
 		if (g_sig == 2)
+		{
 			all.exit_status = 130;
+			g_sig = 1;
+		}
 		if (line[0] != '\0')
 			add_history(line);
 		if (!tokenize(line, &all.tok_lst))
@@ -129,26 +134,20 @@ int	main (int argc, char **argv, char **envp)
 			continue;
 		}
 		delete_token(&all.tok_lst, args, 1);
-		print_list(all.tok_lst);
+		//print_list(all.tok_lst);
 		move_command_to_front(&all.tok_lst);
 		execute (&all);
 		clear_list(&all.tok_lst);
 		free(line);
+		if (g_sig == 1)
+		{
+			all.exit_status = 130;
+			g_sig = 0;
+		}
 	}
+	ft_fprintf(2, "exit\n");
+	clear_all(&all);
+	rl_clear_history();
 	return (all.exit_status);
 }
 
-// static void	check_tty_or_stop_program(int flag, char **envp, int exit_status)
-// {
-// 	if (flag == 1)
-// 	{
-// 		if (!isatty(0) || !isatty(1) || !isatty(2))
-// 			exit(1);
-// 	}
-// 	else
-// 	{
-// 		ft_free_matrix(&envp);
-// 		clear_history();
-// 		exit(exit_status);
-// 	}
-// }
