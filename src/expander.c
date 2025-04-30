@@ -128,7 +128,7 @@ int replace(t_token *p, t_env *envp, char *argv, int exit_status)
 
     while (p)
     { 
-        if (p->type == s_quote)
+        if (p->type == S_QOUTE)
         {
             p = p->next;
             continue;
@@ -243,7 +243,7 @@ int word_split(t_token **list)
     while (lst)
     {
         next = lst->next;
-        if (lst->expaneded && lst->quotes != double_quote)
+        if (lst->expaneded && lst->quotes != DOUBLE_QUOTE)
         {
             tok = ft_strtok(lst->word, " \t");
             last_inserted = lst;
@@ -270,15 +270,15 @@ void    parser2(t_token *list)
 {
     while (list)
     {
-        if(list->type == not_defined)
+        if(list->type == NOT_DEFINED)
         {
-            if(!list->prev || list->prev->type == pipes)
-                list->type = command;
-             else if (list->prev->type == args || list->prev->type == command)
-                list->type = args;
-            else if (list->prev->type == in_re || list->prev->type == out_re 
-                    || list->prev->type == file || list->prev->type == appends)
-                list->type = file; 
+            if(!list->prev || list->prev->type == PIPE)
+                list->type = COMMAND;
+             else if (list->prev->type == ARGS || list->prev->type == COMMAND)
+                list->type = ARGS;
+            else if (list->prev->type == IN_RE || list->prev->type == OUT_RE 
+                    || list->prev->type == FILES || list->prev->type == APPENDS)
+                list->type = FILES; 
         }
         list = list->next;
     }
@@ -346,9 +346,9 @@ int    expander(t_token **tok_lst, t_env *env_lst, char *argv, int exit_status)
     head = *tok_lst;
     while ((head))
     {
-        if ((head)->type == delimiter)
+        if ((head)->type == DELIMITER)
         {
-            if (head->quotes != not_quoted)
+            if (head->quotes != NOT_QUOTE)
             {
                 if (!remove_quotes(&head->word))
                     return (free_return(&p));

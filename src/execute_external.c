@@ -6,7 +6,7 @@ int is_executable (char *cmd, int *exit_status)
         return (1);
     else
     {
-        if (access(cmd, F_OK) == 0) // check if the file of the command is exist but not executable
+        if (access(cmd, F_OK) == 0)
             *exit_status = 126;
         else
             *exit_status = 127;
@@ -67,10 +67,7 @@ char    *find_cmd_path(t_token *cmd, int *exit_status, t_all *all)
     if (!path)
     {
         if (*exit_status == 127)
-        {
-            write (2, cmd->word, ft_strlen(cmd->word));
-            write (2, ": command not found\n", 21);
-        }
+            ft_fprintf(2, "%s: command not found\n", cmd->word);
         else if (*exit_status == 126)
             ft_fprintf (2, "%s: Permission denied\n", cmd->word);
         clear_all(all);
@@ -100,21 +97,20 @@ void    check_if_dir(t_token *cmd, int *exit_status, t_all *all)
     }
 }
 
-char    *check_cmd(t_token *cmd, int *exit_status, t_all *all)
+char    *chck_if_in_dir(t_all *all, t_token *cmd)
 {
     char    *path;
-    char    *accs;
     char    *slash;
+    char    *accs;
 
-    path = NULL;
-    check_if_dir (cmd, exit_status, all);
+    check_if_dir (cmd, &all->exit_status, all);
     path = getcwd(NULL, 0);
     if (!path)
     {
         clear_all(all);
         exit (EXIT_FAILURE);
     }
-    slash = ft_strjoin(path, "/"); // make the norm and fix some frees
+    slash = ft_strjoin(path, "/");
     free (path);
     accs = ft_strjoin(slash, cmd->word);
     free (slash);
@@ -123,10 +119,19 @@ char    *check_cmd(t_token *cmd, int *exit_status, t_all *all)
         clear_all(all);
         exit (EXIT_FAILURE);
     }
-    if (is_executable(accs, exit_status))
+    if (is_executable(accs, &all->exit_status))
         return (accs);
-    else
-        free (accs);
+    free (accs);
+    return (NULL);
+}
+
+char    *check_cmd(t_token *cmd, int *exit_status, t_all *all)
+{
+    char    *path;
+
+    path = chck_if_in_dir(all, cmd);
+    if (path)
+        return (path);
     if (is_absolute_path(cmd))
     {
         if (!is_executable(cmd->word, exit_status))
@@ -162,36 +167,44 @@ int     count_nodes(t_env *env)
     return (count);
 }
 
-char    **list_to_arr(t_env *env)
+char *fill_env(t_env *env, char **envp, int *i)
 {
-    char    **envp;
-    int     i;
-    char    *env_join;
-    
-    i = 0;
-    env_join = NULL;
-    envp = malloc((count_nodes(env) + 1) * sizeof(char *));
-    if(!envp)
-        return (NULL);
-    while(env)
+    char *env_join;
+
+    env_join = ft_strjoin(env->key, "=");
+    if (!env_join)
     {
-        env_join = ft_strjoin(env->key, "=");
-        if(!env_join)
-        {
-            ft_free_split(envp);
-            return (NULL);
-        }
-        envp[i] = ft_strjoin(env_join, env->value);
-        free (env_join);
-        if(!envp[i])
-        {
-            ft_free_split(envp);
-            return (NULL);
-        }
-        env = env->next;
-        i++;   
+        ft_free_split(envp);
+        return (NULL);
     }
-    envp[i] = NULL;
+    envp[++(*i)] = ft_strjoin(env_join, env->value);
+    free(env_join);
+    if (!envp[*i])
+    {
+        ft_free_split(envp);
+        return (NULL);
+    }
+    return (envp[*i]);
+}
+
+char **list_to_arr(t_env *env)
+{
+    char **envp;
+    int  i;
+    char *result;
+    
+    i = -1;
+    envp = malloc((count_nodes(env) + 1) * sizeof(char *));
+    if (!envp)
+        return (NULL);
+    while (env)
+    {
+        result = fill_env(env, envp, &i);
+        if (!result)
+            return (NULL);
+        env = env->next;
+    }
+    envp[++i] = NULL;
     return (envp);
 }
 
@@ -214,6 +227,7 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
     }
     signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
+    // fprintf(stderr, "%s    tty: in=%d, out=%d\n", cmd->args[0], isatty(0), isatty(1));
     execve(path, cmd->args, envp);
     perror("execve");
     free (path);
@@ -222,7 +236,34 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
     exit (EXIT_FAILURE);
 }
 
-void    execute_external(t_token *cmd, t_all *all, t_token *node, int fd[2], int *prev)
+void    duplicate_pipe (int pipefd[2], int *prev)
+{
+    if (pipefd[0] != -1)
+        close (pipefd[0]);
+    if (*prev != -1)
+    {
+        dup2(*prev, STDIN_FILENO);
+        close(*prev);
+    }
+    if (pipefd[1] != -1)
+    {
+        dup2(pipefd[1], STDOUT_FILENO);
+        close(pipefd[1]);
+    }
+}
+
+void    track_child (int *prev, int pipefd[2], t_all *all, int id)
+{
+    if (*prev != -1)
+        close(*prev);
+    if (pipefd[1] != -1)
+        close(pipefd[1]);
+    *prev = pipefd[0];
+    all->last_pid = id;
+    all->num_of_child++;
+}
+
+void    execute_external(t_token *cmd, t_all *all, t_token *node, int pipefd[2], int *prev)
 {
     pid_t id;
 
@@ -235,18 +276,8 @@ void    execute_external(t_token *cmd, t_all *all, t_token *node, int fd[2], int
     }
     else if (id == 0)
     {
-        if (*prev != -1)
-        {
-            dup2(*prev, STDIN_FILENO);
-            close(*prev);
-            close(fd[0]);
-        }
-        if (fd[1] != -1)
-        {
-            dup2(fd[1], STDOUT_FILENO);
-            close(fd[1]);
-        }
-        all->exit_status = apply_redirection(&node, cmd, 1, 1);
+        duplicate_pipe(pipefd, prev);
+        all->exit_status = apply_redirection(&node, cmd, 1);
         if (all->exit_status != 0)
         {
             clear_all(all);
@@ -257,14 +288,6 @@ void    execute_external(t_token *cmd, t_all *all, t_token *node, int fd[2], int
         else
             run_external(cmd, &all->exit_status, all);
     }
-    if (*prev != -1)
-        close(*prev);
-    if (fd[1] != -1)
-        close(fd[1]);
-    if (fd[0] != -1)
-        close(fd[0]);
-    *prev = fd[0];
-    all->last_pid = id;
-    all->num_of_child++;
+    track_child(prev, pipefd, all, id);
 }
 

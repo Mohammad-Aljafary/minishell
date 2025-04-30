@@ -21,9 +21,9 @@ t_token	*get_command_node(t_token *start, t_token **pipe)
 
 	cmd = NULL;
 	*pipe = start;
-	while (*pipe && (*pipe)->type != pipes)
+	while (*pipe && (*pipe)->type != PIPE)
 	{
-		if ((*pipe)->type == command && !cmd)
+		if ((*pipe)->type == COMMAND && !cmd)
 			cmd = *pipe;
 		*pipe = (*pipe)->next;
 	}

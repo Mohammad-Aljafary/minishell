@@ -72,7 +72,7 @@ int handle_single_quotes(t_token **list, char *token, int *i)
             free (temp);
             return (0);
         }
-        node->type = s_quote;
+        node->type = S_QOUTE;
         add_back(list, node);
         *i = j + 1;
     }

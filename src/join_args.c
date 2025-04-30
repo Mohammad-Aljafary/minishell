@@ -8,27 +8,25 @@ int count_args(t_token *node, t_token **cmd)
     count = 0;
     while (node)
     {
-        if (node->type == command && !*cmd)
+        if (node->type == COMMAND && !*cmd)
             *cmd = node;
-        if (node->type == args)
+        if (node->type == ARGS)
             count++;
-        if (node->type == pipes)
+        if (node->type == PIPE)
             break;
         node = node->next;
     }
     return (count);
 }
 
-
-
 int fill_args(t_token *cmd, t_token *node)
 {
     int i;
 
     i = 1;
-    while (node && node->type != pipes)
+    while (node && node->type != PIPE)
     {
-        if (node->type == args)
+        if (node->type == ARGS)
         {
             cmd->args[i++] = ft_strdup(node->word);
             if (!cmd->args[i - 1])
@@ -40,7 +38,7 @@ int fill_args(t_token *cmd, t_token *node)
         node = node->next;
     }
     cmd->args[i] = NULL;
-    if (node && node->type == pipes && node->next)
+    if (node && node->type == PIPE && node->next)
         return join_args(node->next);
     return (1);
 }
@@ -59,18 +57,17 @@ int allocate_args(t_token *cmd, int count)
     return (1);
 }
 
-
 int join_args(t_token *node)
 {
     t_token *cmd;
     int     count;
     int     result;
 
-    while (node && node->type != command && node->type != pipes)
+    while (node && node->type != COMMAND && node->type != PIPE)
         node = node->next;
-    if (!node || node->type == pipes)
+    if (!node || node->type == PIPE)
     {
-        if (node && node->type == pipes && node->next)
+        if (node && node->type == PIPE && node->next)
             return join_args(node->next);
         return 1;
     }

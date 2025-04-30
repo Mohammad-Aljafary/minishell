@@ -2,9 +2,9 @@
 
 int check_ambigious (t_token *node)
 {
-    if (node->type == file)
+    if (node->type == FILES)
     {
-        if (node->next && node->next->type == file)
+        if (node->next && node->next->type == FILES)
             return (0);
         else
             return (1);

@@ -81,35 +81,6 @@ void    add_node_env(t_env **list, t_env *node, char *key)
     }
     add_back_env(list, node);                
 } 
-/* 
-int	add_node_env1(t_env **lst, char *key, char *value)
-{
-	t_env	*node;
-
-	// allocate a new node
-	node = create_node_env(key, value);
-
-	// check for duplicates in the list
-	t_env *tmp = *lst;
-	while (tmp)
-	{
-		if (ft_strcmp(tmp->key, key) == 0)
-		{
-			free(tmp->value);     // <== okay
-			tmp->value = value;   // <== dangerous if `value` is freed soon
-			free(node->key);      // <== you're freeing `key` and `value` here too!
-			free(node);
-			return (0);
-		}
-		tmp = tmp->next;
-	}
-
-	// add to list
-	node->next = *lst;
-	*lst = node;
-	return (1);
-} */
-
 
 void    delete_node_env(t_env **list, char *key)
 {

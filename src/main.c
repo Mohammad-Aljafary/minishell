@@ -90,8 +90,8 @@ int	main (int argc, char **argv, char **envp)
 	t_all	all;
 	
 	(void)argc;
-	ft_bzero(&all, sizeof(all));
 	check_tty_or_stop_program();
+	ft_bzero(&all, sizeof(all));
 	create_list_env(&all.env_lst, envp);
 	create_list_exp(all.env_lst, &all.exp_lst);
 	increment_shlvl(all.env_lst);
@@ -133,7 +133,7 @@ int	main (int argc, char **argv, char **envp)
 			clear_list(&all.tok_lst);
 			continue;
 		}
-		delete_token(&all.tok_lst, args, 1);
+		delete_token(&all.tok_lst, ARGS, 1);
 		//print_list(all.tok_lst);
 		move_command_to_front(&all.tok_lst);
 		execute (&all);

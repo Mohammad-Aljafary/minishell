@@ -78,9 +78,9 @@ int	tokenize(char *line, t_token **list)
 				return (0);
 			}
 			if (flag == 1)
-				node->quotes = single_quote;
+				node->quotes = SINGLE_QOUTE;
 			else if (flag == 2)
-				node->quotes = double_quote; //here is the changes 
+				node->quotes = DOUBLE_QUOTE; //here is the changes 
 			add_back(list, node);
 			i = j;
 		}

@@ -1,20 +1,20 @@
 #include <minishell.h>
 
-int apply_redirection(t_token **next_node, t_token *node, int in_child, int re_alone)
+int apply_redirection(t_token **next_node, t_token *node, int in_child)
 {
-    while (*next_node && (*next_node)->type != pipes)
+    while (*next_node && (*next_node)->type != PIPE)
     {
-        if ((*next_node)->type == out_re)
+        if ((*next_node)->type == OUT_RE)
         {
             if (apply_re_out(next_node, node, 1))
                 return (1);
         }
-        else if ((*next_node)->type == in_re)
+        else if ((*next_node)->type == IN_RE)
         {
             if (apply_re_in(next_node, node))
                 return (1);
         }
-        else if ((*next_node)->type == appends)
+        else if ((*next_node)->type == APPENDS)
         {
             if (apply_re_out(next_node, node, 2))
                 return (1);
@@ -22,15 +22,12 @@ int apply_redirection(t_token **next_node, t_token *node, int in_child, int re_a
         else
             *next_node = (*next_node)->next;
     }
-    if (re_alone)
-    {
-        if (node->out_fd > 1)
-            if (redirect_out(node->out_fd, &node->origin_out, in_child))
-                return (1);
-        if (node->in_fd > 0)
-            if (redirect_in(node->in_fd, &node->origin_in, in_child))
-                return (1);
-    }
+    if (node->out_fd > 1)
+        if (redirect_out(node->out_fd, &node->origin_out, in_child))
+            return (1);
+    if (node->in_fd > 0)
+        if (redirect_in(node->in_fd, &node->origin_in, in_child))
+            return (1);
     return (0);
 }
 
@@ -56,12 +53,12 @@ void retrieve(t_token *cmd)
     }
 }
 
-void    execute_command(t_token *cmd, t_all *all, t_token *node, int fd[2], int *prev)
+void    execute_command(t_token *cmd, t_all *all, t_token *node, int pipefd[2], int *prev)
 {
-    if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == pipes) && fd[0] == -1 && fd[1] == -1)
+    if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == PIPE) && pipefd[0] == -1 && pipefd[1] == -1)
         run_built_in(cmd, &all->exit_status, all, 0);
     else 
-        execute_external(cmd, all, node, fd, prev);
+        execute_external(cmd, all, node, pipefd, prev);
 }
 
 void    wait_status(t_all *wait_statuss)
@@ -90,77 +87,107 @@ void    wait_status(t_all *wait_statuss)
     }
 }
 
+int heredoc_counter(t_token *lst)
+{
+    int count;
+
+    count = 0;
+    while (lst)
+    {
+        if (lst->type == HERE_DOC)
+            count++;
+        lst = lst->next;
+    }
+    return (count);
+}
+
+char    **apply_heredoc(t_all *lists)
+{
+    char    **num_heredoc;
+    int i;
+
+    num_heredoc = malloc((heredoc_counter(lists->tok_lst) + 1) * sizeof(char *));
+    if (!num_heredoc)
+        return (NULL);
+    i = 0;
+    while (num_heredoc[i])
+    {
+        
+    }
+}
+
 void    execute(t_all *lists)
 {
     t_token *node;
     t_token *cmd    = NULL;
     t_token *search = NULL;
-    int     fd[2];
+    int     pipefd[2];
     int     prev_fd;
 
-    node   = lists->tok_lst;
+    node = lists->tok_lst;
     prev_fd = -1;
-    fd[0] = -1;
-    fd[1] = -1;
+    apply_heredoc(lists);
     while (node)
     {
-        if (node->type == command)
+        pipefd[0] = -1;
+        pipefd[1] = -1;
+        if (node->type == COMMAND)
         {
             cmd   = node;
             node  = node->next;
             search = node;
-            while (search && search->type != pipes)
+            while (search && search->type != PIPE)
                 search = search->next;
             if (!search
                 && is_built_in(cmd)
-                && !(cmd->prev && cmd->prev->type == pipes))
+                && !(cmd->prev && cmd->prev->type == PIPE))
             {
-                lists->exit_status = apply_redirection(&node, cmd, 0, 1);
+                lists->exit_status = apply_redirection(&node, cmd, 0);
                 if (lists->exit_status)
                     continue;
             }
-            else if (search && search->type == pipes)
+            else if (search && search->type == PIPE)
             {
-                if (pipe(fd) == -1)
+                if (pipe(pipefd) == -1)
                 {
                     perror("pipe");
                     clear_all(lists);
                     exit (EXIT_FAILURE);
                 }
             }
-            execute_command(cmd, lists, node, fd, &prev_fd);
+            execute_command(cmd, lists, node, pipefd, &prev_fd);
             retrieve(cmd);
             node = search;
-            if (node && node->type == pipes)
+            if (node && node->type == PIPE)
                 node = node->next;
         }
         else
         {
             cmd = node;
-            lists->exit_status = apply_redirection(&node, cmd, 0, 1);
+            lists->exit_status = apply_redirection(&node, cmd, 0);
             if (lists->exit_status)
             {
                 node = node->next;
                 continue ;
             }
-            if (node && node->type == pipes)
+            if (node && node->type == PIPE)
             {
-                if (pipe(fd) == -1)
+                if (pipe(pipefd) == -1)
                 {
                     perror("pipe");
                     clear_all(lists);
                     exit (EXIT_FAILURE);
                 }
-                close (fd[1]);
+                close (pipefd[1]);
                 node = node->next;
             }
             retrieve(cmd);
         }
     }
-    if (fd[0] != -1)
-        close(fd[0]);
-    if (fd[1] != -1)
-        close (fd[1]);
+    if (pipefd[0] != -1)
+        close(pipefd[0]);
+    if (pipefd[1] != -1)
+        close (pipefd[1]);
     wait_status(lists);
 }
 

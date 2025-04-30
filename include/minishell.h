@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/29 15:42:08 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/30 09:48:15 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,24 +31,24 @@ extern int			g_sig;
 
 typedef enum e_type
 {
-	not_defined,
-	pipes,
-	out_re,
-	in_re,
-	here_doc,
-	command,
-	appends,
-	delimiter,
-	args,
-	file,
-	s_quote
+	NOT_DEFINED,
+	PIPE,
+	OUT_RE,
+	IN_RE,
+	HERE_DOC,
+	COMMAND,
+	APPENDS,
+	DELIMITER,
+	ARGS,
+	FILES,
+	S_QOUTE
 }					t_type;
 
 typedef enum e_quote
 {
-	single_quote,
-	double_quote,
-	not_quoted
+	SINGLE_QOUTE,
+	DOUBLE_QUOTE,
+	NOT_QUOTE
 }					t_quote;
 
 typedef struct s_token
@@ -133,7 +133,7 @@ int					redirect_out(int out_fd, int *origin_out, int in_child);
 int					redirect_in(int in_fd, int *origin_in, int in_child);
 int					check_ambigious(t_token *node);
 int					apply_redirection(t_token **next_node, t_token *node,
-						int in_child, int re_alone);
+						int in_child);
 void				retrieve(t_token *cmd);
 void				run_built_in(t_token *cmd, int *exit_status, t_all *all,
 						int in_child);

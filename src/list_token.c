@@ -11,9 +11,9 @@ t_token	*create(char *str)
 	node->word = str;
 	node->prev = NULL;
 	node->next = NULL;
-	node->type = not_defined;
+	node->type = NOT_DEFINED;
 	node->args = NULL;
-	node->quotes = not_quoted;
+	node->quotes = NOT_QUOTE;
 	node->in_fd = 0;
 	node->out_fd = 1;
 	node->origin_in = -1;
@@ -54,7 +54,7 @@ void	clear_list(t_token **list)
 		free(temp->word);
 		temp->next = NULL;
 		temp->prev = NULL;
-		if(temp->type == command && temp->args)
+		if(temp->type == COMMAND && temp->args)
 			ft_free_split(temp->args);
 		retrieve(temp);
 		free(temp);
@@ -128,7 +128,7 @@ void	print_list(t_token *list)
 	while (list)
 	{
 		printf("string:%s type:%d expanded:%d\n", list->word, list->type, list->expaneded);
-		if (list->type == command && list->args)
+		if (list->type == COMMAND && list->args)
 		{
 			i = 0;
 			while (list->args[i])
