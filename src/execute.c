@@ -100,20 +100,92 @@ int heredoc_counter(t_token *lst)
     }
     return (count);
 }
+int file_exist(char *filename)
+{
+    struct stat buffer;
+    
+    if(stat(filename, &buffer) == 0)
+        return (1);
+    return (0);
+}
 
+int    open_heredoc(char **filename, t_token *delimiter)
+{
+    int fd;
+    char    *str;
+
+    fd = open(*filename, O_RDWR | O_CREAT, 0666);
+    if (fd == -1)
+    {
+        free (*filename);
+        return (-1);
+    }
+    while (1)
+    {
+        ft_fprintf(1, "> ");
+        str = get_next_line(0);
+        if (ft_strcmp (str, delimiter->word) == 0)
+        {
+            free (str);
+            break;
+        }    
+        write(fd, str, ft_strlen(str));
+        write(fd, "\n", 1);
+        //ft_fprintf(fd, "%s\n", str);
+        free(str);
+    }
+    close(fd);
+    return (0);
+}
+
+char    *check_file(t_token *node)
+{
+    static int  i = 0;
+    char    *num_to_ch;
+    char    *join;
+
+    while (1)
+    {
+        num_to_ch = ft_itoa(i);
+        if (!num_to_ch)
+            return (NULL);
+        join = ft_strjoin("/tmp/file", num_to_ch);
+        free(num_to_ch);
+        if(!join)
+            return(NULL);
+        if(file_exist(join))
+        {
+            i++;
+            free (join);
+            continue;
+        }
+        else
+            break;
+    }
+    if (open_heredoc(&join, node) == -1)
+        return (NULL);
+    return (join);
+}
 char    **apply_heredoc(t_all *lists)
 {
     char    **num_heredoc;
     int i;
+    t_token *node;
 
     num_heredoc = malloc((heredoc_counter(lists->tok_lst) + 1) * sizeof(char *));
     if (!num_heredoc)
         return (NULL);
     i = 0;
-    while (num_heredoc[i])
+    node = lists->tok_lst;
+    while (node)
     {
-        
+        if(node->type == HERE_DOC)
+        {
+            num_heredoc[i++] = check_file(node);
+        }
+        node = node->next;
     }
+    num_heredoc[i] = NULL;
 }
 
 void    execute(t_all *lists)
