@@ -263,7 +263,7 @@ void    track_child (int *prev, int pipefd[2], t_all *all, int id)
     all->num_of_child++;
 }
 
-void    execute_external(t_token *cmd, t_all *all, t_token *node, int pipefd[2], int *prev)
+void    execute_external(t_token *cmd, t_all *all, t_token *node, int pipefd[2], int *prev, char **heredoc)
 {
     pid_t id;
 
@@ -277,7 +277,7 @@ void    execute_external(t_token *cmd, t_all *all, t_token *node, int pipefd[2],
     else if (id == 0)
     {
         duplicate_pipe(pipefd, prev);
-        all->exit_status = apply_redirection(&node, cmd, 1);
+        all->exit_status = apply_redirection(&node, cmd, 1, heredoc);
         if (all->exit_status != 0)
         {
             clear_all(all);

@@ -136,7 +136,7 @@ int	main (int argc, char **argv, char **envp)
 		delete_token(&all.tok_lst, ARGS, 1);
 		//print_list(all.tok_lst);
 		move_command_to_front(&all.tok_lst);
-		execute (&all);
+ 		execute (&all);
 		clear_list(&all.tok_lst);
 		free(line);
 		if (g_sig == 1)

@@ -1,7 +1,9 @@
 #include <minishell.h>
 
-int apply_redirection(t_token **next_node, t_token *node, int in_child)
+int apply_redirection(t_token **next_node, t_token *node, int in_child, char **heredoc)
 {
+    static int i = 0;
+
     while (*next_node && (*next_node)->type != PIPE)
     {
         if ((*next_node)->type == OUT_RE)
@@ -17,6 +19,11 @@ int apply_redirection(t_token **next_node, t_token *node, int in_child)
         else if ((*next_node)->type == APPENDS)
         {
             if (apply_re_out(next_node, node, 2))
+                return (1);
+        }
+        else if ((*next_node)->type == HERE_DOC)
+        {
+            if (apply_here(node, heredoc[i++], next_node))
                 return (1);
         }
         else
@@ -53,12 +60,12 @@ void retrieve(t_token *cmd)
     }
 }
 
-void    execute_command(t_token *cmd, t_all *all, t_token *node, int pipefd[2], int *prev)
+void    execute_command(t_token *cmd, t_all *all, t_token *node, int pipefd[2], int *prev, char **heredoc)
 {
     if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == PIPE) && pipefd[0] == -1 && pipefd[1] == -1)
         run_built_in(cmd, &all->exit_status, all, 0);
     else 
-        execute_external(cmd, all, node, pipefd, prev);
+        execute_external(cmd, all, node, pipefd, prev, heredoc);
 }
 
 void    wait_status(t_all *wait_statuss)
@@ -87,107 +94,6 @@ void    wait_status(t_all *wait_statuss)
     }
 }
 
-int heredoc_counter(t_token *lst)
-{
-    int count;
-
-    count = 0;
-    while (lst)
-    {
-        if (lst->type == HERE_DOC)
-            count++;
-        lst = lst->next;
-    }
-    return (count);
-}
-int file_exist(char *filename)
-{
-    struct stat buffer;
-    
-    if(stat(filename, &buffer) == 0)
-        return (1);
-    return (0);
-}
-
-int    open_heredoc(char **filename, t_token *delimiter)
-{
-    int fd;
-    char    *str;
-
-    fd = open(*filename, O_RDWR | O_CREAT, 0666);
-    if (fd == -1)
-    {
-        free (*filename);
-        return (-1);
-    }
-    while (1)
-    {
-        ft_fprintf(1, "> ");
-        str = get_next_line(0);
-        if (ft_strcmp (str, delimiter->word) == 0)
-        {
-            free (str);
-            break;
-        }    
-        write(fd, str, ft_strlen(str));
-        write(fd, "\n", 1);
-        //ft_fprintf(fd, "%s\n", str);
-        free(str);
-    }
-    close(fd);
-    return (0);
-}
-
-char    *check_file(t_token *node)
-{
-    static int  i = 0;
-    char    *num_to_ch;
-    char    *join;
-
-    while (1)
-    {
-        num_to_ch = ft_itoa(i);
-        if (!num_to_ch)
-            return (NULL);
-        join = ft_strjoin("/tmp/file", num_to_ch);
-        free(num_to_ch);
-        if(!join)
-            return(NULL);
-        if(file_exist(join))
-        {
-            i++;
-            free (join);
-            continue;
-        }
-        else
-            break;
-    }
-    if (open_heredoc(&join, node) == -1)
-        return (NULL);
-    return (join);
-}
-char    **apply_heredoc(t_all *lists)
-{
-    char    **num_heredoc;
-    int i;
-    t_token *node;
-
-    num_heredoc = malloc((heredoc_counter(lists->tok_lst) + 1) * sizeof(char *));
-    if (!num_heredoc)
-        return (NULL);
-    i = 0;
-    node = lists->tok_lst;
-    while (node)
-    {
-        if(node->type == HERE_DOC)
-        {
-            num_heredoc[i++] = check_file(node);
-        }
-        node = node->next;
-    }
-    num_heredoc[i] = NULL;
-}
-
 void    execute(t_all *lists)
 {
     t_token *node;
@@ -195,10 +101,11 @@ void    execute(t_all *lists)
     t_token *search = NULL;
     int     pipefd[2];
     int     prev_fd;
+    char    **heredoc;
 
     node = lists->tok_lst;
     prev_fd = -1;
-    apply_heredoc(lists);
+    heredoc = apply_heredoc(lists);
     while (node)
     {
         pipefd[0] = -1;
@@ -214,7 +121,7 @@ void    execute(t_all *lists)
                 && is_built_in(cmd)
                 && !(cmd->prev && cmd->prev->type == PIPE))
             {
-                lists->exit_status = apply_redirection(&node, cmd, 0);
+                lists->exit_status = apply_redirection(&node, cmd, 0, heredoc);
                 if (lists->exit_status)
                     continue;
             }
@@ -227,7 +134,7 @@ void    execute(t_all *lists)
                     exit (EXIT_FAILURE);
                 }
             }
-            execute_command(cmd, lists, node, pipefd, &prev_fd);
+            execute_command(cmd, lists, node, pipefd, &prev_fd, heredoc);
             retrieve(cmd);
             node = search;
             if (node && node->type == PIPE)
@@ -236,7 +143,7 @@ void    execute(t_all *lists)
         else
         {
             cmd = node;
-            lists->exit_status = apply_redirection(&node, cmd, 0);
+            lists->exit_status = apply_redirection(&node, cmd, 0, heredoc);
             if (lists->exit_status)
             {
                 node = node->next;
@@ -261,6 +168,7 @@ void    execute(t_all *lists)
     if (pipefd[1] != -1)
         close (pipefd[1]);
     wait_status(lists);
+    unlinks (heredoc);
 }
 
 

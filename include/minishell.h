@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/30 09:48:15 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/04/30 17:45:46 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,15 +131,16 @@ int					apply_re_out(t_token **re_node, t_token *command, int flag);
 int					apply_re_in(t_token **re_token, t_token *command);
 int					redirect_out(int out_fd, int *origin_out, int in_child);
 int					redirect_in(int in_fd, int *origin_in, int in_child);
+int 				apply_here(t_token *cmd, char *filename, t_token **re_token);
 int					check_ambigious(t_token *node);
 int					apply_redirection(t_token **next_node, t_token *node,
-						int in_child);
+						int in_child, char **heredoc);
 void				retrieve(t_token *cmd);
 void				run_built_in(t_token *cmd, int *exit_status, t_all *all,
 						int in_child);
 int					is_built_in(t_token *cmd);
 void				execute_external(t_token *cmd, t_all *all, t_token *node,
-						int fd[2], int *prev);
+						int fd[2], int *prev, char **heredoc);
 void    run_external(t_token *cmd, int *exit_status, t_all *all);
 
 
@@ -160,4 +161,8 @@ int					ft_unset(t_token *cmd, t_env **env, t_env **exp);
 \************************* Signals ****************************\
 \**************************************************************/
 void	signal_setup();
+
+
+char    **apply_heredoc(t_all *lists);
+void    unlinks (char **heredoc);
 #endif
