@@ -57,6 +57,7 @@ char    *find_cmd_path(t_token *cmd, int *exit_status, t_all *all)
     if(!path)
     {
         ft_fprintf(2, "%s: No such file or directory\n", cmd->word);
+        *exit_status = 127;
         return (NULL);
     }
     splitted_path = ft_split(path, ':');
@@ -227,7 +228,7 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
     }
     signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-    // fprintf(stderr, "%s    tty: in=%d, out=%d\n", cmd->args[0], isatty(0), isatty(1));
+    //fprintf(stderr, "%s    tty: in=%d, out=%d\n", cmd->args[0], isatty(0), isatty(1));
     execve(path, cmd->args, envp);
     perror("execve");
     free (path);
@@ -236,10 +237,8 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
     exit (EXIT_FAILURE);
 }
 
-void    duplicate_pipe (int pipefd[2], int *prev)
+void    duplicate_pipe(int pipefd[2], int *prev)
 {
-    if (pipefd[0] != -1)
-        close (pipefd[0]);
     if (*prev != -1)
     {
         dup2(*prev, STDIN_FILENO);
@@ -250,6 +249,9 @@ void    duplicate_pipe (int pipefd[2], int *prev)
         dup2(pipefd[1], STDOUT_FILENO);
         close(pipefd[1]);
     }
+    if (pipefd[0] != -1)
+        close(pipefd[0]);
+
 }
 
 void    track_child (int *prev, int pipefd[2], t_all *all, int id)
@@ -278,6 +280,7 @@ void    execute_external(t_token *cmd, t_all *all, t_token *node, int pipefd[2],
     {
         duplicate_pipe(pipefd, prev);
         all->exit_status = apply_redirection(&node, cmd, 1, heredoc);
+        ft_free_split(heredoc);
         if (all->exit_status != 0)
         {
             clear_all(all);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/04/30 17:45:46 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/01 13:40:05 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void				run_built_in(t_token *cmd, int *exit_status, t_all *all,
 int					is_built_in(t_token *cmd);
 void				execute_external(t_token *cmd, t_all *all, t_token *node,
 						int fd[2], int *prev, char **heredoc);
-void    run_external(t_token *cmd, int *exit_status, t_all *all);
+void    			run_external(t_token *cmd, int *exit_status, t_all *all);
 
 
 /**************************************************************\

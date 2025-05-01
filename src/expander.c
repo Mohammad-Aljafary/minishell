@@ -254,7 +254,10 @@ int word_split(t_token **list)
                     return (0);
                 node = create(temp);
                 if (!node)
+                {
+                    free (temp);
                     return (0);
+                }
                 add_node_token(list, last_inserted, node);
                 last_inserted = node;
                 tok = ft_strtok(NULL, " \t");
@@ -351,7 +354,7 @@ int    expander(t_token **tok_lst, t_env *env_lst, char *argv, int exit_status)
             if (head->quotes != NOT_QUOTE)
             {
                 if (!remove_quotes(&head->word))
-                    return (free_return(&p));
+                    return (0);
             }
             head = (head)->next;
             continue;

@@ -1,40 +1,53 @@
 #include <minishell.h>
 
+int redirections (t_token **next_node, t_token *node, char **heredoc, int *i)
+{
+    if ((*next_node)->type == OUT_RE)
+    {
+        if (apply_re_out(next_node, node, 1))
+            return (1);
+    }
+    else if ((*next_node)->type == IN_RE)
+    {
+        if (apply_re_in(next_node, node))
+            return (1);
+    }
+    else if ((*next_node)->type == APPENDS)
+    {
+        if (apply_re_out(next_node, node, 2))
+            return (1);
+    }
+    else if ((*next_node)->type == HERE_DOC)
+    {
+        if (apply_here(node, heredoc[(*i++)], next_node))
+            return (1);
+    }
+    else
+        *next_node = (*next_node)->next;
+    return (0);
+
+}
+
 int apply_redirection(t_token **next_node, t_token *node, int in_child, char **heredoc)
 {
     static int i = 0;
-
-    while (*next_node && (*next_node)->type != PIPE)
+    
+    if (in_child == -1)
+        i = 0;
+    else
     {
-        if ((*next_node)->type == OUT_RE)
+        while (*next_node && (*next_node)->type != PIPE)
         {
-            if (apply_re_out(next_node, node, 1))
+            if (redirections(next_node, node, heredoc, &i))
                 return (1);
         }
-        else if ((*next_node)->type == IN_RE)
-        {
-            if (apply_re_in(next_node, node))
+        if (node->out_fd > 1)
+            if (redirect_out(node->out_fd, &node->origin_out, in_child))
                 return (1);
-        }
-        else if ((*next_node)->type == APPENDS)
-        {
-            if (apply_re_out(next_node, node, 2))
+        if (node->in_fd > 0)
+            if (redirect_in(node->in_fd, &node->origin_in, in_child))
                 return (1);
-        }
-        else if ((*next_node)->type == HERE_DOC)
-        {
-            if (apply_here(node, heredoc[i++], next_node))
-                return (1);
-        }
-        else
-            *next_node = (*next_node)->next;
     }
-    if (node->out_fd > 1)
-        if (redirect_out(node->out_fd, &node->origin_out, in_child))
-            return (1);
-    if (node->in_fd > 0)
-        if (redirect_in(node->in_fd, &node->origin_in, in_child))
-            return (1);
     return (0);
 }
 
@@ -62,7 +75,8 @@ void retrieve(t_token *cmd)
 
 void    execute_command(t_token *cmd, t_all *all, t_token *node, int pipefd[2], int *prev, char **heredoc)
 {
-    if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == PIPE) && pipefd[0] == -1 && pipefd[1] == -1)
+    if (is_built_in(cmd) && !(cmd->prev && cmd->prev->type == PIPE) 
+        && pipefd[0] == -1 && pipefd[1] == -1)
         run_built_in(cmd, &all->exit_status, all, 0);
     else 
         execute_external(cmd, all, node, pipefd, prev, heredoc);
@@ -92,6 +106,7 @@ void    wait_status(t_all *wait_statuss)
         }
         wait_statuss->num_of_child--;
     }
+    apply_redirection(NULL, NULL, -1, NULL);
 }
 
 void    execute(t_all *lists)
@@ -131,6 +146,7 @@ void    execute(t_all *lists)
                 {
                     perror("pipe");
                     clear_all(lists);
+                    unlinks (heredoc);
                     exit (EXIT_FAILURE);
                 }
             }
@@ -154,6 +170,7 @@ void    execute(t_all *lists)
                 if (pipe(pipefd) == -1)
                 {
                     perror("pipe");
+                    unlinks (heredoc);
                     clear_all(lists);
                     exit (EXIT_FAILURE);
                 }

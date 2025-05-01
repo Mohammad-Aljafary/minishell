@@ -7,14 +7,15 @@ void    unlinks (char **heredoc)
     i = 0;
     while (heredoc[i])
     {
-        unlink(heredoc[i]);
+        if (unlink(heredoc[i]) == -1)
+            return ;
         free (heredoc[i]);
         i++;
     }
     free (heredoc);
 }
 
-int heredoc_counter(t_token *lst)
+int heredoc_count(t_token *lst)
 {
     int count;
 
@@ -46,11 +47,33 @@ void remove_newline(char *str)
         str[len - 1] = '\0';
 }
 
-static int    open_heredoc(char **filename, t_token *delimiter)
+char    *expand_heredoc(char *str, t_env *env)
+{
+    int i;
+    int j;
+
+    i = 0;
+    while (str[i])
+    {
+        j = 0;
+        if (str[i] == '$')
+        {
+            j = i + 1;
+            while (str[j] && str[j] != ' ' && str[j] != '\t' && str[j] != '$')
+                j++;
+        }
+        i++
+    }
+
+}
+
+static int    open_heredoc(char **filename, t_token *delimiter, t_env *env)
 {
     int     fd;
     char    *str;
+    char    *exp;
 
+    exp = NULL;
     fd = open(*filename, O_RDWR | O_CREAT | O_TRUNC, 0600);
     if (fd == -1)
     {
@@ -60,24 +83,35 @@ static int    open_heredoc(char **filename, t_token *delimiter)
     while (1)
     {
         ft_fprintf(1, "> ");
-        str = get_next_line(0);
+        if (g_sig == 2)
+            return (-1);
+        str = get_next_line(STDIN_FILENO);
         if (!str)
+        {
+            write (1, "\n", 1);
             break;
+        }
         remove_newline(str);
         if (ft_strcmp(str, delimiter->word) == 0)
         {
             free (str);
             break;
-        }    
-        write(fd, str, ft_strlen(str));
+        }
+        if (delimiter->quotes != NOT_QUOTE)
+            write(fd, str, ft_strlen(str));
+        else
+            exp = expand_heredoc(str, env);
         write(fd, "\n", 1);
         free(str);
     }
+    //close (0);
+    // str = get_next_line(0);
+    // free (str);
     close(fd);
     return (0);
 }
 
-char    *check_file(t_token *node)
+char    *check_file(t_token *node, t_env *env)
 {
     static int  i = 0;
     char    *num_to_ch;
@@ -101,7 +135,7 @@ char    *check_file(t_token *node)
         else
             break;
     }
-    if (open_heredoc(&join, node) == -1)
+    if (open_heredoc(&join, node, env) == -1)
         return (NULL);
     return (join);
 }
@@ -112,29 +146,19 @@ char    **apply_heredoc(t_all *lists)
     int i;
     t_token *node;
 
-    num_heredoc = NULL;
-    num_heredoc = malloc((heredoc_counter(lists->tok_lst) + 1) * sizeof(char *));
+    num_heredoc = malloc((heredoc_count(lists->tok_lst) + 1) * sizeof(char *));
     if (!num_heredoc)
         return (NULL);
     i = 0;
     node = lists->tok_lst;
     while (node)
     {
-       if (node->type == HERE_DOC && node->next && node->next->type == DELIMITER)
+       if (node->type == HERE_DOC)
         {
-            if (g_sig == 2)
-            {
-                lists->exit_status = 130;
-                g_sig = 1;
-                unlinks(num_heredoc);
-                return (num_heredoc);
-            }
-            num_heredoc[i] = check_file(node->next);
+            num_heredoc[i] = check_file(node->next, lists->env_lst);
             if (!num_heredoc[i])
             {
-                while (--i >= 0)
-                    free(num_heredoc[i]);
-                free(num_heredoc);
+                unlinks(num_heredoc);
                 return (NULL);
             }
             i++;
