@@ -1,15 +1,23 @@
 
 #include <minishell.h>
 
+#include <minishell.h>
+
 int count_args_for_exit(t_token *cmd)
 {
 	if (args_count(cmd->args) > 2)
+    {
     {
 		ft_fprintf(2, "exit: too many arguments\n");
         return (1);
     }
     return (0);
+        return (1);
+    }
+    return (0);
 }
+
+int	ft_atoll(const char *str, long long *out)
 
 int	ft_atoll(const char *str, long long *out)
 {
@@ -74,7 +82,9 @@ int	ft_exits(t_token *cmd, t_all *all)
 	long long	value;
 	int			i;
 	int			n;
+	int			n;
 
+	n = 0;
 	n = 0;
 	i = 0;
 	ft_fprintf(2, "exit\n");
