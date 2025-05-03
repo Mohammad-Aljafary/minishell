@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/01 13:40:05 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/05/03 11:50:18 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ typedef struct s_all
 	t_token			*tok_lst;
 	t_env			*env_lst;
 	t_env			*exp_lst;
+	char			*argv;
 	int				exit_status;
 	int				num_of_child;
 	pid_t			last_pid;
@@ -120,6 +121,8 @@ char				*search_env(t_env *env, char *key);
 int					expander(t_token **tok_lst, t_env *env_lst, char *argv,
 						int exit_status);
 int					break_string(t_token **list, char *token);
+int					replace(t_token *p, t_env *envp, char *argv, int exit_status);
+int					join_strings(t_token *p, char   **token, t_token *ptr1);
 
 /**************************************************************\
 \*********************** Execution ****************************\
@@ -133,8 +136,7 @@ int					redirect_out(int out_fd, int *origin_out, int in_child);
 int					redirect_in(int in_fd, int *origin_in, int in_child);
 int 				apply_here(t_token *cmd, char *filename, t_token **re_token);
 int					check_ambigious(t_token *node);
-int					apply_redirection(t_token **next_node, t_token *node,
-						int in_child, char **heredoc);
+int 				apply_redirection(t_token **next_node, t_token *node, int in_child, char **heredoc, t_all *all);
 void				retrieve(t_token *cmd);
 void				run_built_in(t_token *cmd, int *exit_status, t_all *all,
 						int in_child);
@@ -165,4 +167,5 @@ void	signal_setup();
 
 char    **apply_heredoc(t_all *lists);
 void    unlinks (char **heredoc);
+int break_heredoc(t_token **list, char *str);
 #endif

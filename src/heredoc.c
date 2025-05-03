@@ -47,33 +47,35 @@ void remove_newline(char *str)
         str[len - 1] = '\0';
 }
 
-char    *expand_heredoc(char *str, t_env *env)
+int expand_all_variables(char **str, t_all *all)
 {
-    int i;
-    int j;
+    t_token *p;
 
-    i = 0;
-    while (str[i])
+    p = NULL;
+    if (!break_heredoc(&p, *str))
     {
-        j = 0;
-        if (str[i] == '$')
-        {
-            j = i + 1;
-            while (str[j] && str[j] != ' ' && str[j] != '\t' && str[j] != '$')
-                j++;
-        }
-        i++
+        clear_list(&p);
+        return (0);
     }
-
+    if (!replace(p, all->env_lst, all->argv, all->exit_status))
+    {
+        clear_list(&p);
+        return (0);
+    }
+    if (!join_strings(p, str, p))
+    {
+        clear_list(&p);
+        return (0);
+    }
+    clear_list(&p);
+    return (1);
 }
 
-static int    open_heredoc(char **filename, t_token *delimiter, t_env *env)
+static int    open_heredoc(char **filename, t_token *delimiter, t_all *all)
 {
     int     fd;
     char    *str;
-    char    *exp;
 
-    exp = NULL;
     fd = open(*filename, O_RDWR | O_CREAT | O_TRUNC, 0600);
     if (fd == -1)
     {
@@ -82,36 +84,33 @@ static int    open_heredoc(char **filename, t_token *delimiter, t_env *env)
     }
     while (1)
     {
-        ft_fprintf(1, "> ");
-        if (g_sig == 2)
-            return (-1);
-        str = get_next_line(STDIN_FILENO);
+        str = readline("> ");
         if (!str)
         {
             write (1, "\n", 1);
             break;
         }
-        remove_newline(str);
         if (ft_strcmp(str, delimiter->word) == 0)
         {
             free (str);
             break;
         }
-        if (delimiter->quotes != NOT_QUOTE)
-            write(fd, str, ft_strlen(str));
-        else
-            exp = expand_heredoc(str, env);
+        if (delimiter->quotes == NOT_QUOTE)
+            if (!expand_all_variables(&str, all))
+            {
+                close(fd);
+                free (str);
+                return (1);
+            }
+        write(fd, str, ft_strlen(str));
         write(fd, "\n", 1);
         free(str);
     }
-    //close (0);
-    // str = get_next_line(0);
-    // free (str);
     close(fd);
     return (0);
 }
 
-char    *check_file(t_token *node, t_env *env)
+char    *check_file(t_token *node, t_all *all)
 {
     static int  i = 0;
     char    *num_to_ch;
@@ -135,7 +134,7 @@ char    *check_file(t_token *node, t_env *env)
         else
             break;
     }
-    if (open_heredoc(&join, node, env) == -1)
+    if (open_heredoc(&join, node, all) == -1)
         return (NULL);
     return (join);
 }
@@ -155,7 +154,7 @@ char    **apply_heredoc(t_all *lists)
     {
        if (node->type == HERE_DOC)
         {
-            num_heredoc[i] = check_file(node->next, lists->env_lst);
+            num_heredoc[i] = check_file(node->next, lists);
             if (!num_heredoc[i])
             {
                 unlinks(num_heredoc);

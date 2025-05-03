@@ -1,7 +1,21 @@
 #include <minishell.h>
 
-int redirections (t_token **next_node, t_token *node, char **heredoc, int *i)
+void    find_file(t_token *cmd, t_token *list, int *i)
 {
+    while (list != cmd)
+    {
+        if (list->type == HERE_DOC)
+            *i += 1;
+        list = list->next;
+    }
+}
+
+int redirections (t_token **next_node, t_token *node, char **heredoc, t_all *all)
+{
+    int i;
+
+    i = 0;
+    find_file(node, all->tok_lst, &i);
     if ((*next_node)->type == OUT_RE)
     {
         if (apply_re_out(next_node, node, 1))
@@ -19,7 +33,7 @@ int redirections (t_token **next_node, t_token *node, char **heredoc, int *i)
     }
     else if ((*next_node)->type == HERE_DOC)
     {
-        if (apply_here(node, heredoc[(*i++)], next_node))
+        if (apply_here(node, heredoc[i++], next_node))
             return (1);
     }
     else
@@ -28,26 +42,19 @@ int redirections (t_token **next_node, t_token *node, char **heredoc, int *i)
 
 }
 
-int apply_redirection(t_token **next_node, t_token *node, int in_child, char **heredoc)
+int apply_redirection(t_token **next_node, t_token *node, int in_child, char **heredoc, t_all *all)
 {
-    static int i = 0;
-    
-    if (in_child == -1)
-        i = 0;
-    else
+    while (*next_node && (*next_node)->type != PIPE)
     {
-        while (*next_node && (*next_node)->type != PIPE)
-        {
-            if (redirections(next_node, node, heredoc, &i))
-                return (1);
-        }
-        if (node->out_fd > 1)
-            if (redirect_out(node->out_fd, &node->origin_out, in_child))
-                return (1);
-        if (node->in_fd > 0)
-            if (redirect_in(node->in_fd, &node->origin_in, in_child))
-                return (1);
+        if (redirections(next_node, node, heredoc, all))
+            return (1);
     }
+    if (node->out_fd > 1)
+        if (redirect_out(node->out_fd, &node->origin_out, in_child))
+            return (1);
+    if (node->in_fd > 0)
+        if (redirect_in(node->in_fd, &node->origin_in, in_child))
+            return (1);
     return (0);
 }
 
@@ -106,7 +113,6 @@ void    wait_status(t_all *wait_statuss)
         }
         wait_statuss->num_of_child--;
     }
-    apply_redirection(NULL, NULL, -1, NULL);
 }
 
 void    execute(t_all *lists)
@@ -120,11 +126,13 @@ void    execute(t_all *lists)
 
     node = lists->tok_lst;
     prev_fd = -1;
+    pipefd[0] = -1;
+    pipefd[1] = -1;
     heredoc = apply_heredoc(lists);
+    if (!heredoc)
+        return ;
     while (node)
     {
-        pipefd[0] = -1;
-        pipefd[1] = -1;
         if (node->type == COMMAND)
         {
             cmd   = node;
@@ -136,7 +144,7 @@ void    execute(t_all *lists)
                 && is_built_in(cmd)
                 && !(cmd->prev && cmd->prev->type == PIPE))
             {
-                lists->exit_status = apply_redirection(&node, cmd, 0, heredoc);
+                lists->exit_status = apply_redirection(&node, cmd, 0, heredoc, lists);
                 if (lists->exit_status)
                     continue;
             }
@@ -159,7 +167,7 @@ void    execute(t_all *lists)
         else
         {
             cmd = node;
-            lists->exit_status = apply_redirection(&node, cmd, 0, heredoc);
+            lists->exit_status = apply_redirection(&node, cmd, 0, heredoc, lists);
             if (lists->exit_status)
             {
                 node = node->next;

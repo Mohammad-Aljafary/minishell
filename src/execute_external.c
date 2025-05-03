@@ -279,7 +279,7 @@ void    execute_external(t_token *cmd, t_all *all, t_token *node, int pipefd[2],
     else if (id == 0)
     {
         duplicate_pipe(pipefd, prev);
-        all->exit_status = apply_redirection(&node, cmd, 1, heredoc);
+        all->exit_status = apply_redirection(&node, cmd, 1, heredoc, all);
         ft_free_split(heredoc);
         if (all->exit_status != 0)
         {

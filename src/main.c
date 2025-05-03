@@ -89,18 +89,26 @@ int	main (int argc, char **argv, char **envp)
 	char	*line;
 	t_all	all;
 	
+	(void)envp;
 	(void)argc;
 	check_tty_or_stop_program();
 	ft_bzero(&all, sizeof(all));
-	create_list_env(&all.env_lst, envp);
-	create_list_exp(all.env_lst, &all.exp_lst);
-	increment_shlvl(all.env_lst);
+	if (*envp)
+	{
+		create_list_env(&all.env_lst, envp);
+		create_list_exp(all.env_lst, &all.exp_lst);
+		increment_shlvl(all.env_lst);
+	}
+	all.argv = argv[0];
 	while (1)
 	{
 		setup_signals();
 		line = readline("\033[0;31mminishell> \033[0m");
 		if (!line)
+		{
+			ft_fprintf(2, "exit\n");
 			break;
+		}
 		setup_signals2();
 		if (g_sig == 2)
 		{
@@ -144,7 +152,6 @@ int	main (int argc, char **argv, char **envp)
 			g_sig = 0;
 		}
 	}
-	ft_fprintf(2, "exit\n");
 	clear_all(&all);
 	rl_clear_history();
 	return (all.exit_status);

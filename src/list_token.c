@@ -14,8 +14,8 @@ t_token	*create(char *str)
 	node->type = NOT_DEFINED;
 	node->args = NULL;
 	node->quotes = NOT_QUOTE;
-	node->in_fd = 0;
-	node->out_fd = 1;
+	node->in_fd = -1;
+	node->out_fd = -1;
 	node->origin_in = -1;
 	node->origin_out = -1;
 	node->expaneded = 0;

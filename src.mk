@@ -5,4 +5,4 @@ SRC =   src/main.c src/list_token.c src/tokenizer.c src/parser.c \
 		src/built_in.c src/cd.c src/echo.c\
 		src/env.c src/exit.c src/export.c\
 		src/pwd.c src/unset.c src/heredoc.c \
-		src/apply_heredoc.c
+		src/apply_heredoc.c src/expand_heredoc.c

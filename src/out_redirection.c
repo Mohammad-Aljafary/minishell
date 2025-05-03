@@ -58,7 +58,7 @@ int apply_re_out(t_token **re_node, t_token *command, int flag)
         ft_fprintf(2, "%s: ambiguous redirect\n", (*re_node)->next->word);
         return (1);
     }
-    if (command->out_fd > 1)
+    if (command->out_fd != -1)
         close(command->out_fd);
     if (open_file((*re_node)->next->word, &command->out_fd, flag))
         return (1);
