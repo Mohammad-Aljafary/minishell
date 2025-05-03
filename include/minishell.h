@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mohammad-boom <mohammad-boom@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/03 11:50:18 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/05/03 17:54:45 by mohammad-bo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ void				create_list_exp(t_env *env, t_env **exp);
 int					tokenize(char *line, t_token **list);
 int					check_type(t_token *list);
 void				parser(t_token **list);
+void    			parser2(t_token *list);
 int					syntax_error(t_token *list);
 int					is_whitespace(char c);
 int					check_redirection(t_token *list);

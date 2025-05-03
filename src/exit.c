@@ -1,8 +1,6 @@
 
 #include <minishell.h>
 
-#include <minishell.h>
-
 int count_args_for_exit(t_token *cmd)
 {
 	if (args_count(cmd->args) > 2)

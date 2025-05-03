@@ -121,6 +121,27 @@ void	delete_token(t_token **list, t_type type, int flag)
 	}
 }
 
+void delete_ptr(t_token **list, t_token *lst) 
+{
+    if (lst == *list)
+    {
+        *list = lst->next;
+        if (*list)
+            (*list)->prev = NULL;
+        free(lst->word);
+        free(lst);
+    }
+    else
+    {
+        if (lst->next)
+            lst->next->prev = lst->prev;
+        if (lst->prev)
+            lst->prev->next = lst->next;
+        free(lst->word);
+        free(lst);
+    }
+}
+
 void	print_list(t_token *list)
 {
 	int	i;
@@ -142,4 +163,3 @@ void	print_list(t_token *list)
 		list = list->next;
 	}
 }
-

@@ -111,3 +111,21 @@ int syntax_error(t_token *list)
     }
     return (0);
 }
+
+void    parser2(t_token *list)
+{
+    while (list)
+    {
+        if(list->type == NOT_DEFINED)
+        {
+            if(!list->prev || list->prev->type == PIPE)
+                list->type = COMMAND;
+             else if (list->prev->type == ARGS || list->prev->type == COMMAND)
+                list->type = ARGS;
+            else if (list->prev->type == IN_RE || list->prev->type == OUT_RE 
+                    || list->prev->type == FILES || list->prev->type == APPENDS)
+                list->type = FILES; 
+        }
+        list = list->next;
+    }
+}
