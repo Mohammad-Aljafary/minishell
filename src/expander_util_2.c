@@ -105,4 +105,3 @@ int remove_quotes(char **line1)
     clear_list(&lst);
     return (1);
 }
-

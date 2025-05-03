@@ -12,8 +12,8 @@ t_token	*create(char *str)
 	node->prev = NULL;
 	node->next = NULL;
 	node->type = NOT_DEFINED;
-	node->args = NULL;
 	node->quotes = NOT_QUOTE;
+	node->args = NULL;
 	node->in_fd = -1;
 	node->out_fd = -1;
 	node->origin_in = -1;
@@ -40,24 +40,6 @@ void	add_back(t_token **list, t_token *new_node)
 		*list = new_node;
 		(*list)->prev = NULL;
 		(*list)->next = NULL;
-	}
-}
-
-void	clear_list(t_token **list)
-{
-	t_token	*temp;
-
-	while (*list)
-	{
-		temp = (*list);
-		*list = (*list)->next;
-		free(temp->word);
-		temp->next = NULL;
-		temp->prev = NULL;
-		if(temp->type == COMMAND && temp->args)
-			ft_free_split(temp->args);
-		retrieve(temp);
-		free(temp);
 	}
 }
 

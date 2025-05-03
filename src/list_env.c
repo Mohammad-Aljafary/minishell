@@ -45,19 +45,6 @@ void add_back_env(t_env **list, t_env *node)
     lst->next = node;             
 }
 
-void    clear_list_env(t_env **list)
-{
-    t_env *temp;
-    while (*list)
-    {
-        temp = *list;
-        *list = (*list)->next;
-        free(temp->key);      
-        free(temp->value);  
-        free(temp);
-    }
-}
-
 void    add_node_env(t_env **list, t_env *node, char *key)
 {
     t_env   *lst;

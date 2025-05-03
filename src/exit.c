@@ -16,8 +16,6 @@ int count_args_for_exit(t_token *cmd)
 }
 
 int	ft_atoll(const char *str, long long *out)
-
-int	ft_atoll(const char *str, long long *out)
 {
 	long long	result;
 	int			sign;
