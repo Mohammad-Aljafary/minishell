@@ -51,10 +51,8 @@ static int	expand_tokens(t_token **tok_lst, t_all *all)
 		{
 			if (!remove_quotes(&head->word))
 				return (0);
-			head = head->next;
-			continue ;
 		}
-		if (head->type != DELIMITER)
+		else if (head->type != DELIMITER && check_type(head) == NOT_DEFINED)
 		{
 			if (!process_token_2(head, all))
 				return (0);

@@ -114,6 +114,7 @@ int	main (int argc, char **argv, char **envp)
 		{
 			all.exit_status = 130;
 			g_sig = 1;
+			free (line);
 		}
 		if (line[0] != '\0')
 			add_history(line);
@@ -132,6 +133,7 @@ int	main (int argc, char **argv, char **envp)
 		}
 		if (!expander(&all.tok_lst, &all))
 		{
+			ft_fprintf(2, "heeerree\n");
 			clear_list(&all.tok_lst);
 			free (line);
 			continue;
@@ -139,6 +141,7 @@ int	main (int argc, char **argv, char **envp)
 		if (!join_args(all.tok_lst))
 		{
 			clear_list(&all.tok_lst);
+			free (line);
 			continue;
 		}
 		delete_args(&all.tok_lst, ARGS);

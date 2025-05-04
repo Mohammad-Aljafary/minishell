@@ -7,10 +7,12 @@ int	handle_variable(t_token **list, char *token, int *i)
 	t_token	*node;
 
 	j = *i + 1;
-	while ((token[j] && (ft_isalnum(token[j]) || token[j] == '_'))
-		|| token[j] == '?')
+	if (token[j] == '?') // handle $?
 		j++;
-	if (j > *i)
+	else
+		while (token[j] && (ft_isalnum(token[j]) || token[j] == '_'))
+			j++;
+	if (j > *i + 1)
 	{
 		temp = ft_substr(token, *i, j - *i);
 		if (!temp)
@@ -48,8 +50,8 @@ int	add_normal_text(t_token **list, char *token, int *i)
 			return (0);
 		}
 		add_back(list, node);
-		*i = j;
 	}
+	*i = j;
 	return (1);
 }
 

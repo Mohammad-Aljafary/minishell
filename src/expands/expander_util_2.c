@@ -13,7 +13,7 @@ char	*search_env(t_env *env, char *key)
 	return (NULL);
 }
 
-int	word_split_util(char *tok, t_token *last_inserted, t_token **list)
+int word_split_util(char *tok, t_token **last_inserted, t_token **list)
 {
 	char	*temp;
 	t_token	*node;
@@ -28,12 +28,12 @@ int	word_split_util(char *tok, t_token *last_inserted, t_token **list)
 		free(temp);
 		return (0);
 	}
-	add_node_token(list, last_inserted, node);
-	last_inserted = node;
+	add_node_token(list, *last_inserted, node);
+	*last_inserted = node;
 	return (1);
 }
 
-int	word_split(t_token **list)
+int word_split(t_token **list)
 {
 	t_token	*lst;
 	t_token	*next;
@@ -47,10 +47,10 @@ int	word_split(t_token **list)
 		if (lst->expaneded && lst->quotes != DOUBLE_QUOTE)
 		{
 			tok = ft_strtok(lst->word, " \t");
-			last_inserted = lst;
+			last_inserted = lst->prev;
 			while (tok != NULL)
 			{
-				if (!word_split_util(tok, last_inserted, list))
+				if (!word_split_util(tok, &last_inserted, list))
 					return (0);
 				tok = ft_strtok(NULL, " \t");
 			}
@@ -78,13 +78,14 @@ int	join_strings(t_token *p, char **token, t_token *ptr1)
 	size_t	length;
 	char	*str;
 
+	(void)token;
 	length = calculate_tokens_length(p);
 	str = malloc((length + 1) * sizeof(char));
 	if (!str)
 		return (0);
 	str[0] = '\0';
 	concatenate_tokens(p, str, length, ptr1);
-	free(*token);
-	*token = str;
+	free(ptr1->word);
+	ptr1->word = str;
 	return (1);
 }
