@@ -130,7 +130,7 @@ int	main (int argc, char **argv, char **envp)
 			free(line);
 			continue;
 		}
-		if (!expander(&all.tok_lst, all.env_lst, argv[0], all.exit_status))
+		if (!expander(&all.tok_lst, &all))
 		{
 			clear_list(&all.tok_lst);
 			free (line);
@@ -141,7 +141,7 @@ int	main (int argc, char **argv, char **envp)
 			clear_list(&all.tok_lst);
 			continue;
 		}
-		delete_token(&all.tok_lst, ARGS, 1);
+		delete_args(&all.tok_lst, ARGS);
 		move_command_to_front(&all.tok_lst);
  		execute (&all);
 		clear_list(&all.tok_lst);

@@ -1,0 +1,133 @@
+#include <minishell.h>
+
+t_token	*create(char *str)
+{
+	t_token	*node;
+
+	node = malloc(sizeof(t_token));
+	if (!node)
+		return (NULL);
+	node->word = str;
+	node->prev = NULL;
+	node->next = NULL;
+	node->type = NOT_DEFINED;
+	node->quotes = NOT_QUOTE;
+	node->args = NULL;
+	node->in_fd = -1;
+	node->out_fd = -1;
+	node->origin_in = -1;
+	node->origin_out = -1;
+	node->expaneded = 0;
+	return (node);
+}
+
+void	add_back(t_token **list, t_token *new_node)
+{
+	t_token	*temp;
+
+	temp = *list;
+	if (temp)
+	{
+		while (temp->next)
+			temp = temp->next;
+		temp->next = new_node;
+		new_node->prev = temp;
+		new_node->next = NULL;
+	}
+	else
+	{
+		*list = new_node;
+		(*list)->prev = NULL;
+		(*list)->next = NULL;
+	}
+}
+
+void	add_node_token(t_token **list, t_token *node, t_token *new_node)
+{
+	t_token	*lst;
+
+	lst = *list;
+	while (lst)
+	{
+		if (lst == node && lst->next)
+		{
+			lst->next->prev = new_node;
+			node->next = lst->next;
+			node->prev = lst;
+			lst->next = new_node;
+			return ;
+		}
+		lst = lst->next;
+	}
+	add_back(list, new_node);
+}
+
+void	delete_args(t_token **list, t_type type)
+{
+	t_token	*lst;
+	t_token	*next;
+
+	if (!list || !*list)
+		return ;
+	lst = *list;
+	while (lst)
+	{
+		next = lst->next;
+		if (lst->type == type)
+		{
+			if (lst->prev)
+				lst->prev->next = lst->next;
+			else
+				*list = lst->next;
+			if (lst->next)
+				lst->next->prev = lst->prev;
+			free(lst->word);
+			free(lst);
+		}
+		lst = next;
+	}
+}
+
+void	delete_ptr(t_token **list, t_token *lst)
+{
+	if (lst == *list)
+	{
+		*list = lst->next;
+		if (*list)
+			(*list)->prev = NULL;
+		free(lst->word);
+		free(lst);
+	}
+	else
+	{
+		if (lst->next)
+			lst->next->prev = lst->prev;
+		if (lst->prev)
+			lst->prev->next = lst->next;
+		free(lst->word);
+		free(lst);
+	}
+}
+
+/* void	print_list(t_token *list)
+{
+	int	i;
+
+	while (list)
+	{
+		printf("string:%s type:%d expanded:%d\n", list->word, list->type,
+			list->expaneded);
+		if (list->type == COMMAND && list->args)
+		{
+			i = 0;
+			while (list->args[i])
+			{
+				printf("  arg[%d]: %s\n", i, list->args[i]);
+				i++;
+			}
+		}
+
+		printf("\n");
+		list = list->next;
+	}
+} */

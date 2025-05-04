@@ -6,22 +6,25 @@ OBJ_DIR = obj
 LIBFT = ./libft
 NAME = minishell
 INCLUDE = -I./include
-OBJECTS =$(patsubst src/%.c, obj/%.o, $(SRC))
+
+# Generate obj/*.o from src/*.c
+OBJECTS = $(patsubst src/%.c, $(OBJ_DIR)/%.o, $(SRC))
 
 all: libft $(NAME)
-
 
 $(NAME): $(OBJECTS) $(LIBFT)/libft.a 
 	$(CC) $(CFLAGS) $(OBJECTS) -L $(LIBFT) -lft -lreadline -lncurses -o $(NAME)
 
 libft:
 	@make -C $(LIBFT)
-obj/%.o: src/%.c
-	@mkdir -p obj
+
+# Compile rule with automatic directory creation
+$(OBJ_DIR)/%.o: src/%.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 clean:
-	rm -rf obj
+	rm -rf $(OBJ_DIR)
 	@make clean -C $(LIBFT)
 
 fclean: clean

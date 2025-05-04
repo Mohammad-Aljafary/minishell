@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-boom <mohammad-boom@student.42    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/03 17:54:45 by mohammad-bo      ###   ########.fr       */
+/*   Updated: 2025/05/04 08:47:01 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <errno.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/stat.h>
@@ -25,7 +26,6 @@
 # include <sys/wait.h>
 # include <term.h>
 # include <unistd.h>
-# include <signal.h>
 
 extern int			g_sig;
 
@@ -109,7 +109,7 @@ void				create_list_exp(t_env *env, t_env **exp);
 int					tokenize(char *line, t_token **list);
 int					check_type(t_token *list);
 void				parser(t_token **list);
-void    			parser2(t_token *list);
+void				parser2(t_token *list);
 int					syntax_error(t_token *list);
 int					is_whitespace(char c);
 int					check_redirection(t_token *list);
@@ -119,33 +119,46 @@ void				move_command_to_front(t_token **head);
 \********************** Expander *****************************\
 \*************************************************************/
 char				*search_env(t_env *env, char *key);
-int					expander(t_token **tok_lst, t_env *env_lst, char *argv,
-						int exit_status);
+int					expander(t_token **tok_lst, t_all *all);
 int					break_string(t_token **list, char *token);
-int					replace(t_token *p, t_env *envp, char *argv, int exit_status);
-int					join_strings(t_token *p, char   **token, t_token *ptr1);
-
+int					replace(t_token *p, t_all *all);
+int					join_strings(t_token *p, char **token, t_token *ptr1);
+size_t				calculate_tokens_length(t_token *ptr);
+int					replace_env(t_token *p, t_env *envp, int *i, int *j);
+int					replace_exit_status(char **token, int exit_status);
+int					replace_num(char **token, char *minishell_file);
+int					word_split(t_token **list);
+int					remove_quotes(char **line1);
+int					free_return(t_token **p);
+int					handle_dollar_sign(t_token *p, t_all *all, int i);
+int					process_token(t_token *p, t_all *all);
+int					handle_double_quotes(t_token **list, char *token, int *i);
+int					handle_double_utile(t_token **list, char *token, int length,
+						int *i);
+int					handle_single_quotes(t_token **list, char *token, int *i);
+int					handle_variable(t_token **list, char *token, int *i);
 /**************************************************************\
 \*********************** Execution ****************************\
 \**************************************************************/
 void				execute(t_all *lists);
 int					join_args(t_token *node);
-void				delete_token(t_token **list, t_type type, int flag);
+void				delete_args(t_token **list, t_type type);
 int					apply_re_out(t_token **re_node, t_token *command, int flag);
 int					apply_re_in(t_token **re_token, t_token *command);
 int					redirect_out(int out_fd, int *origin_out, int in_child);
 int					redirect_in(int in_fd, int *origin_in, int in_child);
-int 				apply_here(t_token *cmd, char *filename, t_token **re_token);
+int					apply_here(t_token *cmd, char *filename,
+						t_token **re_token);
 int					check_ambigious(t_token *node);
-int 				apply_redirection(t_token **next_node, t_token *node, int in_child, char **heredoc, t_all *all);
+int					apply_redirection(t_token **next_node, t_token *node,
+						int in_child, char **heredoc, t_all *all);
 void				retrieve(t_token *cmd);
 void				run_built_in(t_token *cmd, int *exit_status, t_all *all,
 						int in_child);
 int					is_built_in(t_token *cmd);
 void				execute_external(t_token *cmd, t_all *all, t_token *node,
 						int fd[2], int *prev, char **heredoc);
-void    			run_external(t_token *cmd, int *exit_status, t_all *all);
-
+void				run_external(t_token *cmd, int *exit_status, t_all *all);
 
 /**************************************************************\
 \*********************** Built-ins ****************************\
@@ -155,18 +168,24 @@ int					ft_cd(t_token *cmd, t_env **env);
 int					ft_echo(t_token *cmd);
 int					ft_env(t_token *cmd, t_env *list);
 int					ft_exits(t_token *cmd, t_all *all);
-void				ft_export(t_token *cmd, t_env **env, t_env **exp,
-						int *exit_status);
 int					ft_pwd(void);
 int					ft_unset(t_token *cmd, t_env **env, t_env **exp);
+void				ft_export(t_token *cmd, t_env **env, t_env **exp,
+						int *exit_status);
+void				free_env_node(t_env *node);
+int					add_to_export(char **key, char **value, t_env **env,
+						t_env **exp);
+int					split_key_value(char *arg, t_env **env, t_env **exp);
 
 /**************************************************************\
 \************************* Signals ****************************\
 \**************************************************************/
-void	signal_setup();
+void				signal_setup(void);
 
-
-char    **apply_heredoc(t_all *lists);
-void    unlinks (char **heredoc);
-int break_heredoc(t_token **list, char *str);
+char				**apply_heredoc(t_all *lists);
+void				unlinks(char **heredoc);
+int					break_heredoc(t_token **list, char *str);
+char				*check_file(t_token *node, t_all *all);
+int					heredoc_count(t_token *lst);
+int					expand_all_variables(char **str, t_all *all);
 #endif
