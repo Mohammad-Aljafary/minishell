@@ -118,7 +118,6 @@ void    wait_status(t_all *wait_statuss)
 void    execute(t_all *lists)
 {
     t_token *node;
-    t_token *node;
     t_token *cmd    = NULL;
     t_token *search = NULL;
     int     pipefd[2];
