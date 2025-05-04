@@ -4,7 +4,9 @@ int	g_sig ;
 
 void	print_env(char **env)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	while (env[i])
 	{
 		printf ("%s\n", env[i]);
@@ -21,18 +23,18 @@ void	increment_shlvl(t_env *envp)
 	convert_atoi = 0;
 	create_shlvl = NULL;
 	shlvl = search_env(envp, "SHLVL");
-	if(!shlvl)
+	if (!shlvl)
 	{
 		create_shlvl = create_node_env("SHLVL", "1");
 		if (!create_shlvl)
 			return ;
-		add_back_env(&envp,create_shlvl);
+		add_back_env(&envp, create_shlvl);
 	}
 	convert_atoi = ft_atoi(shlvl);
 	if (convert_atoi < 0)
 		convert_atoi = -1;
 	shlvl = ft_itoa(convert_atoi + 1);
-	if(!shlvl)
+	if (!shlvl)
 		return ;
 	create_shlvl = create_node_env("SHLVL", shlvl);
 	free (shlvl);
@@ -78,17 +80,17 @@ void	setup_signals2(void)
 	signal(SIGTSTP, SIG_IGN);
 }
 
-static void	check_tty_or_stop_program()
+static	void	check_tty_or_stop_program(void)
 {
 	if (!isatty(0) || !isatty(1) || !isatty(2))
 		exit(1);
 }
 
-int	main (int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	t_all	all;
-	
+
 	(void)envp;
 	(void)argc;
 	check_tty_or_stop_program();
@@ -107,7 +109,7 @@ int	main (int argc, char **argv, char **envp)
 		if (!line)
 		{
 			ft_fprintf(2, "exit\n");
-			break;
+			break ;
 		}
 		setup_signals2();
 		if (g_sig == 2)
@@ -121,29 +123,29 @@ int	main (int argc, char **argv, char **envp)
 		{
 			clear_list(&all.tok_lst);
 			free(line);
-			continue;
+			continue ;
 		}
 		parser(&all.tok_lst);
 		if (syntax_error(all.tok_lst))
 		{
 			clear_list(&all.tok_lst);
 			free(line);
-			continue;
+			continue ;
 		}
 		if (!expander(&all.tok_lst, &all))
 		{
 			clear_list(&all.tok_lst);
 			free (line);
-			continue;
+			continue ;
 		}
 		if (!join_args(all.tok_lst))
 		{
 			clear_list(&all.tok_lst);
-			continue;
+			continue ;
 		}
 		delete_args(&all.tok_lst, ARGS);
 		move_command_to_front(&all.tok_lst);
- 		execute (&all);
+		execute(&all);
 		clear_list(&all.tok_lst);
 		free(line);
 		if (g_sig == 1)
@@ -156,4 +158,3 @@ int	main (int argc, char **argv, char **envp)
 	rl_clear_history();
 	return (all.exit_status);
 }
-
