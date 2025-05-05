@@ -26,8 +26,8 @@ int	handle_variable(t_token **list, char *token, int *i, int check)
 		if (!check)
 			node->quotes = DOUBLE_QUOTE;
 		add_back(list, node);
-		*i = j;
 	}
+	*i = j;
 	return (1);
 }
 
