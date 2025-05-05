@@ -42,74 +42,40 @@ void	add_back(t_token **list, t_token *new_node)
 	}
 }
 
-void	add_node_token(t_token **list, t_token *node, t_token *new_node)
+void add_node_token(t_token **list, t_token *node, t_token *new_node)
 {
-	t_token	*lst;
+    t_token *lst;
 
-	lst = *list;
-	while (lst)
-	{
-		if (lst == node && lst->next)
-		{
-			lst->next->prev = new_node;
-			node->next = lst->next;
-			node->prev = lst;
-			lst->next = new_node;
-			return ;
-		}
-		lst = lst->next;
-	}
-	add_back(list, new_node);
+    lst = *list;
+    while (lst)
+    {
+        if (lst == node)
+        {
+            new_node->next = lst->next;
+            new_node->prev = lst;
+            if (lst->next)
+                lst->next->prev = new_node;
+            lst->next = new_node;
+            return;
+        }
+        lst = lst->next;
+    }
+    add_back(list, new_node);
 }
 
-void	delete_args(t_token **list, t_type type)
+void add_front(t_token **list, t_token *new_node)
 {
-	t_token	*lst;
-	t_token	*next;
-
-	if (!list || !*list)
-		return ;
-	lst = *list;
-	while (lst)
-	{
-		next = lst->next;
-		if (lst->type == type)
-		{
-			if (lst->prev)
-				lst->prev->next = lst->next;
-			else
-				*list = lst->next;
-			if (lst->next)
-				lst->next->prev = lst->prev;
-			free(lst->word);
-			free(lst);
-		}
-		lst = next;
-	}
+	if (!list || !new_node)
+		return;
+	new_node->next = *list;
+	if (*list)
+		(*list)->prev = new_node;
+	new_node->prev = NULL;
+	*list = new_node;
 }
 
-void	delete_ptr(t_token **list, t_token *lst)
-{
-	if (lst == *list)
-	{
-		*list = lst->next;
-		if (*list)
-			(*list)->prev = NULL;
-		free(lst->word);
-		free(lst);
-	}
-	else
-	{
-		if (lst->next)
-			lst->next->prev = lst->prev;
-		if (lst->prev)
-			lst->prev->next = lst->next;
-		free(lst->word);
-		free(lst);
-	}
-}
 
-/* void	print_list(t_token *list)
+void	print_list(t_token *list)
 {
 	int	i;
 
@@ -130,4 +96,4 @@ void	delete_ptr(t_token **list, t_token *lst)
 		printf("\n");
 		list = list->next;
 	}
-} */
+}

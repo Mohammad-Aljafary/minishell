@@ -211,22 +211,22 @@ char	**list_to_arr(t_env *env)
 
 void	run_external(t_token *cmd, int *exit_status, t_all *all)
 {
-	char	**envp;
-	char	*path;
+    char    **envp;
+    char    *path;
 
-	path = check_cmd(cmd, exit_status, all);
-	if (!path)
-	{
-		clear_all(all);
-		exit(*exit_status);
-	}
-	envp = list_to_arr(all->env_lst);
-	if (!envp)
-	{
-		clear_all(all);
-		exit(*exit_status);
-	}
-	signal(SIGINT, SIG_DFL);
+    path = check_cmd(cmd, exit_status, all);
+    if (!path)
+    {
+        clear_all(all);
+        exit(*exit_status);
+    }
+    envp = list_to_arr(all->env_lst);
+    if(!envp)
+    {
+        clear_all(all);
+        exit (*exit_status);
+    }
+    signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	// fprintf(stderr, "%s    tty: in=%d, out=%d\n", cmd->args[0], isatty(0),)
 	isatty(1);

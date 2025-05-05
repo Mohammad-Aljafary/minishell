@@ -103,7 +103,7 @@ int	expand_all_variables(char **str, t_all *all)
 		clear_list(&p);
 		return (0);
 	}
-	if (!join_strings(p, str, p))
+	if (!join_strings(p, str, NULL))
 	{
 		clear_list(&p);
 		return (0);

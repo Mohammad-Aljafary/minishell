@@ -58,7 +58,7 @@ int	handle_double_quotes(t_token **list, char *token, int *i)
 			if (j > *i)
 				if (!handle_double_utile(list, token, j - *i, i))
 					return (0);
-			if (!handle_variable(list, token, &j))
+			if (!handle_variable(list, token, &j, 0))
 				return (0);
 			*i = j;
 			continue ;

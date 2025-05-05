@@ -1,16 +1,18 @@
 #include <minishell.h>
 
-int	handle_variable(t_token **list, char *token, int *i)
+int	handle_variable(t_token **list, char *token, int *i, int check)
 {
 	int		j;
 	char	*temp;
 	t_token	*node;
 
 	j = *i + 1;
-	while ((token[j] && (ft_isalnum(token[j]) || token[j] == '_'))
-		|| token[j] == '?')
+	if (token[j] == '?')
 		j++;
-	if (j > *i)
+	else
+		while (token[j] && (ft_isalnum(token[j]) || token[j] == '_'))
+			j++;
+	if (j > *i + 1)
 	{
 		temp = ft_substr(token, *i, j - *i);
 		if (!temp)
@@ -21,9 +23,11 @@ int	handle_variable(t_token **list, char *token, int *i)
 			free(temp);
 			return (0);
 		}
+		if (!check)
+			node->quotes = DOUBLE_QUOTE;
 		add_back(list, node);
-		*i = j;
 	}
+	*i = j;
 	return (1);
 }
 
@@ -48,8 +52,8 @@ int	add_normal_text(t_token **list, char *token, int *i)
 			return (0);
 		}
 		add_back(list, node);
-		*i = j;
 	}
+	*i = j;
 	return (1);
 }
 
@@ -83,7 +87,7 @@ int	handle_quotes_and_var(t_token **list, char *token, int *i)
 	}
 	else if (token[*i] == '$')
 	{
-		if (!handle_variable(list, token, i))
+		if (!handle_variable(list, token, i, 1))
 		{
 			clear_list(list);
 			return (0);
