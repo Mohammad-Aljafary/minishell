@@ -61,11 +61,11 @@ int	replace_env(t_token *p, t_env *envp, int *i, int *j)
 	return (1);
 }
 
-int	handle_dollar_sign(t_token *p, t_all *all, int i)
+int	handle_dollar_sign(t_token *p, t_all *all, int *i)
 {
 	int	j;
 
-	j = i + 1;
+	j = *i + 1;
 	if (p->word[j] == '?')
 	{
 		if (!replace_exit_status(&p->word, all->exit_status))
@@ -82,9 +82,9 @@ int	handle_dollar_sign(t_token *p, t_all *all, int i)
 	}
 	while (p->word[j] && (ft_isalnum(p->word[j]) || p->word[j] == '_'))
 		j++;
-	if (j == i + 1)
-		return (i + 1);
-	if (!replace_env(p, all->env_lst, &i, &j))
+	if (j == *i + 1)
+		return (*i + 1);
+	if (!replace_env(p, all->env_lst, i, &j))
 		return (0);
-	return (i);
+	return (1);
 }

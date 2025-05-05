@@ -90,12 +90,11 @@ int	process_token(t_token *p, t_all *all)
 	{
 		if (p->word[i] == '$')
 		{
-			ret = handle_dollar_sign(p, all, i);
+			ret = handle_dollar_sign(p, all, &i);
 			if (ret == 0)
 				return (0);
 			if (ret == -1)
 				break ;
-			i = ret;
 		}
 		else
 			i++;

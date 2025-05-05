@@ -213,7 +213,7 @@ void    run_external(t_token *cmd, int *exit_status, t_all *all)
 {
     char    **envp;
     char    *path;
-    
+
     path = check_cmd(cmd, exit_status, all);
     if (!path)
     {

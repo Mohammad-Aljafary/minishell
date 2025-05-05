@@ -48,3 +48,50 @@ void	create_list_exp(t_env *env, t_env **exp)
 		env = env->next;
 	}
 }
+
+void	delete_args(t_token **list, t_type type)
+{
+	t_token	*lst;
+	t_token	*next;
+
+	if (!list || !*list)
+		return ;
+	lst = *list;
+	while (lst)
+	{
+		next = lst->next;
+		if (lst->type == type)
+		{
+			if (lst->prev)
+				lst->prev->next = lst->next;
+			else
+				*list = lst->next;
+			if (lst->next)
+				lst->next->prev = lst->prev;
+			free(lst->word);
+			free(lst);
+		}
+		lst = next;
+	}
+}
+
+void	delete_ptr(t_token **list, t_token *lst)
+{
+	if (lst == *list)
+	{
+		*list = lst->next;
+		if (*list)
+			(*list)->prev = NULL;
+		free(lst->word);
+		free(lst);
+	}
+	else
+	{
+		if (lst->next)
+			lst->next->prev = lst->prev;
+		if (lst->prev)
+			lst->prev->next = lst->next;
+		free(lst->word);
+		free(lst);
+	}
+}

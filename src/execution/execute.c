@@ -107,7 +107,8 @@ void    wait_status(t_all *wait_statuss)
         if (WIFSIGNALED(status))
         {
             if (WTERMSIG(status) == SIGQUIT)
-                write (1, "Quit (core dumped)\n", 20);
+                write (1, "Quit (core dumped)", 20);
+            write(STDOUT_FILENO, "\n", 1);
             wait_statuss->exit_status = WTERMSIG(status) + 128;
             g_sig = 0;
         }
@@ -129,8 +130,12 @@ void    execute(t_all *lists)
     pipefd[0] = -1;
     pipefd[1] = -1;
     heredoc = apply_heredoc(lists);
-    if (!heredoc)
+    if (!heredoc || g_sig == 2)
+    {
+        unlinks(heredoc);
+        g_sig = 0;
         return ;
+    }
     while (node)
     {
         if (node->type == COMMAND)
@@ -183,6 +188,7 @@ void    execute(t_all *lists)
                     exit (EXIT_FAILURE);
                 }
                 close (pipefd[1]);
+                prev_fd = pipefd[0];
                 node = node->next;
             }
             retrieve(cmd);

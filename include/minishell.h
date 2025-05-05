@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/04 08:47:01 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/05/05 14:59:33 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void				add_node_token(t_token **list, t_token *prev_node,
 						t_token *node);
 void				delete_ptr(t_token **list, t_token *lst);
 void				create_list_exp(t_env *env, t_env **exp);
-
+void				add_front(t_token **list, t_token *new_node);
 /*************************************************************\
 \******************** TOKENIZATION ***************************\
 \*************************************************************/
@@ -130,13 +130,13 @@ int					replace_num(char **token, char *minishell_file);
 int					word_split(t_token **list);
 int					remove_quotes(char **line1);
 int					free_return(t_token **p);
-int					handle_dollar_sign(t_token *p, t_all *all, int i);
+int					handle_dollar_sign(t_token *p, t_all *all, int *i);
 int					process_token(t_token *p, t_all *all);
 int					handle_double_quotes(t_token **list, char *token, int *i);
 int					handle_double_utile(t_token **list, char *token, int length,
 						int *i);
 int					handle_single_quotes(t_token **list, char *token, int *i);
-int					handle_variable(t_token **list, char *token, int *i);
+int					handle_variable(t_token **list, char *token, int *i, int check);
 /**************************************************************\
 \*********************** Execution ****************************\
 \**************************************************************/
@@ -181,6 +181,7 @@ int					split_key_value(char *arg, t_env **env, t_env **exp);
 \************************* Signals ****************************\
 \**************************************************************/
 void				signal_setup(void);
+void				setup_signals2(void);
 
 char				**apply_heredoc(t_all *lists);
 void				unlinks(char **heredoc);

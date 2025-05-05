@@ -1,0 +1,14 @@
+total 136
+drwxr-xr-x 7 malja-fa 2024_42campus    163 May  5 16:01 .
+drwxr-xr-x 9 malja-fa 2024_42campus    109 Mar  7 16:30 ..
+drwxr-xr-x 8 malja-fa 2024_42campus   4096 May  5 06:59 .git
+-rw-r--r-- 1 malja-fa 2024_42campus      0 May  5 16:01 in
+drwxr-xr-x 2 malja-fa 2024_42campus     25 May  4 07:00 include
+drwxr-xr-x 5 malja-fa 2024_42campus     75 May  5 15:49 libft
+-rw-r--r-- 1 malja-fa 2024_42campus      0 May  5 11:07 ls
+-rw-r--r-- 1 malja-fa 2024_42campus    671 May  4 07:18 Makefile
+-rwxr-xr-x 1 malja-fa 2024_42campus 121480 May  5 15:58 minishell
+drwxr-xr-x 9 malja-fa 2024_42campus    128 May  5 15:49 obj
+-rw-r--r-- 1 malja-fa 2024_42campus    251 Apr 20 17:21 readline_curses.supp
+drwxr-xr-x 9 malja-fa 2024_42campus    147 May  5 06:59 src
+-rw-r--r-- 1 malja-fa 2024_42campus    942 May  4 08:50 src.mk

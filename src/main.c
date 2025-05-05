@@ -45,6 +45,7 @@ static void	restore_prompt(int sig)
 {
 	g_sig = sig;
 	write(STDOUT_FILENO, "\n", 1);
+	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
 }
@@ -103,7 +104,7 @@ int	main (int argc, char **argv, char **envp)
 	while (1)
 	{
 		setup_signals();
-		line = readline("\033[0;31mminishell> \033[0m");
+		line = readline("minishell> ");
 		if (!line)
 		{
 			ft_fprintf(2, "exit\n");
@@ -113,8 +114,7 @@ int	main (int argc, char **argv, char **envp)
 		if (g_sig == 2)
 		{
 			all.exit_status = 130;
-			g_sig = 1;
-			free (line);
+			g_sig = 0;
 		}
 		if (line[0] != '\0')
 			add_history(line);
@@ -133,7 +133,6 @@ int	main (int argc, char **argv, char **envp)
 		}
 		if (!expander(&all.tok_lst, &all))
 		{
-			ft_fprintf(2, "heeerree\n");
 			clear_list(&all.tok_lst);
 			free (line);
 			continue;
@@ -146,14 +145,10 @@ int	main (int argc, char **argv, char **envp)
 		}
 		delete_args(&all.tok_lst, ARGS);
 		move_command_to_front(&all.tok_lst);
- 		execute (&all);
+		//print_list(all.tok_lst);
+		execute (&all);
 		clear_list(&all.tok_lst);
 		free(line);
-		if (g_sig == 1)
-		{
-			all.exit_status = 130;
-			g_sig = 0;
-		}
 	}
 	clear_all(&all);
 	rl_clear_history();
