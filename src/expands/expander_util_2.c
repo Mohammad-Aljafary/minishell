@@ -85,6 +85,8 @@ int	join_strings(t_token *p, char **token, t_token *ptr1)
 	char	*str;
 
 	length = calculate_tokens_length(p);
+/* 	if(!length)
+		return (0); */
 	str = malloc((length + 1) * sizeof(char));
 	if (!str)
 		return (0);
