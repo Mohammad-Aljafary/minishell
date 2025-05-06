@@ -13,7 +13,7 @@ char	*search_env(t_env *env, char *key)
 	return (NULL);
 }
 
-int word_split_util(char *tok, t_token **last_inserted, t_token **list)
+int	word_split_util(char *tok, t_token **last_inserted, t_token **list)
 {
 	char	*temp;
 	t_token	*node;
@@ -36,7 +36,7 @@ int word_split_util(char *tok, t_token **last_inserted, t_token **list)
 	return (1);
 }
 
-int word_split(t_token **list)
+int	word_split(t_token **list)
 {
 	t_token	*lst;
 	t_token	*next;
@@ -57,7 +57,7 @@ int word_split(t_token **list)
 					return (0);
 				tok = ft_strtok(NULL, " \t");
 			}
-				delete_ptr(list, lst);
+			delete_ptr(list, lst);
 		}
 		lst = next;
 	}
@@ -99,4 +99,3 @@ int	join_strings(t_token *p, char **token, t_token *ptr1)
 	*token = str;
 	return (1);
 }
-

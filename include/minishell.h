@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/05 14:59:33 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/05/06 08:47:46 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void				add_node_token(t_token **list, t_token *prev_node,
 void				delete_ptr(t_token **list, t_token *lst);
 void				create_list_exp(t_env *env, t_env **exp);
 void				add_front(t_token **list, t_token *new_node);
+
 /*************************************************************\
 \******************** TOKENIZATION ***************************\
 \*************************************************************/
@@ -114,6 +115,11 @@ int					syntax_error(t_token *list);
 int					is_whitespace(char c);
 int					check_redirection(t_token *list);
 void				move_command_to_front(t_token **head);
+int					divide_by_qoute(char *line, int *flag, int *j);
+int					divide_text(char *line, int i, int *j, int *flag);
+int 				get_op_len(char *str);
+int					is_operator(char c);
+t_token				*create_token(char *line, int i, int len);
 
 /*************************************************************\
 \********************** Expander *****************************\
@@ -137,6 +143,7 @@ int					handle_double_utile(t_token **list, char *token, int length,
 						int *i);
 int					handle_single_quotes(t_token **list, char *token, int *i);
 int					handle_variable(t_token **list, char *token, int *i, int check);
+
 /**************************************************************\
 \*********************** Execution ****************************\
 \**************************************************************/
@@ -180,13 +187,20 @@ int					split_key_value(char *arg, t_env **env, t_env **exp);
 /**************************************************************\
 \************************* Signals ****************************\
 \**************************************************************/
-void				signal_setup(void);
+void				setup_signals(void);
 void				setup_signals2(void);
+void				sigint_handler_heredoc(int sig);
+void				setup_heredoc_signals(void);
 
+/**************************************************************\
+\************************* Heredoc ****************************\
+\**************************************************************/
 char				**apply_heredoc(t_all *lists);
 void				unlinks(char **heredoc);
 int					break_heredoc(t_token **list, char *str);
 char				*check_file(t_token *node, t_all *all);
 int					heredoc_count(t_token *lst);
 int					expand_all_variables(char **str, t_all *all);
+int					file_exist(char *filename);
+
 #endif

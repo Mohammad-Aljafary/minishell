@@ -42,38 +42,37 @@ void	add_back(t_token **list, t_token *new_node)
 	}
 }
 
-void add_node_token(t_token **list, t_token *node, t_token *new_node)
+void	add_node_token(t_token **list, t_token *node, t_token *new_node)
 {
-    t_token *lst;
+	t_token	*lst;
 
-    lst = *list;
-    while (lst)
-    {
-        if (lst == node)
-        {
-            new_node->next = lst->next;
-            new_node->prev = lst;
-            if (lst->next)
-                lst->next->prev = new_node;
-            lst->next = new_node;
-            return;
-        }
-        lst = lst->next;
-    }
-    add_back(list, new_node);
+	lst = *list;
+	while (lst)
+	{
+		if (lst == node)
+		{
+			new_node->next = lst->next;
+			new_node->prev = lst;
+			if (lst->next)
+				lst->next->prev = new_node;
+			lst->next = new_node;
+			return ;
+		}
+		lst = lst->next;
+	}
+	add_back(list, new_node);
 }
 
-void add_front(t_token **list, t_token *new_node)
+void	add_front(t_token **list, t_token *new_node)
 {
 	if (!list || !new_node)
-		return;
+		return ;
 	new_node->next = *list;
 	if (*list)
 		(*list)->prev = new_node;
 	new_node->prev = NULL;
 	*list = new_node;
 }
-
 
 void	print_list(t_token *list)
 {
@@ -92,7 +91,6 @@ void	print_list(t_token *list)
 				i++;
 			}
 		}
-
 		printf("\n");
 		list = list->next;
 	}

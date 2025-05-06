@@ -3,7 +3,6 @@
 int	handle_variable(t_token **list, char *token, int *i, int check)
 {
 	int		j;
-	char	*temp;
 	t_token	*node;
 
 	j = *i + 1;
@@ -14,15 +13,9 @@ int	handle_variable(t_token **list, char *token, int *i, int check)
 			j++;
 	if (j > *i + 1)
 	{
-		temp = ft_substr(token, *i, j - *i);
-		if (!temp)
-			return (0);
-		node = create(temp);
+		node = create_token(token, *i, j - *i);
 		if (!node)
-		{
-			free(temp);
 			return (0);
-		}
 		if (!check)
 			node->quotes = DOUBLE_QUOTE;
 		add_back(list, node);
@@ -34,7 +27,6 @@ int	handle_variable(t_token **list, char *token, int *i, int check)
 int	add_normal_text(t_token **list, char *token, int *i)
 {
 	int		j;
-	char	*temp;
 	t_token	*node;
 
 	j = *i;
@@ -42,15 +34,9 @@ int	add_normal_text(t_token **list, char *token, int *i)
 		j++;
 	if (j > *i)
 	{
-		temp = ft_substr(token, *i, j - *i);
-		if (!temp)
-			return (0);
-		node = create(temp);
+		node = create_token(token, *i, j - *i);
 		if (!node)
-		{
-			free(temp);
 			return (0);
-		}
 		add_back(list, node);
 	}
 	*i = j;

@@ -1,24 +1,10 @@
 #include <minishell.h>
 
-int	add_token(t_token **lst, char *str)
-{
-	t_token	*node;
-
-	node = create(str);
-	if (!node)
-	{
-		free(str);
-		return (0);
-	}
-	add_back(lst, node);
-	return (1);
-}
-
 static int	handle_quoted_segment(char *line, int *i, t_token **lst)
 {
 	char	q;
-	char	*temp;
 	int		j;
+	t_token	*node;
 
 	q = line[(*i)++];
 	j = *i;
@@ -26,11 +12,10 @@ static int	handle_quoted_segment(char *line, int *i, t_token **lst)
 		j++;
 	if (!line[j])
 		return (0);
-	temp = ft_substr(line, *i, j - *i);
-	if (!temp)
+	node = create_token(line, *i, j - *i);
+	if (!node)
 		return (0);
-	if (!add_token(lst, temp))
-		return (0);
+	add_back(lst, node);
 	*i = j + 1;
 	return (1);
 }
@@ -38,16 +23,15 @@ static int	handle_quoted_segment(char *line, int *i, t_token **lst)
 static int	handle_unquoted_segment(char *line, int *i, t_token **lst)
 {
 	int		j;
-	char	*temp;
+	t_token	*node;
 
 	j = *i;
 	while (line[j] && line[j] != '"' && line[j] != '\'')
 		j++;
-	temp = ft_substr(line, *i, j - *i);
-	if (!temp)
+	node = create_token(line, *i, j - *i);
+	if (!node)
 		return (0);
-	if (!add_token(lst, temp))
-		return (0);
+	add_back(lst, node);
 	*i = j;
 	return (1);
 }

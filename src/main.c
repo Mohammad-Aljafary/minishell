@@ -41,43 +41,6 @@ void	increment_shlvl(t_env *envp)
 	add_node_env(&envp, create_shlvl, "SHLVL");
 }
 
-static void	restore_prompt(int sig)
-{
-	g_sig = sig;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-}
-
-static void	signal_handler(int sig)
-{
-	g_sig = sig;
-}
-
-void	setup_signals(void)
-{
-	struct sigaction	sa;
-
-	sa.sa_handler = restore_prompt;
-	sa.sa_flags = SA_RESTART;
-	sigemptyset(&sa.sa_mask);
-	sigaction(SIGINT, &sa, NULL);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTSTP, SIG_IGN);
-}
-
-void	setup_signals2(void)
-{
-	struct sigaction	sa;
-
-	sa.sa_handler = signal_handler;
-	sa.sa_flags = SA_RESTART;
-	sigemptyset(&sa.sa_mask);
-	sigaction(SIGINT, &sa, NULL);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTSTP, SIG_IGN);
-}
 
 static void	check_tty_or_stop_program()
 {

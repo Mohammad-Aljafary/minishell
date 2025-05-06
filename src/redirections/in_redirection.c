@@ -1,5 +1,14 @@
 #include <minishell.h>
 
+int	file_exist(char *filename)
+{
+	struct stat	buffer;
+
+	if (stat(filename, &buffer) == 0)
+		return (1);
+	return (0);
+}
+
 int	redirect_in(int in_fd, int *origin_in, int in_child)
 {
 	if (!in_child)

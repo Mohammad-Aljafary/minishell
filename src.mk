@@ -9,7 +9,9 @@ SRC =   src/main.c \
 		src/lists/create_lists_env_exp.c \
 		\
 		src/parse/tokenizer.c \
+		src/parse/tokenizer_util.c \
 		src/parse/parser.c \
+		src/parse/parser_util.c \
 		\
 		src/execution/execute.c \
 		src/execution/execute_external.c\
@@ -35,4 +37,6 @@ SRC =   src/main.c \
 		src/expands/expander_util_2.c \
 		src/expands/expander_util_3.c \
 		src/expands/expander_util_4.c \
-		src/expands/replaces.c
+		src/expands/replaces.c \
+		\
+		src/signals/signals.c

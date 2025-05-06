@@ -1,5 +1,11 @@
 #include <minishell.h>
 
+void	setup_heredoc_signals(void)
+{
+	signal(SIGINT, sigint_handler_heredoc);
+	signal(SIGQUIT, SIG_IGN);
+}
+
 void	unlinks(char **heredoc)
 {
 	int	i;

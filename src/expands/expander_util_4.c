@@ -3,7 +3,6 @@
 int	handle_single_quotes(t_token **list, char *token, int *i)
 {
 	int		j;
-	char	*temp;
 	t_token	*node;
 
 	j = ++*i;
@@ -11,15 +10,9 @@ int	handle_single_quotes(t_token **list, char *token, int *i)
 		j++;
 	if (token[j] == '\'')
 	{
-		temp = ft_substr(token, *i, j - *i);
-		if (!temp)
-			return (0);
-		node = create(temp);
+		node = create_token(token, *i, j - *i);
 		if (!node)
-		{
-			free(temp);
 			return (0);
-		}
 		node->type = S_QOUTE;
 		add_back(list, node);
 		*i = j + 1;
@@ -29,19 +22,12 @@ int	handle_single_quotes(t_token **list, char *token, int *i)
 
 int	handle_double_utile(t_token **list, char *token, int length, int *i)
 {
-	char	*temp;
 	t_token	*node;
 
 	node = NULL;
-	temp = ft_substr(token, *i, length);
-	if (!temp)
-		return (0);
-	node = create(temp);
+	node = create_token(token, *i, length);
 	if (!node)
-	{
-		free(temp);
 		return (0);
-	}
 	add_back(list, node);
 	return (1);
 }
