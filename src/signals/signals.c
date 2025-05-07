@@ -40,8 +40,7 @@ void	setup_signals2(void)
 
 void	sigint_handler_heredoc(int sig)
 {
-	(void)sig;
 	g_sig = sig;
-	write(1, "\n", 1);
+	write(2, "\n", 1);
 	close(STDIN_FILENO);
 }

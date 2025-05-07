@@ -31,7 +31,7 @@ static int	read_line(t_token *delimiter, int fd, t_all *all, int temp)
 	if (process_heredoc_line(&str, delimiter, fd, all))
 	{
 		free(str);
-		close (temp);
+		close(temp);
 		return (1);
 	}
 	free(str);
@@ -40,7 +40,7 @@ static int	read_line(t_token *delimiter, int fd, t_all *all, int temp)
 
 static int	read_heredoc_input(int fd, t_token *delimiter, t_all *all, int dups)
 {
-	int		reads;
+	int	reads;
 
 	setup_heredoc_signals();
 	while (1)
@@ -84,13 +84,12 @@ static int	open_heredoc(char **filename, t_token *delimiter, t_all *all)
 	}
 	if (read_heredoc_input(fd, delimiter, all, dups))
 	{
-		close (fd);
-		close (dups);
+		close(fd);
+		close(dups);
 		return (1);
 	}
 	close(fd);
-	close (dups);
-	setup_signals2();
+	close(dups);
 	return (0);
 }
 

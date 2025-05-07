@@ -58,6 +58,7 @@ void	checks(t_all *all, t_token *cmd, long long *value, int i)
 	{
 		ft_fprintf(2, "exit: %s: numeric argument required\n", cmd->args[1]);
 		clear_all(all);
+		unlinks(all->heredoc);
 		exit(2);
 	}
 	while (cmd->args[1][i])
@@ -67,6 +68,7 @@ void	checks(t_all *all, t_token *cmd, long long *value, int i)
 			ft_fprintf(2, "exit: %s: numeric argument required\n",
 				cmd->args[1]);
 			clear_all(all);
+			unlinks(all->heredoc);
 			exit(2);
 		}
 		i++;
@@ -87,6 +89,7 @@ int	ft_exits(t_token *cmd, t_all *all)
 	if (!cmd->args[1])
 	{
 		clear_all(all);
+		unlinks(all->heredoc);
 		exit(all->exit_status);
 	}
 	if ((cmd->args[1][0] == '+' || cmd->args[1][0] == '-') && cmd->args[1][1])
@@ -96,5 +99,6 @@ int	ft_exits(t_token *cmd, t_all *all)
 	checks(all, cmd, &value, i);
 	normalize_n(&n, &value);
 	clear_all(all);
+	unlinks(all->heredoc);
 	exit(n);
 }

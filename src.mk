@@ -14,7 +14,11 @@ SRC =   src/main.c \
 		src/parse/parser_util.c \
 		\
 		src/execution/execute.c \
+		src/execution/execute_util.c \
+		src/execution/handle_redirection.c \
 		src/execution/execute_external.c\
+		src/execution/execute_external_util.c \
+		src/execution/external_checks.c \
 		\
 		src/redirections/out_redirection.c\
 		src/redirections/in_redirection.c \

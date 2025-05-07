@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/06 08:47:46 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/05/07 16:01:35 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,10 @@ typedef struct s_all
 	t_env			*env_lst;
 	t_env			*exp_lst;
 	char			*argv;
+	char			**heredoc;
 	int				exit_status;
 	int				num_of_child;
+	int				pipefd[2];
 	pid_t			last_pid;
 }					t_all;
 
@@ -117,7 +119,7 @@ int					check_redirection(t_token *list);
 void				move_command_to_front(t_token **head);
 int					divide_by_qoute(char *line, int *flag, int *j);
 int					divide_text(char *line, int i, int *j, int *flag);
-int 				get_op_len(char *str);
+int					get_op_len(char *str);
 int					is_operator(char c);
 t_token				*create_token(char *line, int i, int len);
 
@@ -142,7 +144,8 @@ int					handle_double_quotes(t_token **list, char *token, int *i);
 int					handle_double_utile(t_token **list, char *token, int length,
 						int *i);
 int					handle_single_quotes(t_token **list, char *token, int *i);
-int					handle_variable(t_token **list, char *token, int *i, int check);
+int					handle_variable(t_token **list, char *token, int *i,
+						int check);
 
 /**************************************************************\
 \*********************** Execution ****************************\
@@ -156,22 +159,33 @@ int					redirect_out(int out_fd, int *origin_out, int in_child);
 int					redirect_in(int in_fd, int *origin_in, int in_child);
 int					apply_here(t_token *cmd, char *filename,
 						t_token **re_token);
+void				handle_redirection_node(t_token **node, t_token *cmd, t_all *all,
+							int *prev_fd);
 int					check_ambigious(t_token *node);
 int					apply_redirection(t_token **next_node, t_token *node,
-						int in_child, char **heredoc, t_all *all);
+						int in_child, t_all *all);
 void				retrieve(t_token *cmd);
 void				run_built_in(t_token *cmd, int *exit_status, t_all *all,
 						int in_child);
 int					is_built_in(t_token *cmd);
+int					is_executable(char *cmd, int *exit_status);
+int					is_absolute_path(t_token *cmd);
 void				execute_external(t_token *cmd, t_all *all, t_token *node,
-						int fd[2], int *prev, char **heredoc);
+						int *prev);
 void				run_external(t_token *cmd, int *exit_status, t_all *all);
+char				**list_to_arr(t_env *env);
+char				*check_cmd(t_token *cmd, int *exit_status, t_all *all);
+void				handle_pipe_or_exit(t_all *all);
+void				find_file(t_token *cmd, t_token *list, int *i);
+void				wait_status(t_all *wait_statuss);
+char				*access_path(t_token *cmd, char **paths, int *exit_status);
+char				*find_cmd_path(t_token *cmd, int *exit_status, t_all *all);
 
 /**************************************************************\
 \*********************** Built-ins ****************************\
 \**************************************************************/
 int					args_count(char **args);
-int					ft_cd(t_token *cmd, t_env **env);
+int					ft_cd(t_token *cmd, t_env **env, t_env **exp);
 int					ft_echo(t_token *cmd);
 int					ft_env(t_token *cmd, t_env *list);
 int					ft_exits(t_token *cmd, t_all *all);

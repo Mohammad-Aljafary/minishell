@@ -27,7 +27,7 @@ void	run_built_in(t_token *cmd, int *exit_status, t_all *all, int in_child)
 	else if (!ft_strcmp(cmd->word, "echo"))
 		*exit_status = ft_echo(cmd);
 	else if (!ft_strcmp(cmd->word, "cd"))
-		*exit_status = ft_cd(cmd, &all->env_lst);
+		*exit_status = ft_cd(cmd, &all->env_lst, &all->exp_lst);
 	else if (!ft_strcmp(cmd->word, "pwd"))
 		*exit_status = ft_pwd();
 	else if (!ft_strcmp(cmd->word, "exit"))

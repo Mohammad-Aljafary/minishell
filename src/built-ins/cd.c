@@ -57,7 +57,7 @@ int	update_pwd(t_env **env)
 	return (0);
 }
 
-static int	ft_change_dir(char *path, t_env **env)
+static int	ft_change_dir(char *path, t_env **env, t_env **exp)
 {
 	char	*current;
 
@@ -73,7 +73,8 @@ static int	ft_change_dir(char *path, t_env **env)
 		free(current);
 		return (1);
 	}
-	if (update_oldpwd(env, current) || update_pwd(env))
+	if (update_oldpwd(env, current) || update_pwd(env)
+		||update_oldpwd(exp, current) || update_pwd(exp))
 	{
 		free(current);
 		return (1);
@@ -82,7 +83,7 @@ static int	ft_change_dir(char *path, t_env **env)
 	return (0);
 }
 
-int	ft_cd(t_token *cmd, t_env **env)
+int	ft_cd(t_token *cmd, t_env **env, t_env **exp)
 {
 	char	*path;
 
@@ -92,7 +93,7 @@ int	ft_cd(t_token *cmd, t_env **env)
 		path = cmd->args[1];
 	else
 		path = search_env(*env, "HOME");
-	if (ft_change_dir(path, env))
+	if (ft_change_dir(path, env, exp))
 		return (1);
 	return (0);
 }
