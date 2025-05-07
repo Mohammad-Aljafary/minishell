@@ -10,12 +10,8 @@ void	find_file(t_token *cmd, t_token *list, int *i)
 	}
 }
 
-int	redirections(t_token **next_node, t_token *node, char **heredoc, t_all *all)
+int	handle_redirection(t_token **next_node, t_token *node, char **heredoc, int *i)
 {
-	int	i;
-
-	i = 0;
-	find_file(node, all->tok_lst, &i);
 	if ((*next_node)->type == OUT_RE)
 	{
 		if (apply_re_out(next_node, node, 1))
@@ -33,11 +29,22 @@ int	redirections(t_token **next_node, t_token *node, char **heredoc, t_all *all)
 	}
 	else if ((*next_node)->type == HERE_DOC)
 	{
-		if (apply_here(node, heredoc[i++], next_node))
+		if (apply_here(node, heredoc[*i++], next_node))
 			return (1);
 	}
 	else
 		*next_node = (*next_node)->next;
+	return (0);
+}
+
+int	redirections(t_token **next_node, t_token *node, char **heredoc, t_all *all)
+{
+	int	i;
+
+	i = 0;
+	find_file(node, all->tok_lst, &i);
+	if (handle_redirection(next_node, node, heredoc, &i))
+		return (1);
 	return (0);
 }
 
@@ -107,7 +114,7 @@ void	wait_status(t_all *wait_statuss)
 		if (WIFSIGNALED(status))
 		{
 			if (WTERMSIG(status) == SIGQUIT)
-				write(1, "Quit (core dumped)", 20);
+				write(2, "Quit (core dumped)\n", 20);
 			write(STDOUT_FILENO, "\n", 1);
 			wait_statuss->exit_status = WTERMSIG(status) + 128;
 			g_sig = 0;
@@ -115,8 +122,116 @@ void	wait_status(t_all *wait_statuss)
 		wait_statuss->num_of_child--;
 	}
 }
+/********************************************/
+typedef struct s_execute_data
+{
+	t_token	*node;
+	t_token	*cmd;
+	t_token	*search;
+	int		pipefd[2];
+	int		prev_fd;
+	char	**heredoc;
+	t_all	*lists;
+} t_execute_data;
+/************************************************/
+void init_exec_data(t_execute_data *data, t_all *lists)
+{
+	data->cmd = NULL;
+	data->search = NULL;
+	data->node = lists->tok_lst;
+	data->prev_fd = -1;
+	data->pipefd[0] = -1;
+	data->pipefd[1] = -1;
+	data->lists = lists;
+	data->heredoc = apply_heredoc(lists);
+}
 
-void	execute(t_all *lists)
+int heredoc_failed(t_execute_data *data)
+{
+	if (!data->heredoc || g_sig == 2)
+	{
+		unlinks(data->heredoc);
+		g_sig = 0;
+		return (1);
+	}
+	return (0);
+}
+
+void handle_pipe_or_exit(t_execute_data *data)
+{
+	if (pipe(data->pipefd) == -1)
+	{
+		perror("pipe");
+		clear_all(data->lists);
+		unlinks(data->heredoc);
+		exit(EXIT_FAILURE);
+	}
+}
+
+void handle_command_node(t_execute_data *data)
+{
+	data->cmd = data->node;
+	data->node = data->node->next;
+	data->search = data->node;
+	while (data->search && data->search->type != PIPE)
+		data->search = data->search->next;
+	if (!data->search && is_built_in(data->cmd) && !(data->cmd->prev && data->cmd->prev->type == PIPE))
+	{
+		data->lists->exit_status = apply_redirection(&data->node, data->cmd, 0, data->heredoc, data->lists);
+		if (data->lists->exit_status)
+			return ;
+	}
+	else if (data->search && data->search->type == PIPE)
+		handle_pipe_or_exit(data);
+	execute_command(data->cmd, data->lists, data->node,
+		data->pipefd, &data->prev_fd, data->heredoc);
+	retrieve(data->cmd);
+	data->node = data->search;
+	if (data->node && data->node->type == PIPE)
+			data->node = data->node->next;
+}
+
+void handle_redirection_node(t_execute_data *data)
+{
+	data->cmd = data->node;
+	data->lists->exit_status = apply_redirection(&data->node, data->cmd, 0, data->heredoc, data->lists);
+	if (data->lists->exit_status)
+	{
+		data->node = data->node->next;
+		return ;
+	}
+	if (data->node && data->node->type == PIPE)
+	{
+		handle_pipe_or_exit(data);
+		close(data->pipefd[1]);
+		data->prev_fd = data->pipefd[0];
+		data->node = data->node->next;
+	}
+	retrieve(data->cmd);
+}
+
+void execute(t_all *lists)
+{
+	t_execute_data data;
+
+	init_exec_data(&data, lists);
+	if (heredoc_failed(&data))
+		return ;
+	while (data.node)
+	{
+		if (data.node->type == COMMAND)
+			handle_command_node(&data);
+		else
+			handle_redirection_node(&data);
+	}
+	if (data.pipefd[0] != -1)
+		close(data.pipefd[0]);
+	if (data.pipefd[1] != -1)
+		close(data.pipefd[1]);
+	wait_status(lists);
+	unlinks(data.heredoc);
+}
+/* void	execute(t_all *lists)
 {
 	t_token	*node;
 	t_token	*cmd;
@@ -204,3 +319,4 @@ void	execute(t_all *lists)
 	wait_status(lists);
 	unlinks(heredoc);
 }
+ */
