@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute_util.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/08 07:38:07 by taabu-fe          #+#    #+#             */
+/*   Updated: 2025/05/08 07:38:08 by taabu-fe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <minishell.h>
 
 void	handle_pipe_or_exit(t_all *all)
 {
 	perror("pipe");
-	ft_free_split(all->heredoc);
+	unlinks(all->heredoc);
 	clear_all(all);
 	exit(EXIT_FAILURE);
 }

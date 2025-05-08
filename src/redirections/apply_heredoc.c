@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   apply_heredoc.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/08 07:39:05 by taabu-fe          #+#    #+#             */
+/*   Updated: 2025/05/08 07:39:06 by taabu-fe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <minishell.h>
 
 void	setup_heredoc_signals(void)
@@ -18,7 +30,8 @@ void	unlinks(char **heredoc)
 		free(heredoc[i]);
 		i++;
 	}
-	free(heredoc);
+	if (heredoc)
+		free(heredoc);
 }
 
 int	open_heredoc(char *filename, int *in_fd)

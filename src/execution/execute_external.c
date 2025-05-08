@@ -1,33 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute_external.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/08 07:38:04 by taabu-fe          #+#    #+#             */
+/*   Updated: 2025/05/08 07:38:05 by taabu-fe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <minishell.h>
-
-char	*find_cmd_path(t_token *cmd, int *exit_status, t_all *all)
-{
-	char	*path;
-	char	**splitted_path;
-
-	path = search_env(all->env_lst, "PATH");
-	if (!path)
-	{
-		ft_fprintf(2, "%s: No such file or directory\n", cmd->word);
-		*exit_status = 127;
-		return (NULL);
-	}
-	splitted_path = ft_split(path, ':');
-	if (!splitted_path)
-		return (NULL);
-	path = access_path(cmd, splitted_path, exit_status);
-	ft_free_split(splitted_path);
-	if (!path)
-	{
-		if (*exit_status == 127)
-			ft_fprintf(2, "%s: command not found\n", cmd->word);
-		else if (*exit_status == 126)
-			ft_fprintf(2, "%s: Permission denied\n", cmd->word);
-		clear_all(all);
-		exit(*exit_status);
-	}
-	return (path);
-}
 
 void	run_external(t_token *cmd, int *exit_status, t_all *all)
 {
@@ -83,6 +66,14 @@ void	track_child(int *prev, int pipefd[2], t_all *all, int id)
 	all->num_of_child++;
 }
 
+void	run_command(t_token *cmd, t_all *all)
+{
+	if (is_built_in(cmd))
+		run_built_in(cmd, &all->exit_status, all, 1);
+	else
+		run_external(cmd, &all->exit_status, all);
+}
+
 void	execute_external(t_token *cmd, t_all *all, t_token *node, int *prev)
 {
 	pid_t	id;
@@ -106,10 +97,7 @@ void	execute_external(t_token *cmd, t_all *all, t_token *node, int *prev)
 			clear_all(all);
 			exit(all->exit_status);
 		}
-		if (is_built_in(cmd))
-			run_built_in(cmd, &all->exit_status, all, 1);
-		else
-			run_external(cmd, &all->exit_status, all);
+		run_command(cmd, all);
 	}
 	track_child(prev, all->pipefd, all, id);
 }

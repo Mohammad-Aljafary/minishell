@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/08 07:38:10 by taabu-fe          #+#    #+#             */
+/*   Updated: 2025/05/08 07:38:11 by taabu-fe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <minishell.h>
 
 void	execute_command(t_token *cmd, t_all *all, t_token *node, int *prev)
@@ -17,6 +29,10 @@ void	handle_redirection_node(t_token **node, t_token *cmd, t_all *all,
 		close(*prev_fd);
 		*prev_fd = -1;
 	}
+	if (all->pipefd[0] != -1)
+		close(all->pipefd[0]);
+	if (all->pipefd[1] != -1)
+		close(all->pipefd[1]);
 	cmd = *node;
 	all->exit_status = apply_redirection(node, cmd, 0, all);
 	if (all->exit_status)
@@ -24,22 +40,14 @@ void	handle_redirection_node(t_token **node, t_token *cmd, t_all *all,
 		*node = (*node)->next;
 		clear_all(all);
 		ft_free_split(all->heredoc);
-		if (all->pipefd[0] != -1)
-			close (all->pipefd[0]);
-		if (all->pipefd[1] != -1)
-			close (all->pipefd[1]);
 		exit(EXIT_FAILURE);
 	}
 	if (*node && (*node)->type == PIPE)
 		*node = (*node)->next;
-	if (all->pipefd[0] != -1)
-		close (all->pipefd[0]);
-	if (all->pipefd[1] != -1)
-		close (all->pipefd[1]);
 	retrieve(cmd);
 	clear_all(all);
 	ft_free_split(all->heredoc);
-	exit (EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 void	handle_command_node(t_token *cmd, t_token **node, t_all *lists,

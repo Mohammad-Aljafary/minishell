@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/08 07:37:36 by taabu-fe          #+#    #+#             */
+/*   Updated: 2025/05/08 08:18:25 by taabu-fe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <minishell.h>
 
 int	count_args_for_exit(t_token *cmd)
@@ -100,5 +112,6 @@ int	ft_exits(t_token *cmd, t_all *all)
 	normalize_n(&n, &value);
 	clear_all(all);
 	unlinks(all->heredoc);
+	n = all->exit_status;
 	exit(n);
 }

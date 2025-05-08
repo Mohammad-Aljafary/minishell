@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/08 07:37:26 by taabu-fe          #+#    #+#             */
+/*   Updated: 2025/05/08 07:37:27 by taabu-fe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <minishell.h>
 
 int	check_cd_args(t_token *cmd)
@@ -73,8 +85,8 @@ static int	ft_change_dir(char *path, t_env **env, t_env **exp)
 		free(current);
 		return (1);
 	}
-	if (update_oldpwd(env, current) || update_pwd(env)
-		||update_oldpwd(exp, current) || update_pwd(exp))
+	if (update_oldpwd(env, current) || update_pwd(env) || update_oldpwd(exp,
+			current) || update_pwd(exp))
 	{
 		free(current);
 		return (1);
