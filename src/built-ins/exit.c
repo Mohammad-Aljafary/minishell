@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:37:36 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 08:18:25 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/08 19:09:45 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,15 +55,6 @@ int	ft_atoll(const char *str, long long *out)
 	return (1);
 }
 
-void	normalize_n(int *n, long long *value)
-{
-	while (*value >= 256)
-		*value -= 256;
-	while (*value < 0)
-		*value += 256;
-	*n = (int)*value;
-}
-
 void	checks(t_all *all, t_token *cmd, long long *value, int i)
 {
 	if (!ft_atoll(cmd->args[1], value))
@@ -109,9 +100,8 @@ int	ft_exits(t_token *cmd, t_all *all)
 	if (cmd->args[1][1] && cmd->args[1][1] == '-' && !cmd->args[1][2])
 		i++;
 	checks(all, cmd, &value, i);
-	normalize_n(&n, &value);
+	n = (int)value;
 	clear_all(all);
 	unlinks(all->heredoc);
-	n = all->exit_status;
 	exit(n);
 }

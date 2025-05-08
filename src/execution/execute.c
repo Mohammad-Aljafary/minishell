@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:38:10 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 07:38:11 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/08 19:57:58 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	handle_redirection_node(t_token **node, t_token *cmd, t_all *all,
 		close(all->pipefd[0]);
 	if (all->pipefd[1] != -1)
 		close(all->pipefd[1]);
+	*node = cmd;
 	cmd = *node;
 	all->exit_status = apply_redirection(node, cmd, 0, all);
 	if (all->exit_status)

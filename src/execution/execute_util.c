@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:38:07 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 07:38:08 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/08 19:12:09 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,16 @@ void	wait_status(t_all *wait_statuss)
 		{
 			if (WIFEXITED(status))
 				wait_statuss->exit_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+			{
+				if (WTERMSIG(status) == SIGQUIT)
+					write(2, "Quit (core dumped)", 19);
+				write (2, "\n", 1);
+				wait_statuss->exit_status = WTERMSIG(status) + 128;
+				g_sig = 0;
+			}
 			else
 				wait_statuss->exit_status = 1;
-		}
-		if (WIFSIGNALED(status))
-		{
-			if (WTERMSIG(status) == SIGQUIT)
-				write(2, "Quit (core dumped)\n", 20);
-			wait_statuss->exit_status = WTERMSIG(status) + 128;
-			g_sig = 0;
 		}
 		wait_statuss->num_of_child--;
 	}

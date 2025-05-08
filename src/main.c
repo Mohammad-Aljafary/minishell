@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:39:32 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 08:02:59 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/08 20:11:46 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static int	handle_signal(t_all *all)
 	if (g_sig == 2)
 	{
 		all->exit_status = 130;
-		g_sig = 1;
+		g_sig = 0;
 		return (1);
 	}
 	return (0);
@@ -64,6 +64,8 @@ static void	shell_loop(t_all *all)
 		if (!line)
 		{
 			ft_fprintf(2, "exit\n");
+			if (g_sig)
+				all->exit_status = 130;
 			break ;
 		}
 		setup_signals2();
