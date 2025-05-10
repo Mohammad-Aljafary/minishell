@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:39:21 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 07:39:22 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/10 10:28:27 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	restore_prompt(int sig)
 	rl_redisplay();
 }
 
-static void	signal_handler(int sig)
+void	signal_handler(int sig)
 {
 	g_sig = sig;
 }

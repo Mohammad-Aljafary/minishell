@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:37:36 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 19:09:45 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/05/10 08:08:29 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,7 @@ int	count_args_for_exit(t_token *cmd)
 {
 	if (args_count(cmd->args) > 2)
 	{
-		{
-			ft_fprintf(2, "exit: too many arguments\n");
-			return (1);
-		}
-		return (0);
+		ft_fprintf(2, "exit: too many arguments\n");
 		return (1);
 	}
 	return (0);
@@ -84,7 +80,7 @@ int	ft_exits(t_token *cmd, t_all *all)
 	int			i;
 	int			n;
 
-	n = 0;
+	n = all->exit_status;
 	i = 0;
 	ft_fprintf(2, "exit\n");
 	if (count_args_for_exit(cmd))
@@ -93,7 +89,7 @@ int	ft_exits(t_token *cmd, t_all *all)
 	{
 		clear_all(all);
 		unlinks(all->heredoc);
-		exit(all->exit_status);
+		exit(n);
 	}
 	if ((cmd->args[1][0] == '+' || cmd->args[1][0] == '-') && cmd->args[1][1])
 		i++;

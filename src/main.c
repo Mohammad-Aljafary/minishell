@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:39:32 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 20:11:46 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/05/08 20:13:24 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,6 @@ int	main(int argc, char **argv, char **envp)
 	check_tty_or_stop_program();
 	init_shell(&all, envp, argv);
 	shell_loop(&all);
-	if (g_sig == 1)
-		all.exit_status = 130;
 	clear_all(&all);
 	rl_clear_history();
 	return (all.exit_status);

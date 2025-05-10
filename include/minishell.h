@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 08:02:32 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/10 10:35:26 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ void				setup_signals(void);
 void				setup_signals2(void);
 void				sigint_handler_heredoc(int sig);
 void				setup_heredoc_signals(void);
-
+void				signal_handler(int sig);
 char				**apply_heredoc(t_all *lists);
 void				unlinks(char **heredoc);
 int					break_heredoc(t_token **list, char *str);

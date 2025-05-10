@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built_in.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:37:22 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 07:37:23 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/10 10:35:29 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ int	is_built_in(t_token *cmd)
 
 void	run_built_in(t_token *cmd, int *exit_status, t_all *all, int in_child)
 {
+	if (in_child)
+		signal(SIGPIPE, signal_handler);
 	if (!ft_strcmp(cmd->word, "export"))
 		ft_export(cmd, &all->env_lst, &all->exp_lst, exit_status);
 	else if (!ft_strcmp(cmd->word, "echo"))
@@ -51,6 +53,8 @@ void	run_built_in(t_token *cmd, int *exit_status, t_all *all, int in_child)
 	if (in_child)
 	{
 		clear_all(all);
+		if (g_sig != 0)
+			*exit_status = 128 + g_sig;
 		exit(*exit_status);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:38:10 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 19:57:58 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/05/10 10:22:32 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,20 +34,18 @@ void	handle_redirection_node(t_token **node, t_token *cmd, t_all *all,
 	if (all->pipefd[1] != -1)
 		close(all->pipefd[1]);
 	*node = cmd;
-	cmd = *node;
-	all->exit_status = apply_redirection(node, cmd, 0, all);
+	all->exit_status = apply_redirection(node, cmd, 1, all);
+	ft_free_split(all->heredoc);
 	if (all->exit_status)
 	{
 		*node = (*node)->next;
 		clear_all(all);
-		ft_free_split(all->heredoc);
 		exit(EXIT_FAILURE);
 	}
 	if (*node && (*node)->type == PIPE)
 		*node = (*node)->next;
 	retrieve(cmd);
 	clear_all(all);
-	ft_free_split(all->heredoc);
 	exit(EXIT_SUCCESS);
 }
 
@@ -61,7 +59,8 @@ void	handle_command_node(t_token *cmd, t_token **node, t_all *lists,
 	search = *node;
 	while (search && search->type != PIPE)
 		search = search->next;
-	if (!search && is_built_in(cmd) && !(cmd->prev && cmd->prev->type == PIPE))
+	if (!search && is_built_in(cmd) && *node && !(cmd->prev
+			&& cmd->prev->type == PIPE))
 	{
 		lists->exit_status = apply_redirection(node, cmd, 0, lists);
 		if (lists->exit_status)
@@ -106,10 +105,10 @@ void	execute(t_all *lists)
 	{
 		handle_command_node(cmd, &node, lists, &prev_fd);
 	}
+	wait_status(lists);
 	if (lists->pipefd[0] != -1)
 		close(lists->pipefd[0]);
 	if (lists->pipefd[1] != -1)
 		close(lists->pipefd[1]);
-	wait_status(lists);
 	unlinks(lists->heredoc);
 }

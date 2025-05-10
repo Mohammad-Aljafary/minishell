@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:38:04 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 19:21:36 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/05/10 07:15:09 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	execute_external(t_token *cmd, t_all *all, t_token *node, int *prev)
 	}
 	else if (id == 0)
 	{
-		if (check_redirection(cmd))
+		if (check_redirection(cmd) || cmd->type == HERE_DOC)
 			handle_redirection_node(&node, cmd, all, prev);
 		duplicate_pipe(all->pipefd, prev);
 		all->exit_status = apply_redirection(&node, cmd, 1, all);
