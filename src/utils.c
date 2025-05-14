@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:39:36 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 08:04:45 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/13 19:07:38 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void	increment_shlvl(t_env *envp)
 		add_back_env(&envp, create_shlvl);
 	}
 	convert_atoi = ft_atoi(shlvl);
+	if(!convert_atoi)
+		return ;
 	if (convert_atoi < 0)
 		convert_atoi = -1;
 	shlvl = ft_itoa(convert_atoi + 1);

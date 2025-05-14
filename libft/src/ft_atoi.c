@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 14:02:53 by malja-fa          #+#    #+#             */
-/*   Updated: 2025/04/23 17:22:16 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/13 19:09:27 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int	ft_atoi(const char *str)
 
 	result = 0;
 	sign = 1;
+	if(!str)
+		return (0);
 	while (*str == ' ' || (*str >= '\t' && *str <= '\r'))
 		str++;
 	if (*str == '+' || *str == '-')

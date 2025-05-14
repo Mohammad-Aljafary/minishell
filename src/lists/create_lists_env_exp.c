@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:38:42 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 07:38:43 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/14 12:46:03 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ void	create_list_env(t_env **list, char **envp)
 	while (envp[++i])
 	{
 		str = ft_split(envp[i], '=');
+		if(!str)
+			return ;
 		if (str && str[0])
 		{
 			if (str[1])
