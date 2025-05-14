@@ -6,39 +6,47 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:39:36 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/08 08:04:45 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/14 14:29:53 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
+static void	set_shlvl(t_env *envp, char *old_value)
+{
+	t_env	*new_node;
+	int		shlvl;
+	char	*new_value;
+
+	if (!old_value)
+	{
+		new_node = create_node_env("SHLVL", "1");
+		if (!new_node)
+			return ;
+		add_back_env(&envp, new_node);
+		return ;
+	}
+	shlvl = ft_atoi(old_value);
+	if (shlvl < 0)
+		shlvl = -1;
+	new_value = ft_itoa(shlvl + 1);
+	if (!new_value)
+		return ;
+	new_node = create_node_env("SHLVL", new_value);
+	free(new_value);
+	if (!new_node)
+		return ;
+	add_node_env(&envp, new_node, "SHLVL");
+}
+
 void	increment_shlvl(t_env *envp)
 {
 	char	*shlvl;
-	t_env	*create_shlvl;
-	int		convert_atoi;
 
-	convert_atoi = 0;
-	create_shlvl = NULL;
+	if (!envp)
+		return ;
 	shlvl = search_env(envp, "SHLVL");
-	if (!shlvl)
-	{
-		create_shlvl = create_node_env("SHLVL", "1");
-		if (!create_shlvl)
-			return ;
-		add_back_env(&envp, create_shlvl);
-	}
-	convert_atoi = ft_atoi(shlvl);
-	if (convert_atoi < 0)
-		convert_atoi = -1;
-	shlvl = ft_itoa(convert_atoi + 1);
-	if (!shlvl)
-		return ;
-	create_shlvl = create_node_env("SHLVL", shlvl);
-	free (shlvl);
-	if (!create_shlvl)
-		return ;
-	add_node_env(&envp, create_shlvl, "SHLVL");
+	set_shlvl(envp, shlvl);
 }
 
 void	check_tty_or_stop_program(void)
