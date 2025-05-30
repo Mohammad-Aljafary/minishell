@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/10 10:35:26 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/05/29 15:35:33 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ t_token				*create(char *str);
 void				add_back(t_token **list, t_token *new_node);
 void				clear_list(t_token **list);
 void				print_list(t_token *list);
-void				create_list_env(t_env **list, char **envp);
+int					create_list_env(t_env **list, char **envp);
 void				add_back_env(t_env **list, t_env *node);
 void				clear_list_env(t_env **list);
 void				clear_all(t_all *all);
@@ -99,7 +99,7 @@ void				add_node_env(t_env **list, t_env *node, char *key);
 void				add_node_token(t_token **list, t_token *prev_node,
 						t_token *node);
 void				delete_ptr(t_token **list, t_token *lst);
-void				create_list_exp(t_env *env, t_env **exp);
+int					create_list_exp(t_env *env, t_env **exp);
 void				add_front(t_token **list, t_token *new_node);
 
 int					tokenize(char *line, t_token **list);
@@ -195,7 +195,7 @@ int					heredoc_count(t_token *lst);
 int					expand_all_variables(char **str, t_all *all);
 int					file_exist(char *filename);
 
-void				increment_shlvl(t_env *envp);
+int					increment_shlvl(t_env *envp);
 void				check_tty_or_stop_program(void);
 int					check_if_whitspace(char *line);
 #endif

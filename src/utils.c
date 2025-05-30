@@ -6,13 +6,13 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:39:36 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/14 14:29:53 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/29 15:34:42 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
-static void	set_shlvl(t_env *envp, char *old_value)
+static int	set_shlvl(t_env *envp, char *old_value)
 {
 	t_env	*new_node;
 	int		shlvl;
@@ -22,31 +22,34 @@ static void	set_shlvl(t_env *envp, char *old_value)
 	{
 		new_node = create_node_env("SHLVL", "1");
 		if (!new_node)
-			return ;
+			return (1);
 		add_back_env(&envp, new_node);
-		return ;
+		return (0);
 	}
 	shlvl = ft_atoi(old_value);
 	if (shlvl < 0)
 		shlvl = -1;
 	new_value = ft_itoa(shlvl + 1);
 	if (!new_value)
-		return ;
+		return (1);
 	new_node = create_node_env("SHLVL", new_value);
 	free(new_value);
 	if (!new_node)
-		return ;
+		return (1);
 	add_node_env(&envp, new_node, "SHLVL");
+	return (0);
 }
 
-void	increment_shlvl(t_env *envp)
+int	increment_shlvl(t_env *envp)
 {
 	char	*shlvl;
 
 	if (!envp)
-		return ;
+		return (1);
 	shlvl = search_env(envp, "SHLVL");
-	set_shlvl(envp, shlvl);
+	if (set_shlvl(envp, shlvl))
+		return (1);
+	return (0);
 }
 
 void	check_tty_or_stop_program(void)
