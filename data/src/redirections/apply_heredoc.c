@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:39:05 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/31 13:46:27 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/31 14:00:44 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ void	unlinks(char **heredoc)
 	int	i;
 
 	i = 0;
+	if (!heredoc)
+		return ;
 	while (heredoc[i])
 	{
 		if (unlink(heredoc[i]) == -1)
@@ -32,18 +34,13 @@ void	unlinks(char **heredoc)
 	}
 	if (heredoc)
 		free(heredoc);
+	heredoc = NULL;
 }
 
-/* int	open_heredoc(char *filename, int *in_fd)
-{
-	*in_fd = open(filename, O_RDONLY);
-	if (*in_fd == -1)
-	{
-		perror(filename);
-		return (1);
-	}
-	return (0);
-} */
+// Check if file doesn't exist due to previous creation failures
+// In this case, skip the error message to avoid duplicate messages
+// File doesn't exist, likely due to creation failure
+// Error was already reported during creation
 int	open_heredoc(char *filename, int *in_fd)
 {
 	*in_fd = open(filename, O_RDONLY);
@@ -67,6 +64,9 @@ int	apply_here(t_token *cmd, char *filename, t_token **re_token)
 	return (0);
 }
 
+// For system call errors in heredoc creation,
+// use a placeholder to indicate failed heredoc
+// This allows the shell to continue running
 char	**apply_heredoc(t_all *lists)
 {
 	char	**num_heredoc;
@@ -85,8 +85,9 @@ char	**apply_heredoc(t_all *lists)
 			num_heredoc[i] = check_file(node->next, lists);
 			if (!num_heredoc[i])
 			{
-				unlinks(num_heredoc);
-				return (NULL);
+				num_heredoc[i] = ft_strdup("/dev/null");
+				if (!num_heredoc[i])
+					return (NULL);
 			}
 			i++;
 		}
