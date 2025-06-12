@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mohammad-boom <mohammad-boom@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:39:32 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/31 13:43:02 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/06/12 16:01:34 by mohammad-bo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ static void	init_shell(t_all *all, char **envp, char **argv)
 	}
 }
 
-static int	process_input(char *line, t_all *all)
+int	process_input(char *line, t_all *all)
 {
 	if (!tokenize(line, &all->tok_lst))
-		return (0);
+		return (2);
 	parser(&all->tok_lst);
 	if (syntax_error(all->tok_lst))
 		return (0);
@@ -45,15 +45,14 @@ static int	process_input(char *line, t_all *all)
 	move_command_to_front(&all->tok_lst);
 	return (1);
 }
-static int	handle_signal(t_all *all)
+
+void	handle_signal(t_all *all)
 {
 	if (g_sig == 2)
 	{
 		all->exit_status = 130;
 		g_sig = 0;
-		return (1);
 	}
-	return (0);
 }
 
 int	main(int argc, char **argv, char **envp)

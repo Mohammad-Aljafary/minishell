@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mohammad-boom <mohammad-boom@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/31 13:41:56 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/06/12 16:05:32 by mohammad-bo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ int					handle_single_quotes(t_token **list, char *token, int *i);
 int					handle_variable(t_token **list, char *token, int *i,
 						int check);
 
-void				execute(t_all *lists);
+int					execute(t_all *lists);
 int					join_args(t_token *node);
 void				delete_args(t_token **list, t_type type);
 int					apply_re_out(t_token **re_node, t_token *command, int flag);
@@ -200,4 +200,6 @@ void				shell_loop(t_all *all);
 int					handle_line(t_all *all, char *line);
 void				check_tty_or_stop_program(void);
 int					check_if_whitspace(char *line);
+void				handle_signal(t_all *all);
+int					process_input(char *line, t_all *all);
 #endif
