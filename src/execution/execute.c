@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-boom <mohammad-boom@student.42    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:38:10 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/06/12 16:10:47 by mohammad-bo      ###   ########.fr       */
+/*   Updated: 2025/05/10 10:22:32 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	init(t_token **cmd, t_token **node, int *prev_fd, t_all *lists)
 	lists->pipefd[1] = -1;
 }
 
-int	execute(t_all *lists)
+void	execute(t_all *lists)
 {
 	t_token	*node;
 	t_token	*cmd;
@@ -95,20 +95,20 @@ int	execute(t_all *lists)
 
 	init(&cmd, &node, &prev_fd, lists);
 	lists->heredoc = apply_heredoc(lists);
-	if (!lists->heredoc && g_sig != 2)
-		return (-1);
-	if (g_sig == 2)
+	if (!lists->heredoc || g_sig == 2)
 	{
+		unlinks(lists->heredoc);
 		g_sig = 0;
-		return (0);
+		return ;
 	}
 	while (node)
+	{
 		handle_command_node(cmd, &node, lists, &prev_fd);
+	}
 	wait_status(lists);
 	if (lists->pipefd[0] != -1)
 		close(lists->pipefd[0]);
 	if (lists->pipefd[1] != -1)
 		close(lists->pipefd[1]);
 	unlinks(lists->heredoc);
-	return (0);
 }

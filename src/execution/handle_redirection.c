@@ -6,7 +6,7 @@
 /*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:38:17 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/21 16:23:53 by malja-fa         ###   ########.fr       */
+/*   Updated: 2025/05/08 19:52:21 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	handle_redirection(t_token **next_node, t_token *node, char **heredoc,
 	}
 	else if ((*next_node)->type == HERE_DOC)
 	{
-		if (apply_here(node, heredoc[(*i)++], next_node))
+		if (apply_here(node, heredoc[*i++], next_node))
 			return (1);
 	}
 	else
@@ -40,9 +40,13 @@ int	handle_redirection(t_token **next_node, t_token *node, char **heredoc,
 	return (0);
 }
 
-int	redirections(t_token **next_node, t_token *node, char **heredoc, int *i)
+int	redirections(t_token **next_node, t_token *node, char **heredoc, t_all *all)
 {
-	if (handle_redirection(next_node, node, heredoc, i))
+	int	i;
+
+	i = 0;
+	find_file(node, all->tok_lst, &i);
+	if (handle_redirection(next_node, node, heredoc, &i))
 		return (1);
 	return (0);
 }
@@ -50,13 +54,9 @@ int	redirections(t_token **next_node, t_token *node, char **heredoc, int *i)
 int	apply_redirection(t_token **next_node, t_token *node, int in_child,
 		t_all *all)
 {
-	int	i;
-
-	i = 0;
-	find_file(node, all->tok_lst, &i);
 	while (*next_node && (*next_node)->type != PIPE)
 	{
-		if (redirections(next_node, node, all->heredoc, &i))
+		if (redirections(next_node, node, all->heredoc, all))
 			return (1);
 	}
 	if (node->out_fd > 1)

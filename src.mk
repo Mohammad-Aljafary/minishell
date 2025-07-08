@@ -1,6 +1,5 @@
 SRC =   src/main.c \
 		src/utils.c \
-		src/shell_loop.c\
 		\
 		src/utils/join_args.c \
 		src/utils/move_command_to_head.c \

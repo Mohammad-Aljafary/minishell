@@ -6,7 +6,7 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:39:05 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/31 13:46:27 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/08 07:39:06 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,23 +34,11 @@ void	unlinks(char **heredoc)
 		free(heredoc);
 }
 
-/* int	open_heredoc(char *filename, int *in_fd)
-{
-	*in_fd = open(filename, O_RDONLY);
-	if (*in_fd == -1)
-	{
-		perror(filename);
-		return (1);
-	}
-	return (0);
-} */
 int	open_heredoc(char *filename, int *in_fd)
 {
 	*in_fd = open(filename, O_RDONLY);
 	if (*in_fd == -1)
 	{
-		if (access(filename, F_OK) == -1)
-			return (1);
 		perror(filename);
 		return (1);
 	}

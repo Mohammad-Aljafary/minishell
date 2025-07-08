@@ -6,13 +6,13 @@
 /*   By: taabu-fe <taabu-fe@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 07:38:42 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/05/29 15:30:39 by taabu-fe         ###   ########.fr       */
+/*   Updated: 2025/05/08 07:38:43 by taabu-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
-int	create_list_env(t_env **list, char **envp)
+void	create_list_env(t_env **list, char **envp)
 {
 	int		i;
 	char	**str;
@@ -32,16 +32,15 @@ int	create_list_env(t_env **list, char **envp)
 			{
 				clear_list_env(list);
 				ft_free_split(str);
-				return (1);
+				return ;
 			}
 			add_back_env(list, node);
 		}
 		ft_free_split(str);
 	}
-	return (0);
 }
 
-int	create_list_exp(t_env *env, t_env **exp)
+void	create_list_exp(t_env *env, t_env **exp)
 {
 	t_env	*node;
 
@@ -55,12 +54,11 @@ int	create_list_exp(t_env *env, t_env **exp)
 		if (!node)
 		{
 			clear_list_env(exp);
-			return (1);
+			return ;
 		}
 		add_back_env(exp, node);
 		env = env->next;
 	}
-	return (0);
 }
 
 void	delete_args(t_token **list, t_type type)

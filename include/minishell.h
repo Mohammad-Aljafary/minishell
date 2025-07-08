@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-boom <mohammad-boom@student.42    +#+  +:+       +#+        */
+/*   By: malja-fa <malja-fa@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:32:29 by taabu-fe          #+#    #+#             */
-/*   Updated: 2025/06/12 16:05:32 by mohammad-bo      ###   ########.fr       */
+/*   Updated: 2025/05/10 10:35:26 by malja-fa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ t_token				*create(char *str);
 void				add_back(t_token **list, t_token *new_node);
 void				clear_list(t_token **list);
 void				print_list(t_token *list);
-int					create_list_env(t_env **list, char **envp);
+void				create_list_env(t_env **list, char **envp);
 void				add_back_env(t_env **list, t_env *node);
 void				clear_list_env(t_env **list);
 void				clear_all(t_all *all);
@@ -99,7 +99,7 @@ void				add_node_env(t_env **list, t_env *node, char *key);
 void				add_node_token(t_token **list, t_token *prev_node,
 						t_token *node);
 void				delete_ptr(t_token **list, t_token *lst);
-int					create_list_exp(t_env *env, t_env **exp);
+void				create_list_exp(t_env *env, t_env **exp);
 void				add_front(t_token **list, t_token *new_node);
 
 int					tokenize(char *line, t_token **list);
@@ -137,7 +137,7 @@ int					handle_single_quotes(t_token **list, char *token, int *i);
 int					handle_variable(t_token **list, char *token, int *i,
 						int check);
 
-int					execute(t_all *lists);
+void				execute(t_all *lists);
 int					join_args(t_token *node);
 void				delete_args(t_token **list, t_type type);
 int					apply_re_out(t_token **re_node, t_token *command, int flag);
@@ -195,11 +195,7 @@ int					heredoc_count(t_token *lst);
 int					expand_all_variables(char **str, t_all *all);
 int					file_exist(char *filename);
 
-int					increment_shlvl(t_env *envp);
-void				shell_loop(t_all *all);
-int					handle_line(t_all *all, char *line);
+void				increment_shlvl(t_env *envp);
 void				check_tty_or_stop_program(void);
 int					check_if_whitspace(char *line);
-void				handle_signal(t_all *all);
-int					process_input(char *line, t_all *all);
 #endif
